@@ -44,8 +44,11 @@ class HeadUnitSceneDelegate: AutoPlayScene, CPTemplateApplicationSceneDelegate {
         self.interfaceController = AutoPlayInterfaceController(
             interfaceController: interfaceController
         )
-        
-        connect(props: [:])
+
+        connect(props: [
+            "colorScheme": interfaceController.carTraitCollection
+                .userInterfaceStyle == .dark ? "dark" : "light"
+        ])
         HybridAutoPlay.emit(event: .didconnect)
     }
 
