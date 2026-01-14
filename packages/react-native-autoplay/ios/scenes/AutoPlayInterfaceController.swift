@@ -102,6 +102,7 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
         try await interfaceController.popToRootTemplate(
             animated: animated
         )
+
         TemplateStore.removeTemplates(templateIds: templateIds)
 
         return templateIds
