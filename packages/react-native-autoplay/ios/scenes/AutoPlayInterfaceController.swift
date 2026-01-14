@@ -96,6 +96,9 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
             templateIds.append(templateId)
         }
 
+        if templateIds.count == 0 {
+            return templateIds
+        }
         try await interfaceController.popToRootTemplate(
             animated: animated
         )
