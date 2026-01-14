@@ -96,17 +96,8 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
             templateIds.append(templateId)
         }
 
-        do {
-            try await interfaceController.popToRootTemplate(
-                animated: animated
-            )
-        } catch let error as NSError
-            where error.domain == "CarPlayErrorDomain" && error.code == -1
-        {
-            // Silently ignore "No templates were available to be popped" error
-        } catch {
-            // Rethrow any other unexpected errors
-            throw error
+        if templateIds.count == 0 {
+            return templateIds
         }
         TemplateStore.removeTemplates(templateIds: templateIds)
 
