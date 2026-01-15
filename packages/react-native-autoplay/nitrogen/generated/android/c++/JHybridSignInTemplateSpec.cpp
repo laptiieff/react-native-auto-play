@@ -9,6 +9,10 @@
 
 // Forward declaration of `SignInTemplateConfig` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInTemplateConfig; }
+// Forward declaration of `SignInMethod` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInMethod; }
+// Forward declaration of `SignInMethods` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class SignInMethods; }
 // Forward declaration of `NitroAction` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct NitroAction; }
 // Forward declaration of `GlyphImage` to properly resolve imports.
@@ -23,10 +27,6 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroAc
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroAlignment; }
 // Forward declaration of `NitroButtonStyle` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroButtonStyle; }
-// Forward declaration of `SignInMethod` to properly resolve imports.
-namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInMethod; }
-// Forward declaration of `SignInMethods` to properly resolve imports.
-namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class SignInMethods; }
 
 #include "SignInTemplateConfig.hpp"
 #include "JSignInTemplateConfig.hpp"
@@ -36,7 +36,12 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class SignInM
 #include "JFunc_void_std__optional_bool_.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include "JFunc_void.hpp"
+#include "SignInMethod.hpp"
+#include "JSignInMethod.hpp"
+#include "SignInMethods.hpp"
+#include "JSignInMethods.hpp"
 #include "NitroAction.hpp"
+#include <vector>
 #include "JNitroAction.hpp"
 #include "GlyphImage.hpp"
 #include "AssetImage.hpp"
@@ -52,11 +57,6 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class SignInM
 #include "JNitroAlignment.hpp"
 #include "NitroButtonStyle.hpp"
 #include "JNitroButtonStyle.hpp"
-#include <vector>
-#include "SignInMethod.hpp"
-#include "JSignInMethod.hpp"
-#include "SignInMethods.hpp"
-#include "JSignInMethods.hpp"
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 

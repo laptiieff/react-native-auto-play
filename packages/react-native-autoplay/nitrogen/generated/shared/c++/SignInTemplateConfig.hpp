@@ -23,17 +23,17 @@
 #error NitroModules cannot be found! Are you sure you installed NitroModules properly?
 #endif
 
-// Forward declaration of `NitroAction` to properly resolve imports.
-namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct NitroAction; }
 // Forward declaration of `SignInMethod` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInMethod; }
+// Forward declaration of `NitroAction` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct NitroAction; }
 
 #include <string>
 #include <optional>
 #include <functional>
+#include "SignInMethod.hpp"
 #include "NitroAction.hpp"
 #include <vector>
-#include "SignInMethod.hpp"
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
@@ -49,15 +49,14 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     std::optional<std::function<void(std::optional<bool> /* animated */)>> onDidDisappear     SWIFT_PRIVATE;
     std::optional<std::function<void()>> onPopped     SWIFT_PRIVATE;
     std::optional<double> autoDismissMs     SWIFT_PRIVATE;
-    std::optional<NitroAction> headerAction     SWIFT_PRIVATE;
     std::optional<std::string> title     SWIFT_PRIVATE;
     std::optional<std::string> description     SWIFT_PRIVATE;
-    std::optional<std::vector<NitroAction>> actions     SWIFT_PRIVATE;
     SignInMethod signInMethod     SWIFT_PRIVATE;
+    std::optional<std::vector<NitroAction>> headerActions     SWIFT_PRIVATE;
 
   public:
     SignInTemplateConfig() = default;
-    explicit SignInTemplateConfig(std::string id, std::optional<std::function<void(std::optional<bool> /* animated */)>> onWillAppear, std::optional<std::function<void(std::optional<bool> /* animated */)>> onWillDisappear, std::optional<std::function<void(std::optional<bool> /* animated */)>> onDidAppear, std::optional<std::function<void(std::optional<bool> /* animated */)>> onDidDisappear, std::optional<std::function<void()>> onPopped, std::optional<double> autoDismissMs, std::optional<NitroAction> headerAction, std::optional<std::string> title, std::optional<std::string> description, std::optional<std::vector<NitroAction>> actions, SignInMethod signInMethod): id(id), onWillAppear(onWillAppear), onWillDisappear(onWillDisappear), onDidAppear(onDidAppear), onDidDisappear(onDidDisappear), onPopped(onPopped), autoDismissMs(autoDismissMs), headerAction(headerAction), title(title), description(description), actions(actions), signInMethod(signInMethod) {}
+    explicit SignInTemplateConfig(std::string id, std::optional<std::function<void(std::optional<bool> /* animated */)>> onWillAppear, std::optional<std::function<void(std::optional<bool> /* animated */)>> onWillDisappear, std::optional<std::function<void(std::optional<bool> /* animated */)>> onDidAppear, std::optional<std::function<void(std::optional<bool> /* animated */)>> onDidDisappear, std::optional<std::function<void()>> onPopped, std::optional<double> autoDismissMs, std::optional<std::string> title, std::optional<std::string> description, SignInMethod signInMethod, std::optional<std::vector<NitroAction>> headerActions): id(id), onWillAppear(onWillAppear), onWillDisappear(onWillDisappear), onDidAppear(onDidAppear), onDidDisappear(onDidDisappear), onPopped(onPopped), autoDismissMs(autoDismissMs), title(title), description(description), signInMethod(signInMethod), headerActions(headerActions) {}
   };
 
 } // namespace margelo::nitro::swe::iternio::reactnativeautoplay
@@ -77,11 +76,10 @@ namespace margelo::nitro {
         JSIConverter<std::optional<std::function<void(std::optional<bool>)>>>::fromJSI(runtime, obj.getProperty(runtime, "onDidDisappear")),
         JSIConverter<std::optional<std::function<void()>>>::fromJSI(runtime, obj.getProperty(runtime, "onPopped")),
         JSIConverter<std::optional<double>>::fromJSI(runtime, obj.getProperty(runtime, "autoDismissMs")),
-        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>::fromJSI(runtime, obj.getProperty(runtime, "headerAction")),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "title")),
         JSIConverter<std::optional<std::string>>::fromJSI(runtime, obj.getProperty(runtime, "description")),
-        JSIConverter<std::optional<std::vector<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>>::fromJSI(runtime, obj.getProperty(runtime, "actions")),
-        JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethod>::fromJSI(runtime, obj.getProperty(runtime, "signInMethod"))
+        JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethod>::fromJSI(runtime, obj.getProperty(runtime, "signInMethod")),
+        JSIConverter<std::optional<std::vector<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>>::fromJSI(runtime, obj.getProperty(runtime, "headerActions"))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::swe::iternio::reactnativeautoplay::SignInTemplateConfig& arg) {
@@ -93,11 +91,10 @@ namespace margelo::nitro {
       obj.setProperty(runtime, "onDidDisappear", JSIConverter<std::optional<std::function<void(std::optional<bool>)>>>::toJSI(runtime, arg.onDidDisappear));
       obj.setProperty(runtime, "onPopped", JSIConverter<std::optional<std::function<void()>>>::toJSI(runtime, arg.onPopped));
       obj.setProperty(runtime, "autoDismissMs", JSIConverter<std::optional<double>>::toJSI(runtime, arg.autoDismissMs));
-      obj.setProperty(runtime, "headerAction", JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>::toJSI(runtime, arg.headerAction));
       obj.setProperty(runtime, "title", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.title));
       obj.setProperty(runtime, "description", JSIConverter<std::optional<std::string>>::toJSI(runtime, arg.description));
-      obj.setProperty(runtime, "actions", JSIConverter<std::optional<std::vector<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>>::toJSI(runtime, arg.actions));
       obj.setProperty(runtime, "signInMethod", JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethod>::toJSI(runtime, arg.signInMethod));
+      obj.setProperty(runtime, "headerActions", JSIConverter<std::optional<std::vector<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>>::toJSI(runtime, arg.headerActions));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -115,11 +112,10 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<std::function<void(std::optional<bool>)>>>::canConvert(runtime, obj.getProperty(runtime, "onDidDisappear"))) return false;
       if (!JSIConverter<std::optional<std::function<void()>>>::canConvert(runtime, obj.getProperty(runtime, "onPopped"))) return false;
       if (!JSIConverter<std::optional<double>>::canConvert(runtime, obj.getProperty(runtime, "autoDismissMs"))) return false;
-      if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>::canConvert(runtime, obj.getProperty(runtime, "headerAction"))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "title"))) return false;
       if (!JSIConverter<std::optional<std::string>>::canConvert(runtime, obj.getProperty(runtime, "description"))) return false;
-      if (!JSIConverter<std::optional<std::vector<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>>::canConvert(runtime, obj.getProperty(runtime, "actions"))) return false;
       if (!JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethod>::canConvert(runtime, obj.getProperty(runtime, "signInMethod"))) return false;
+      if (!JSIConverter<std::optional<std::vector<margelo::nitro::swe::iternio::reactnativeautoplay::NitroAction>>>::canConvert(runtime, obj.getProperty(runtime, "headerActions"))) return false;
       return true;
     }
   };
