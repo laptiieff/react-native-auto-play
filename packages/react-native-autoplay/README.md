@@ -804,7 +804,11 @@ new ListTemplate({
     - `range`: Range in km.
     - `odometer`: Odometer in km.
     - `vehicle`: Vehicle information (model name, model year, manufacturer).
-    - `selectedGear`: The currently selected gear.
+    - `selectedGear`: The currently selected gear, one of the `VehicleGear` enum:
+       - Neutral = 1
+       - Reverse = 2
+       - Park = 4
+       - Drive = 8
     - `envOutsideTemperature`: The outside temperature in °C.
     - `evChargePortConnected`: Whether the EV charge port is connected.
     - `evBatteryInstantaneousChargeRate`: The instantaneous charge rate of the EV battery in kW.
@@ -845,7 +849,7 @@ CarPlayDashboard.setButtons([
 
 ### iOS
 
--   **Broken exceptions with `react-native-skia`**: When using `react-native-skia` up to version `2.4.7`, exceptions on iOS are not reported correctly. This is fixed in newer versions of `react-native-skia`. For more details, see this [pull request](https://github.com/Shopify/react-native-skia/pull/3595).
+-   **Broken exceptions with `react-native-skia`**: When using `react-native-skia` up to version `2.4.14`, exceptions on iOS are not reported correctly. This is fixed in newer versions of `react-native-skia`. For more details, see this [pull request](https://github.com/Shopify/react-native-skia/pull/3595) and [issue](https://github.com/Shopify/react-native-skia/issues/3635).
 -   **AppState on iOS**: The `AppState` module from React Native does not work correctly on iOS because this library uses scenes, which are not supported by the stock `AppState` module. This library provides a custom state listener that works for both Android and iOS. Use `HybridAutoPlay.addListenerRenderState` instead of `AppState`.
 -   **Timers stop on screen lock**: iOS stops all timers when the device's main screen is turned off. To ensure timers continue to run (which is often necessary for background tasks related to autoplay), a patch for `react-native` is required. A patch is included in the root `patches/` directory and can be applied using `patch-package`.
 -   **expo-splash-screen stuck on iOS**: The `expo-splash-screen` module is broken on iOS because it does not support scenes, which are used by this library. This can cause the splash screen to be stuck on either the mobile device or on CarPlay. To fix this, a patch for `expo-splash-screen` is included in the root `patches/` directory and can be applied using `patch-package`. After applying the patch, you can hide the splash screen for a specific scene by passing the module name to the `hide` or `hideAsync` function. The module name can be one of the values from the `AutoPlayModules` enum or the UUID of a cluster screen.
@@ -859,6 +863,10 @@ CarPlayDashboard.setButtons([
     // Hide the splash screen for the CarPlay screen
     hideAsync(AutoPlayModules.AutoPlayRoot);
     ```
+### Android
+-   **Broken exceptions with `react-native`** up to version 0.79
+When using react-native before 0.80.0 exceptions are broken and are reported as `Unknown runtime_error` or similar.
+See [this issue](https://github.com/mrousavy/nitro/issues/382) for details.
 
 ## Contributing
 

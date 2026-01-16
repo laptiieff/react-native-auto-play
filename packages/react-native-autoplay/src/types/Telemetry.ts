@@ -51,6 +51,13 @@ type VehicleTelemetryItem = {
   manufacturer?: StringTelemetryItem;
 };
 
+export enum VehicleGear {
+  Neutral = 1,
+  Reverse = 2,
+  Park = 4,
+  Drive = 8,
+}
+
 export type Telemetry = {
   /**
    * Speed in km/h
@@ -76,17 +83,18 @@ export type Telemetry = {
    * Vehicle information
    */
   vehicle?: VehicleTelemetryItem;
-
   /**
-   * one of GEAR_NEUTRAL(1), GEAR_REVERSE(2), GEAR_PARK(4), GEAR_DRIVE(8)
+   * one of VehicleGear enum
    */
   selectedGear?: NumericTelemetryItem;
-
+  /**
+   * Outside temperature in celsius.
+   */
   envOutsideTemperature?: NumericTelemetryItem;
-
   evChargePortConnected?: BooleanTelemetryItem;
-
+  /**
+   * EV instantaneous charge rate in kW.
+   */
   evBatteryInstantaneousChargeRate?: NumericTelemetryItem;
-
   parkingBrakeOn?: BooleanTelemetryItem;
 };

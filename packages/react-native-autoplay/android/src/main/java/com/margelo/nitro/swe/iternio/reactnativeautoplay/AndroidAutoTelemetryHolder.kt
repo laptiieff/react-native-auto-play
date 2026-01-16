@@ -161,10 +161,18 @@ class AndroidAutoTelemetryHolder {
                 speed = createNumericTelemetryItem(speed, speedTimestamp),
                 odometer = createNumericTelemetryItem(odometer, odometerTimestamp),
                 selectedGear = createNumericTelemetryItem(selectedGear, selectedGearTimestamp),
-                parkingBrakeOn = createBooleanTelemetryItem(parkingBrakeOn, parkingBrakeOnTimestamp),
-                envOutsideTemperature = createNumericTelemetryItem(envOutsideTemperature, envOutsideTemperatureTimestamp),
-                evChargePortConnected = createBooleanTelemetryItem(evChargePortConnected, evChargePortConnectedTimestamp),
-                evBatteryInstantaneousChargeRate = createNumericTelemetryItem(evBatteryInstantaneousChargeRate, evBatteryInstantaneousChargeRateTimeStamp),
+                parkingBrakeOn = createBooleanTelemetryItem(
+                    parkingBrakeOn, parkingBrakeOnTimestamp
+                ),
+                envOutsideTemperature = createNumericTelemetryItem(
+                    envOutsideTemperature, envOutsideTemperatureTimestamp
+                ),
+                evChargePortConnected = createBooleanTelemetryItem(
+                    evChargePortConnected, evChargePortConnectedTimestamp
+                ),
+                evBatteryInstantaneousChargeRate = createNumericTelemetryItem(
+                    evBatteryInstantaneousChargeRate, evBatteryInstantaneousChargeRateTimeStamp
+                ),
                 vehicle = VehicleTelemetryItem(
                     name = createStringTelemetryItem(name),
                     manufacturer = createStringTelemetryItem(manufacturer),
