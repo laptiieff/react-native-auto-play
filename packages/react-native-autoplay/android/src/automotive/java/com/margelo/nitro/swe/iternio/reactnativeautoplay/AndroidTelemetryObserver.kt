@@ -6,6 +6,7 @@ import android.car.VehicleGear
 import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
+import android.util.Log
 import kotlin.math.floor
 
 private val REQUIRED_VEHICLE_PROPERTY_IDS = listOf(
@@ -19,6 +20,8 @@ private val REQUIRED_VEHICLE_PROPERTY_IDS = listOf(
     VehiclePropertyIds.PARKING_BRAKE_ON,
     VehiclePropertyIds.CURRENT_GEAR
 )
+
+private val TAG = "AndroidTelemetryObserver"
 
 object AndroidTelemetryObserver : TelemetryObserver() {
     private val carContext = AndroidAutoSession.getCarContext(AndroidAutoSession.ROOT_SESSION)
@@ -109,7 +112,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                     }
                 }
             } catch (e: Exception) {
-
+                Log.e(TAG, "error processing telemetry value", e)
             }
         }
 
