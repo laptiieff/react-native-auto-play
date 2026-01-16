@@ -9,10 +9,18 @@
 
 // Forward declaration of `SignInTemplateConfig` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInTemplateConfig; }
-// Forward declaration of `SignInMethod` to properly resolve imports.
-namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInMethod; }
+// Forward declaration of `QrSignIn` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct QrSignIn; }
+// Forward declaration of `PinSignIn` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct PinSignIn; }
+// Forward declaration of `InputSignIn` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct InputSignIn; }
 // Forward declaration of `SignInMethods` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class SignInMethods; }
+// Forward declaration of `KeyboardType` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class KeyboardType; }
+// Forward declaration of `TextInputType` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class TextInputType; }
 // Forward declaration of `NitroAction` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct NitroAction; }
 // Forward declaration of `GlyphImage` to properly resolve imports.
@@ -28,6 +36,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroAl
 // Forward declaration of `NitroButtonStyle` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroButtonStyle; }
 
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
 #include "SignInTemplateConfig.hpp"
 #include "JSignInTemplateConfig.hpp"
 #include <string>
@@ -36,16 +46,26 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroBu
 #include "JFunc_void_std__optional_bool_.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include "JFunc_void.hpp"
-#include "SignInMethod.hpp"
-#include "JSignInMethod.hpp"
+#include "QrSignIn.hpp"
+#include "PinSignIn.hpp"
+#include "InputSignIn.hpp"
+#include <variant>
+#include "JVariant_QrSignIn_PinSignIn_InputSignIn.hpp"
+#include "JQrSignIn.hpp"
 #include "SignInMethods.hpp"
 #include "JSignInMethods.hpp"
+#include "JPinSignIn.hpp"
+#include "JInputSignIn.hpp"
+#include "KeyboardType.hpp"
+#include "JKeyboardType.hpp"
+#include "JFunc_void_std__string.hpp"
+#include "TextInputType.hpp"
+#include "JTextInputType.hpp"
 #include "NitroAction.hpp"
 #include <vector>
 #include "JNitroAction.hpp"
 #include "GlyphImage.hpp"
 #include "AssetImage.hpp"
-#include <variant>
 #include "JVariant_GlyphImage_AssetImage.hpp"
 #include "JGlyphImage.hpp"
 #include "NitroColor.hpp"
@@ -93,6 +113,21 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
   void JHybridSignInTemplateSpec::createSignInTemplate(const SignInTemplateConfig& config) {
     static const auto method = javaClassStatic()->getMethod<void(jni::alias_ref<JSignInTemplateConfig> /* config */)>("createSignInTemplate");
     method(_javaPart, JSignInTemplateConfig::fromCpp(config));
+  }
+  std::shared_ptr<Promise<void>> JHybridSignInTemplateSpec::updateTemplate(const std::string& templateId, const SignInTemplateConfig& config) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JString> /* templateId */, jni::alias_ref<JSignInTemplateConfig> /* config */)>("updateTemplate");
+    auto __result = method(_javaPart, jni::make_jstring(templateId), JSignInTemplateConfig::fromCpp(config));
+    return [&]() {
+      auto __promise = Promise<void>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& /* unit */) {
+        __promise->resolve();
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
+    }();
   }
 
 } // namespace margelo::nitro::swe::iternio::reactnativeautoplay

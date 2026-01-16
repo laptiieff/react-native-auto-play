@@ -12,25 +12,35 @@
 
 #include "AssetImage.hpp"
 #include "GlyphImage.hpp"
+#include "InputSignIn.hpp"
 #include "JAssetImage.hpp"
 #include "JFunc_void.hpp"
 #include "JFunc_void_std__optional_bool_.hpp"
+#include "JFunc_void_std__string.hpp"
 #include "JGlyphImage.hpp"
+#include "JInputSignIn.hpp"
+#include "JKeyboardType.hpp"
 #include "JNitroAction.hpp"
 #include "JNitroActionType.hpp"
 #include "JNitroAlignment.hpp"
 #include "JNitroButtonStyle.hpp"
 #include "JNitroColor.hpp"
-#include "JSignInMethod.hpp"
+#include "JPinSignIn.hpp"
+#include "JQrSignIn.hpp"
 #include "JSignInMethods.hpp"
+#include "JTextInputType.hpp"
 #include "JVariant_GlyphImage_AssetImage.hpp"
+#include "JVariant_QrSignIn_PinSignIn_InputSignIn.hpp"
+#include "KeyboardType.hpp"
 #include "NitroAction.hpp"
 #include "NitroActionType.hpp"
 #include "NitroAlignment.hpp"
 #include "NitroButtonStyle.hpp"
 #include "NitroColor.hpp"
-#include "SignInMethod.hpp"
+#include "PinSignIn.hpp"
+#include "QrSignIn.hpp"
 #include "SignInMethods.hpp"
+#include "TextInputType.hpp"
 #include <NitroModules/JNICallable.hpp>
 #include <functional>
 #include <optional>
@@ -75,10 +85,12 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
       jni::local_ref<jni::JString> title = this->getFieldValue(fieldTitle);
       static const auto fieldDescription = clazz->getField<jni::JString>("description");
       jni::local_ref<jni::JString> description = this->getFieldValue(fieldDescription);
-      static const auto fieldSignInMethod = clazz->getField<JSignInMethod>("signInMethod");
-      jni::local_ref<JSignInMethod> signInMethod = this->getFieldValue(fieldSignInMethod);
+      static const auto fieldSignInMethod = clazz->getField<JVariant_QrSignIn_PinSignIn_InputSignIn>("signInMethod");
+      jni::local_ref<JVariant_QrSignIn_PinSignIn_InputSignIn> signInMethod = this->getFieldValue(fieldSignInMethod);
       static const auto fieldHeaderActions = clazz->getField<jni::JArrayClass<JNitroAction>>("headerActions");
       jni::local_ref<jni::JArrayClass<JNitroAction>> headerActions = this->getFieldValue(fieldHeaderActions);
+      static const auto fieldActions = clazz->getField<jni::JArrayClass<JNitroAction>>("actions");
+      jni::local_ref<jni::JArrayClass<JNitroAction>> actions = this->getFieldValue(fieldActions);
       return SignInTemplateConfig(
         id->toStdString(),
         onWillAppear != nullptr ? std::make_optional([&]() -> std::function<void(std::optional<bool> /* animated */)> {
@@ -129,13 +141,23 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         autoDismissMs != nullptr ? std::make_optional(autoDismissMs->value()) : std::nullopt,
         title != nullptr ? std::make_optional(title->toStdString()) : std::nullopt,
         description != nullptr ? std::make_optional(description->toStdString()) : std::nullopt,
-        signInMethod->toCpp(),
+        signInMethod != nullptr ? std::make_optional(signInMethod->toCpp()) : std::nullopt,
         headerActions != nullptr ? std::make_optional([&]() {
           size_t __size = headerActions->size();
           std::vector<NitroAction> __vector;
           __vector.reserve(__size);
           for (size_t __i = 0; __i < __size; __i++) {
             auto __element = headerActions->getElement(__i);
+            __vector.push_back(__element->toCpp());
+          }
+          return __vector;
+        }()) : std::nullopt,
+        actions != nullptr ? std::make_optional([&]() {
+          size_t __size = actions->size();
+          std::vector<NitroAction> __vector;
+          __vector.reserve(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            auto __element = actions->getElement(__i);
             __vector.push_back(__element->toCpp());
           }
           return __vector;
@@ -149,7 +171,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
      */
     [[maybe_unused]]
     static jni::local_ref<JSignInTemplateConfig::javaobject> fromCpp(const SignInTemplateConfig& value) {
-      using JSignature = JSignInTemplateConfig(jni::alias_ref<jni::JString>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void::javaobject>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JSignInMethod>, jni::alias_ref<jni::JArrayClass<JNitroAction>>);
+      using JSignature = JSignInTemplateConfig(jni::alias_ref<jni::JString>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void::javaobject>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JVariant_QrSignIn_PinSignIn_InputSignIn>, jni::alias_ref<jni::JArrayClass<JNitroAction>>, jni::alias_ref<jni::JArrayClass<JNitroAction>>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -163,12 +185,22 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         value.autoDismissMs.has_value() ? jni::JDouble::valueOf(value.autoDismissMs.value()) : nullptr,
         value.title.has_value() ? jni::make_jstring(value.title.value()) : nullptr,
         value.description.has_value() ? jni::make_jstring(value.description.value()) : nullptr,
-        JSignInMethod::fromCpp(value.signInMethod),
+        value.signInMethod.has_value() ? JVariant_QrSignIn_PinSignIn_InputSignIn::fromCpp(value.signInMethod.value()) : nullptr,
         value.headerActions.has_value() ? [&]() {
           size_t __size = value.headerActions.value().size();
           jni::local_ref<jni::JArrayClass<JNitroAction>> __array = jni::JArrayClass<JNitroAction>::newArray(__size);
           for (size_t __i = 0; __i < __size; __i++) {
             const auto& __element = value.headerActions.value()[__i];
+            auto __elementJni = JNitroAction::fromCpp(__element);
+            __array->setElement(__i, *__elementJni);
+          }
+          return __array;
+        }() : nullptr,
+        value.actions.has_value() ? [&]() {
+          size_t __size = value.actions.value().size();
+          jni::local_ref<jni::JArrayClass<JNitroAction>> __array = jni::JArrayClass<JNitroAction>::newArray(__size);
+          for (size_t __i = 0; __i < __size; __i++) {
+            const auto& __element = value.actions.value()[__i];
             auto __elementJni = JNitroAction::fromCpp(__element);
             __array->setElement(__i, *__elementJni);
           }

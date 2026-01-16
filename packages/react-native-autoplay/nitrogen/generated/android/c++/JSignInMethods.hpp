@@ -44,7 +44,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
       static const auto fieldQR = clazz->getStaticField<JSignInMethods>("QR");
       static const auto fieldGOOGLE = clazz->getStaticField<JSignInMethods>("GOOGLE");
       static const auto fieldPIN = clazz->getStaticField<JSignInMethods>("PIN");
-      static const auto fieldCREDENTIALS = clazz->getStaticField<JSignInMethods>("CREDENTIALS");
+      static const auto fieldINPUT = clazz->getStaticField<JSignInMethods>("INPUT");
       
       switch (value) {
         case SignInMethods::QR:
@@ -53,8 +53,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
           return clazz->getStaticFieldValue(fieldGOOGLE);
         case SignInMethods::PIN:
           return clazz->getStaticFieldValue(fieldPIN);
-        case SignInMethods::CREDENTIALS:
-          return clazz->getStaticFieldValue(fieldCREDENTIALS);
+        case SignInMethods::INPUT:
+          return clazz->getStaticFieldValue(fieldINPUT);
         default:
           std::string stringValue = std::to_string(static_cast<int>(value));
           throw std::invalid_argument("Invalid enum value (" + stringValue + "!");
