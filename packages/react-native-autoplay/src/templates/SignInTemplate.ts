@@ -104,6 +104,13 @@ export class SignInTemplate extends Template<
       actions: NitroActionUtil.convert(this.template, actions),
     };
 
+    if (
+      nitroConfig.signInMethod?.method === SignInMethods.PIN &&
+      (nitroConfig.signInMethod.pin?.length > 12 || nitroConfig.signInMethod.pin?.length < 1)
+    ) {
+      throw new Error('PIN must be 1-12 characters');
+    }
+
     return HybridSignInTemplate?.updateTemplate(this.id, nitroConfig);
   }
 }
