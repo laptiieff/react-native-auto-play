@@ -277,7 +277,7 @@ This approach allows you to dynamically set the required flags based on your bui
 #### App launch on Android Automotive
 
 Android Automotive requires you to remove your app activity since it invokes the libraries Android Auto service in a different way. Not doing so will bring up 2 app icons on the Android Automotive launcher.
-To get rid of you default activity do a automotive specific build variant and add this AndroidManifest.xml for that variant.
+To get rid of your default activity, do an automotive specific build variant and add this AndroidManifest.xml for that variant.
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
