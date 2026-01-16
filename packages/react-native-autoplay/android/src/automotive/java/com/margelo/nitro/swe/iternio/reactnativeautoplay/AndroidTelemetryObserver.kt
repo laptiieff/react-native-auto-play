@@ -117,7 +117,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
         }
 
         override fun onErrorEvent(p0: Int, p1: Int) {
-
+            Log.e(TAG, "error receiving vehicle property id $p0 zone: $p1")
         }
     }
 
