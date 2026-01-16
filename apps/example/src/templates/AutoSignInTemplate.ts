@@ -49,7 +49,11 @@ const getQrSignInConfig = (signInFinished: () => void): SignInTemplateConfig => 
     },
     actions: [
       {
-        type: 'text',
+        type: 'textImage',
+        image: {
+          name: 'dialpad',
+          type: 'glyph',
+        },
         title: 'PIN sign in',
         onPress: () => {
           const conf: SignInTemplateConfig = {
@@ -60,7 +64,11 @@ const getQrSignInConfig = (signInFinished: () => void): SignInTemplateConfig => 
         },
       },
       {
-        type: 'text',
+        type: 'textImage',
+        image: {
+          name: 'mail',
+          type: 'glyph',
+        },
         title: 'Mail sign in',
         onPress: () => {
           const conf: SignInTemplateConfig = {
@@ -86,7 +94,11 @@ const getPinSignInConfig = (signInFinished: () => void): SignInTemplateConfig =>
     },
     actions: [
       {
-        type: 'text',
+        type: 'textImage',
+        image: {
+          name: 'qr_code_scanner',
+          type: 'glyph',
+        },
         title: 'QR sign in',
         onPress: () => {
           const conf: SignInTemplateConfig = {
@@ -97,7 +109,11 @@ const getPinSignInConfig = (signInFinished: () => void): SignInTemplateConfig =>
         },
       },
       {
-        type: 'text',
+        type: 'textImage',
+        image: {
+          name: 'mail',
+          type: 'glyph',
+        },
         title: 'Mail sign in',
         onPress: () => {
           const conf: SignInTemplateConfig = {
@@ -139,7 +155,11 @@ const getInputSignInConfig = (signInFinished: () => void, mail?: string): SignIn
     },
     actions: [
       {
-        type: 'text',
+        type: 'textImage',
+        image: {
+          name: 'qr_code_scanner',
+          type: 'glyph',
+        },
         title: 'QR sign in',
         onPress: () => {
           const conf: SignInTemplateConfig = {
@@ -150,7 +170,11 @@ const getInputSignInConfig = (signInFinished: () => void, mail?: string): SignIn
         },
       },
       {
-        type: 'text',
+        type: 'textImage',
+        image: {
+          name: 'dialpad',
+          type: 'glyph',
+        },
         title: 'PIN sign in',
         onPress: () => {
           const conf: SignInTemplateConfig = {
