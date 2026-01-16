@@ -19,10 +19,10 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct Telemetry; 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct PermissionRequestResult; }
 
 #include <functional>
-#include <NitroModules/Promise.hpp>
 #include "Telemetry.hpp"
 #include <optional>
 #include "PermissionRequestResult.hpp"
+#include <NitroModules/Promise.hpp>
 #include <string>
 #include <vector>
 
@@ -57,7 +57,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
     public:
       // Methods
-      virtual std::shared_ptr<Promise<std::function<void()>>> registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */)>& callback) = 0;
+      virtual std::function<void()> registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */)>& callback) = 0;
       virtual std::shared_ptr<Promise<PermissionRequestResult>> requestAutomotivePermissions(const std::vector<std::string>& permissions, const std::string& message, const std::string& grantButtonText, const std::optional<std::string>& cancelButtonText) = 0;
 
     protected:

@@ -7,10 +7,8 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 class HybridAndroidAutoTelemetry : HybridAndroidAutoTelemetrySpec() {
-    override fun registerTelemetryListener(callback: (tlm: Telemetry?) -> Unit): Promise<() -> Unit> {
-        return Promise.async {
-            AndroidTelemetryObserver.addListener(callback)
-        }
+    override fun registerTelemetryListener(callback: (tlm: Telemetry?) -> Unit): () -> Unit {
+        return AndroidTelemetryObserver.addListener(callback)
     }
 
     override fun requestAutomotivePermissions(

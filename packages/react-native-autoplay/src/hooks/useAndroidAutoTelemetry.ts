@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { type Permission, PermissionsAndroid } from 'react-native';
-import { type CleanupCallback, HybridAndroidAutoTelemetry, HybridAutoPlay } from '..';
+import { HybridAndroidAutoTelemetry, HybridAutoPlay } from '..';
 
 import type { AndroidAutoPermissions, Telemetry } from '../types/Telemetry';
 
@@ -50,7 +50,6 @@ export const useAndroidAutoTelemetry = ({
   const [telemetry, setTelemetry] = useState<Telemetry | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [isConnected, setIsConnected] = useState(false);
-  const removeTelemetryCallback = useRef<CleanupCallback | null>(null);
 
   useEffect(() => {
     const removeDidConnect = HybridAutoPlay.addListener('didConnect', () => setIsConnected(true));
@@ -85,21 +84,18 @@ export const useAndroidAutoTelemetry = ({
       return;
     }
 
-    HybridAndroidAutoTelemetry?.registerTelemetryListener(setTelemetry)
-      .then((remove) => {
-        removeTelemetryCallback.current = remove;
-      })
-      .catch((e) => {
-        if (e instanceof Error) {
-          setError(`${e.name}: ${e.message}\n${e.stack ?? ''}`.trim());
-        } else {
-          setError(String(e));
-        }
-      });
+    try {
+      const remove = HybridAndroidAutoTelemetry?.registerTelemetryListener(setTelemetry);
+      return () => remove?.();
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(`${e.name}: ${e.message}\n${e.stack ?? ''}`.trim());
+      } else {
+        setError(String(e));
+      }
+    }
 
-    return () => {
-      removeTelemetryCallback.current?.();
-    };
+    return;
   }, [isConnected, permissionsGranted]);
 
   useEffect(() => {

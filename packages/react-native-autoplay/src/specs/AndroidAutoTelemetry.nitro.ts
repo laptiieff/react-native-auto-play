@@ -15,7 +15,7 @@ export interface AndroidAutoTelemetry extends HybridObject<{ android: 'kotlin' }
    * @returns callback to remove the listener
    * @namespace Android
    */
-  registerTelemetryListener(callback: (tlm?: Telemetry) => void): Promise<CleanupCallback>;
+  registerTelemetryListener(callback: (tlm?: Telemetry) => void): CleanupCallback;
   /**
    * Brings up a template to request specified permissions from the user
    * @param permissions some of `AndroidAutoPermissions`

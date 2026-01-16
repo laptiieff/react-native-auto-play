@@ -54,7 +54,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
   public:
     // Methods
-    std::shared_ptr<Promise<std::function<void()>>> registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */)>& callback) override;
+    std::function<void()> registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */)>& callback) override;
     std::shared_ptr<Promise<PermissionRequestResult>> requestAutomotivePermissions(const std::vector<std::string>& permissions, const std::string& message, const std::string& grantButtonText, const std::optional<std::string>& cancelButtonText) override;
 
   private:
