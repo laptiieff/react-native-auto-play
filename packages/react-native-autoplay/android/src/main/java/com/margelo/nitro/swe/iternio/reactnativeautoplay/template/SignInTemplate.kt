@@ -112,13 +112,16 @@ class SignInTemplate(
                     ?.let {
                         setHeaderAction(Parser.parseAction(context, it))
                     }
-                val actionStripBuilder = ActionStrip.Builder()
 
-                headerActions.filter { it.type == NitroActionType.CUSTOM }.forEach {
-                    actionStripBuilder.addAction(Parser.parseAction(context, it))
+                val endHeaderActions = headerActions.filter { it.type == NitroActionType.CUSTOM }
+                if (endHeaderActions.isNotEmpty()) {
+                    val actionStripBuilder = ActionStrip.Builder()
+
+                    endHeaderActions.forEach {
+                        actionStripBuilder.addAction(Parser.parseAction(context, it))
+                    }
+                    setActionStrip(actionStripBuilder.build())
                 }
-                setActionStrip(actionStripBuilder.build())
-
             }
             config.actions?.let {
                 it.forEach { action ->
