@@ -19,10 +19,11 @@ export const HybridSignInTemplate =
 
 export interface NitroSignInTemplateConfig extends TemplateConfig {
   title?: string;
-  description?: string;
+  additionalText?: string;
   signInMethod?: SignInMethod;
   headerActions?: Array<NitroAction>;
   actions?: Array<NitroAction>;
+  instructions?: string;
 }
 
 export type SignInHeaderActions<T> = {

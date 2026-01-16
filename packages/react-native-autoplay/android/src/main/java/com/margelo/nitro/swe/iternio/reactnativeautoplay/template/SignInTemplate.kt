@@ -42,8 +42,11 @@ class SignInTemplate(
         config.actions?.let {
             this.config = this.config.copy(actions = config.actions)
         }
-        config.description?.let {
-            this.config = this.config.copy(description = config.description)
+        config.instructions?.let {
+            this.config = this.config.copy(instructions = config.instructions)
+        }
+        config.additionalText?.let {
+            this.config = this.config.copy(additionalText = config.additionalText)
         }
         super.applyConfigUpdate()
     }
@@ -98,7 +101,10 @@ class SignInTemplate(
             config.title?.let {
                 setTitle(it)
             }
-            config.description?.let {
+            config.instructions?.let {
+                setInstructions(it)
+            }
+            config.additionalText?.let {
                 setAdditionalText(it)
             }
             config.headerActions?.let { headerActions ->

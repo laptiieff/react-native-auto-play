@@ -43,7 +43,7 @@ data class SignInTemplateConfig(
   val title: String?,
   @DoNotStrip
   @Keep
-  val description: String?,
+  val additionalText: String?,
   @DoNotStrip
   @Keep
   val signInMethod: Variant_QrSignIn_PinSignIn_InputSignIn?,
@@ -52,13 +52,16 @@ data class SignInTemplateConfig(
   val headerActions: Array<NitroAction>?,
   @DoNotStrip
   @Keep
-  val actions: Array<NitroAction>?
+  val actions: Array<NitroAction>?,
+  @DoNotStrip
+  @Keep
+  val instructions: String?
 ) {
   /**
    * Create a new instance of SignInTemplateConfig from Kotlin
    */
-  constructor(id: String, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?, title: String?, description: String?, signInMethod: Variant_QrSignIn_PinSignIn_InputSignIn?, headerActions: Array<NitroAction>?, actions: Array<NitroAction>?):
-         this(id, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs, title, description, signInMethod, headerActions, actions)
+  constructor(id: String, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?, title: String?, additionalText: String?, signInMethod: Variant_QrSignIn_PinSignIn_InputSignIn?, headerActions: Array<NitroAction>?, actions: Array<NitroAction>?, instructions: String?):
+         this(id, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs, title, additionalText, signInMethod, headerActions, actions, instructions)
 
   private companion object {
     /**
@@ -68,8 +71,8 @@ data class SignInTemplateConfig(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(id: String, onWillAppear: Func_void_std__optional_bool_?, onWillDisappear: Func_void_std__optional_bool_?, onDidAppear: Func_void_std__optional_bool_?, onDidDisappear: Func_void_std__optional_bool_?, onPopped: Func_void?, autoDismissMs: Double?, title: String?, description: String?, signInMethod: Variant_QrSignIn_PinSignIn_InputSignIn?, headerActions: Array<NitroAction>?, actions: Array<NitroAction>?): SignInTemplateConfig {
-      return SignInTemplateConfig(id, onWillAppear, onWillDisappear, onDidAppear, onDidDisappear, onPopped, autoDismissMs, title, description, signInMethod, headerActions, actions)
+    private fun fromCpp(id: String, onWillAppear: Func_void_std__optional_bool_?, onWillDisappear: Func_void_std__optional_bool_?, onDidAppear: Func_void_std__optional_bool_?, onDidDisappear: Func_void_std__optional_bool_?, onPopped: Func_void?, autoDismissMs: Double?, title: String?, additionalText: String?, signInMethod: Variant_QrSignIn_PinSignIn_InputSignIn?, headerActions: Array<NitroAction>?, actions: Array<NitroAction>?, instructions: String?): SignInTemplateConfig {
+      return SignInTemplateConfig(id, onWillAppear, onWillDisappear, onDidAppear, onDidDisappear, onPopped, autoDismissMs, title, additionalText, signInMethod, headerActions, actions, instructions)
     }
   }
 }

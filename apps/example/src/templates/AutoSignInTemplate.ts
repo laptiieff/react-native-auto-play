@@ -42,7 +42,7 @@ const getDefaultConfig = (signInFinished: () => void): Partial<SignInTemplateCon
 const getQrSignInConfig = (signInFinished: () => void): SignInTemplateConfig => {
   const config: SignInTemplateConfig = {
     title: 'Sign In with QR',
-    description: 'Scan the QR code with the companion app to sign in',
+    additionalText: 'Scan the QR code with the companion app to sign in',
     signInMethod: {
       method: SignInMethods.QR,
       url: 'https://abetterrouteplanner.com',
@@ -79,7 +79,7 @@ const getQrSignInConfig = (signInFinished: () => void): SignInTemplateConfig => 
 const getPinSignInConfig = (signInFinished: () => void): SignInTemplateConfig => {
   const config: SignInTemplateConfig = {
     title: 'Sign In with PIN',
-    description: 'Enter the PIN code in the companion app to sign in',
+    additionalText: 'Enter the PIN code in the companion app to sign in',
     signInMethod: {
       method: SignInMethods.PIN,
       pin: '123456',
@@ -116,7 +116,7 @@ const getPinSignInConfig = (signInFinished: () => void): SignInTemplateConfig =>
 const getInputSignInConfig = (signInFinished: () => void, mail?: string): SignInTemplateConfig => {
   const config: SignInTemplateConfig = {
     title: 'Sign In with Input',
-    description: mail ? `Enter password for ${mail}` : 'Enter your email to sign in',
+    additionalText: mail ? `Enter password for ${mail}` : 'Enter your email to sign in',
     signInMethod: {
       method: SignInMethods.INPUT,
       keyboardType: mail ? KeyboardType.DEFAULT : KeyboardType.EMAIL,
