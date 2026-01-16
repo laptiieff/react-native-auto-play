@@ -74,10 +74,10 @@ class SignInTemplate(
                 }).apply {
                     inputSignIn.keyboardType?.let { kt ->
                         when (kt) {
-                            KeyboardType.DEFAULT -> InputSignInMethod.KEYBOARD_DEFAULT
-                            KeyboardType.EMAIL -> InputSignInMethod.KEYBOARD_EMAIL
-                            KeyboardType.PHONE -> InputSignInMethod.KEYBOARD_PHONE
-                            KeyboardType.NUMBER -> InputSignInMethod.KEYBOARD_NUMBER
+                            KeyboardType.DEFAULT -> setKeyboardType(InputSignInMethod.KEYBOARD_DEFAULT)
+                            KeyboardType.EMAIL -> setKeyboardType(InputSignInMethod.KEYBOARD_EMAIL)
+                            KeyboardType.PHONE -> setKeyboardType(InputSignInMethod.KEYBOARD_PHONE)
+                            KeyboardType.NUMBER -> setKeyboardType(InputSignInMethod.KEYBOARD_NUMBER)
                         }
                     }
                     when (inputSignIn.inputType) {
