@@ -17,6 +17,8 @@
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct SignInTemplateConfig; }
 
 #include "SignInTemplateConfig.hpp"
+#include <NitroModules/Promise.hpp>
+#include <string>
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
@@ -50,6 +52,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     public:
       // Methods
       virtual void createSignInTemplate(const SignInTemplateConfig& config) = 0;
+      virtual std::shared_ptr<Promise<void>> updateTemplate(const std::string& templateId, const SignInTemplateConfig& config) = 0;
 
     protected:
       // Hybrid Setup

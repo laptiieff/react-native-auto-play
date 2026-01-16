@@ -10,6 +10,7 @@ package com.margelo.nitro.swe.iternio.reactnativeautoplay
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -48,6 +49,10 @@ abstract class HybridSignInTemplateSpec: HybridObject() {
   @DoNotStrip
   @Keep
   abstract fun createSignInTemplate(config: SignInTemplateConfig): Unit
+  
+  @DoNotStrip
+  @Keep
+  abstract fun updateTemplate(templateId: String, config: SignInTemplateConfig): Promise<Unit>
 
   private external fun initHybrid(): HybridData
 
