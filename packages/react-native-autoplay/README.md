@@ -68,7 +68,7 @@ Create a `Entitlements.plist` file in your project, paste the content below and 
 - On **Code Signing Entitlements** enter the path to the Entitlements.plist file you just created.
 
 #### Scene delegates
-Depending on on your needs you need to set up the scene delegates. The library brings following delegates:
+Depending on your needs you need to set up the scene delegates. The library brings following delegates:
 
 - WindowApplicationSceneDelegate - The main scene visible on your mobile device
 - HeadUnitSceneDelegate - The main scene on CarPlay device
