@@ -2,12 +2,13 @@ package com.margelo.nitro.swe.iternio.reactnativeautoplay
 
 import android.os.Handler
 import android.os.HandlerThread
+import java.util.concurrent.CopyOnWriteArrayList
 
 abstract class TelemetryObserver {
     abstract fun startTelemetryObserver(): Boolean
     abstract fun stopTelemetryObserver()
 
-    var telemetryCallbacks: MutableList<(Telemetry?) -> Unit> = ArrayList()
+    var telemetryCallbacks: MutableList<(Telemetry?) -> Unit> = CopyOnWriteArrayList()
     val telemetryHolder = AndroidAutoTelemetryHolder()
     var isObserverRunning = false
     val handler: Handler
