@@ -22,6 +22,7 @@ import androidx.car.app.model.DistanceSpan
 import androidx.car.app.model.DurationSpan
 import androidx.car.app.model.Header
 import androidx.car.app.model.ItemList
+import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Row
 import androidx.car.app.model.Template
 import androidx.car.app.model.Toggle
@@ -173,7 +174,7 @@ object Parser {
         }.build()
     }
 
-    fun parseAction(context: CarContext, action: NitroAction): Action {
+    fun parseAction(context: CarContext, action: NitroAction, useParkedOnlyClickListener: Boolean = false): Action {
         if (action.type == NitroActionType.APPICON) {
             return Action.APP_ICON
         }
@@ -183,7 +184,12 @@ object Parser {
         }
 
         return Action.Builder().apply {
-            setOnClickListener(action.onPress)
+            if (useParkedOnlyClickListener) {
+                setOnClickListener(ParkedOnlyOnClickListener.create(action.onPress))
+            } else {
+                setOnClickListener(action.onPress)
+            }
+
             action.image?.let { image ->
                 setIcon(parseImage(context, image))
             }
