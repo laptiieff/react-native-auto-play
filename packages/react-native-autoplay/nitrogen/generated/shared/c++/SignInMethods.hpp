@@ -25,7 +25,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
    */
   enum class SignInMethods {
     QR      SWIFT_NAME(qr) = 0,
-    GOOGLE      SWIFT_NAME(google) = 1,
+    PROVIDER      SWIFT_NAME(provider) = 1,
     PIN      SWIFT_NAME(pin) = 2,
     INPUT      SWIFT_NAME(input) = 3,
   } CLOSED_ENUM;
