@@ -49,69 +49,49 @@ class SignInTemplate(
     }
 
     override fun parse(): Template {
-        val templateBuilder = config.signInMethod?.asFirstOrNull()?.let {
-            val url = it.url
-                ?: throw InvalidParameterException("missing url parameter")
-            SignInTemplate.Builder(QRCodeSignInMethod(Uri.parse(url)))
-        } ?: run {
-            config.signInMethod?.asSecondOrNull()?.let {
-                val pin = it.pin
+        val qrSignIn = config.signInMethod?.asFirstOrNull()
+        val pinSignIn = config.signInMethod?.asSecondOrNull()
+        val inputSignIn = config.signInMethod?.asThirdOrNull()
+
+        val templateBuilder = when {
+            qrSignIn != null -> {
+                val url = qrSignIn.url
+                    ?: throw InvalidParameterException("missing url parameter")
+                SignInTemplate.Builder(QRCodeSignInMethod(Uri.parse(url)))
+            }
+
+            pinSignIn != null -> {
+                val pin = pinSignIn.pin
                     ?: throw InvalidParameterException("missing pin parameter")
                 SignInTemplate.Builder(PinSignInMethod(pin))
-            } ?: run {
-                config.signInMethod?.asThirdOrNull()?.let {
-                    SignInTemplate.Builder(InputSignInMethod.Builder(object : InputCallback {
-                        override fun onInputSubmitted(text: String) {
-                            it.callback(text)
-                        }
-                    }).apply {
-                        it.keyboardType?.let { kt ->
-                            when (kt) {
-                                KeyboardType.DEFAULT -> {
-                                    InputSignInMethod.KEYBOARD_DEFAULT
-                                }
-
-                                KeyboardType.EMAIL -> {
-                                    InputSignInMethod.KEYBOARD_EMAIL
-                                }
-
-                                KeyboardType.PHONE -> {
-                                    InputSignInMethod.KEYBOARD_PHONE
-                                }
-
-                                KeyboardType.NUMBER -> {
-                                    InputSignInMethod.KEYBOARD_NUMBER
-                                }
-                            }
-                        }
-                        when (it.inputType) {
-                            TextInputType.DEFAULT -> {
-                                setInputType(INPUT_TYPE_DEFAULT)
-                            }
-                            TextInputType.PASSWORD -> {
-                                setInputType(INPUT_TYPE_PASSWORD)
-                            }
-                        }
-                        it.hint?.let { hint ->
-                            setHint(hint)
-                        }
-                        it.errorMessage?.let { error ->
-                            setErrorMessage(error)
-                        }
-                        it.defaultValue?.let { default ->
-                            setDefaultValue(default)
-                        }
-                        it.showKeyboardByDefault?.let { showKeyboard ->
-                            setShowKeyboardByDefault(showKeyboard)
-                        }
-                    }.build())
-
-                }
             }
-        }
 
-        if (templateBuilder == null) {
-            throw InvalidParameterException("missing SignInTemplate builder")
+            inputSignIn != null -> {
+                SignInTemplate.Builder(InputSignInMethod.Builder(object : InputCallback {
+                    override fun onInputSubmitted(text: String) {
+                        inputSignIn.callback(text)
+                    }
+                }).apply {
+                    inputSignIn.keyboardType?.let { kt ->
+                        when (kt) {
+                            KeyboardType.DEFAULT -> InputSignInMethod.KEYBOARD_DEFAULT
+                            KeyboardType.EMAIL -> InputSignInMethod.KEYBOARD_EMAIL
+                            KeyboardType.PHONE -> InputSignInMethod.KEYBOARD_PHONE
+                            KeyboardType.NUMBER -> InputSignInMethod.KEYBOARD_NUMBER
+                        }
+                    }
+                    when (inputSignIn.inputType) {
+                        TextInputType.DEFAULT -> setInputType(INPUT_TYPE_DEFAULT)
+                        TextInputType.PASSWORD -> setInputType(INPUT_TYPE_PASSWORD)
+                    }
+                    inputSignIn.hint?.let { setHint(it) }
+                    inputSignIn.errorMessage?.let { setErrorMessage(it) }
+                    inputSignIn.defaultValue?.let { setDefaultValue(it) }
+                    inputSignIn.showKeyboardByDefault?.let { setShowKeyboardByDefault(it) }
+                }.build())
+            }
+
+            else -> throw InvalidParameterException("missing SignInTemplate builder")
         }
 
         return templateBuilder.apply {

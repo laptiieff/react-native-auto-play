@@ -1,6 +1,6 @@
 export enum SignInMethods {
   QR = 0,
-  GOOGLE = 1,
+  PROVIDER = 1,
   PIN = 2,
   INPUT = 3,
 }
