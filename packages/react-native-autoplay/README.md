@@ -264,6 +264,11 @@ Alternatively, if you need to support different build variants (e.g., for both A
         // other flavors...
     ]
     apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
+    if (project.ext.has("env")) {
+        rootProject.ext.minSdkVersion = project.ext.env.minSdkVersion
+        rootProject.ext.isAutomotiveApp = project.ext.env.isAutomotiveApp
+    }
     ```
 Adjust to the build variants your app provides. Check the example app for details.
 
