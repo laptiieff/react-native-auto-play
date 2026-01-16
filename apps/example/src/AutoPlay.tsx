@@ -21,7 +21,7 @@ import {
   setSelectedTrip,
 } from './state/navigationSlice';
 import { startAppListening } from './state/store';
-import { TelemetryView } from './TelemetryView';
+import TelemetryView from './TelemetryView';
 import {
   AutoTemplate,
   onTripFinished,

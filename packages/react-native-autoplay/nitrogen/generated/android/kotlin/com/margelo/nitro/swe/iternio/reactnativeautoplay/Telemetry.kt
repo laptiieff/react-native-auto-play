@@ -34,7 +34,22 @@ data class Telemetry(
   val odometer: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val vehicle: VehicleTelemetryItem?
+  val vehicle: VehicleTelemetryItem?,
+  @DoNotStrip
+  @Keep
+  val selectedGear: NumericTelemetryItem?,
+  @DoNotStrip
+  @Keep
+  val envOutsideTemperature: NumericTelemetryItem?,
+  @DoNotStrip
+  @Keep
+  val evChargePortConnected: BooleanTelemetryItem?,
+  @DoNotStrip
+  @Keep
+  val evBatteryInstantaneousChargeRate: NumericTelemetryItem?,
+  @DoNotStrip
+  @Keep
+  val parkingBrakeOn: BooleanTelemetryItem?
 ) {
   /* primary constructor */
 
@@ -46,8 +61,8 @@ data class Telemetry(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(speed: NumericTelemetryItem?, fuelLevel: NumericTelemetryItem?, batteryLevel: NumericTelemetryItem?, range: NumericTelemetryItem?, odometer: NumericTelemetryItem?, vehicle: VehicleTelemetryItem?): Telemetry {
-      return Telemetry(speed, fuelLevel, batteryLevel, range, odometer, vehicle)
+    private fun fromCpp(speed: NumericTelemetryItem?, fuelLevel: NumericTelemetryItem?, batteryLevel: NumericTelemetryItem?, range: NumericTelemetryItem?, odometer: NumericTelemetryItem?, vehicle: VehicleTelemetryItem?, selectedGear: NumericTelemetryItem?, envOutsideTemperature: NumericTelemetryItem?, evChargePortConnected: BooleanTelemetryItem?, evBatteryInstantaneousChargeRate: NumericTelemetryItem?, parkingBrakeOn: BooleanTelemetryItem?): Telemetry {
+      return Telemetry(speed, fuelLevel, batteryLevel, range, odometer, vehicle, selectedGear, envOutsideTemperature, evChargePortConnected, evBatteryInstantaneousChargeRate, parkingBrakeOn)
     }
   }
 }

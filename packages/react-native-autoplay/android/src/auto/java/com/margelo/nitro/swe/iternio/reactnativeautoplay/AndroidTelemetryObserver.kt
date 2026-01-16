@@ -1,9 +1,5 @@
 package com.margelo.nitro.swe.iternio.reactnativeautoplay
 
-
-import android.os.Handler
-import android.os.Looper
-import android.util.Log
 import androidx.car.app.CarContext
 import androidx.car.app.hardware.CarHardwareManager
 import androidx.car.app.hardware.common.CarValue
@@ -15,23 +11,27 @@ import androidx.car.app.hardware.info.Speed
 import androidx.car.app.versioning.CarAppApiLevels
 import androidx.core.content.ContextCompat
 
-object AndroidAutoTelemetryObserver {
-    private var telemetryCallbacks: MutableList<(telemetry: Telemetry?, error: String?) -> Unit> =
-        ArrayList();
-
-    private var isRunning = false
+object AndroidTelemetryObserver : TelemetryObserver() {
     private var carContext: CarContext? = null
 
-    private val telemetryHolder = AndroidAutoTelemetryHolder()
-    private val handler = Handler(Looper.getMainLooper())
+    private val mModelListener = OnCarDataAvailableListener<Model> { model ->
+        val name = if (model.name.status == CarValue.STATUS_SUCCESS) {
+            model.name.value
+        } else null
 
-    private val mModelListener = OnCarDataAvailableListener<Model> {
-        telemetryHolder.updateVehicle(it)
+        val manufacturer = if (model.manufacturer.status == CarValue.STATUS_SUCCESS) {
+            model.manufacturer.value
+        } else null
 
-        val tlm = telemetryHolder.toTelemetry()
-        tlm?.let {
+        val year = if (model.year.status == CarValue.STATUS_SUCCESS) {
+            model.year.value
+        } else null
+
+        telemetryHolder.updateVehicle(name, manufacturer, year)
+
+        telemetryHolder.toTelemetry()?.let {
             telemetryCallbacks.forEach { callback ->
-                callback(tlm, null)
+                callback(it)
             }
         }
     }
@@ -70,51 +70,15 @@ object AndroidAutoTelemetryObserver {
         }
     }
 
-    private val emitter = object : Runnable {
-        override fun run() {
-            val tlm = telemetryHolder.toTelemetry()
-
-            if (tlm != null) {
-                telemetryCallbacks.forEach { callback ->
-                    callback(tlm, null)
-                }
-            }
-
-            handler.postDelayed(this, BuildConfig.TELEMETRY_UPDATE_INTERVAL)
-        }
-    }
-
-    fun addListener(callback: (Telemetry?, String?) -> Unit): () -> Unit {
-        telemetryCallbacks.add(callback)
-
-
-        // start is called every time a new listener is registered, so the single shot values are still requested and returned immediately
-        try {
-            startTelemetryObserver()
-        } catch (err: Exception) {
-            callback(null, err.message)
-        }
-
-
-        return {
-            telemetryCallbacks.remove(callback)
-            if (telemetryCallbacks.isEmpty()) {
-                stopTelemetryObserver()
-            }
-        }
-    }
-
-
-    fun startTelemetryObserver(
-    ) {
+    override fun startTelemetryObserver(): Boolean {
         val carContext =
-            AndroidAutoSession.Companion.getCarContext(AndroidAutoSession.Companion.ROOT_SESSION)
+            AndroidAutoSession.getCarContext(AndroidAutoSession.Companion.ROOT_SESSION)
                 ?: throw IllegalArgumentException(
                     "Car context not available, failed to start telemetry"
                 )
 
 
-        AndroidAutoTelemetryObserver.carContext = carContext
+        AndroidTelemetryObserver.carContext = carContext
         if (carContext.carAppApiLevel < CarAppApiLevels.LEVEL_3) {
             throw UnsupportedOperationException("Telemetry not supported for this API level ${carContext.carAppApiLevel}")
         }
@@ -133,13 +97,10 @@ object AndroidAutoTelemetryObserver {
         } catch (_: NullPointerException) {
         }
 
-        if (isRunning) {
-            // we stop here to not re-register multiple listeners, only the single shot values can be requested multiple times by registering another tlm listener on RN side
-            Log.d(
-                AndroidAutoTelemetryObserver.javaClass.name,
-                "Telemetry observer is already running"
-            )
-            return
+        if (isObserverRunning) {
+            // we stop here to not re-register multiple listeners
+            // only the single shot values can be requested multiple times by registering another tlm listener on RN side
+            return false
         }
 
         try {
@@ -160,19 +121,17 @@ object AndroidAutoTelemetryObserver {
         } catch (_: NullPointerException) {
         }
 
-        handler.post(emitter)
 
-        isRunning = true
-
-        Log.d(AndroidAutoTelemetryObserver.javaClass.name, "Telemetry observer started")
+        isObserverRunning = true
+        return true
     }
 
-    fun stopTelemetryObserver() {
-        if (!isRunning) {
+    override fun stopTelemetryObserver() {
+        if (!isObserverRunning) {
             return
         }
 
-        isRunning = false
+        isObserverRunning = false
 
         carContext?.let {
             val carHardwareManager = it.getCarService(
@@ -195,7 +154,5 @@ object AndroidAutoTelemetryObserver {
             } catch (_: SecurityException) {
             }
         }
-
-        handler.removeCallbacks(emitter)
     }
 }

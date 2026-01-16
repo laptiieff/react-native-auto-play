@@ -10,6 +10,7 @@ package com.margelo.nitro.swe.iternio.reactnativeautoplay
 import androidx.annotation.Keep
 import com.facebook.jni.HybridData
 import com.facebook.proguard.annotations.DoNotStrip
+import com.margelo.nitro.core.Promise
 import com.margelo.nitro.core.HybridObject
 
 /**
@@ -45,14 +46,18 @@ abstract class HybridAndroidAutoTelemetrySpec: HybridObject() {
   
 
   // Methods
-  abstract fun registerTelemetryListener(callback: (tlm: Telemetry?, error: String?) -> Unit): () -> Unit
+  abstract fun registerTelemetryListener(callback: (tlm: Telemetry?) -> Unit): Promise<() -> Unit>
   
   @DoNotStrip
   @Keep
-  private fun registerTelemetryListener_cxx(callback: Func_void_std__optional_Telemetry__std__optional_std__string_): Func_void {
+  private fun registerTelemetryListener_cxx(callback: Func_void_std__optional_Telemetry_): Promise<() -> Unit> {
     val __result = registerTelemetryListener(callback)
-    return Func_void_java(__result)
+    return __result
   }
+  
+  @DoNotStrip
+  @Keep
+  abstract fun requestAutomotivePermissions(permissions: Array<String>, message: String, grantButtonText: String, cancelButtonText: String?): Promise<PermissionRequestResult>
 
   private external fun initHybrid(): HybridData
 

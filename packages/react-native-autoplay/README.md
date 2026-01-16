@@ -68,7 +68,7 @@ Create a `Entitlements.plist` file in your project, paste the content below and 
 - On **Code Signing Entitlements** enter the path to the Entitlements.plist file you just created.
 
 #### Scene delegates
-Depending on your needs you need to set up the scene delegates. The library brings following delegates:
+Depending on on your needs you need to set up the scene delegates. The library brings following delegates:
 
 - WindowApplicationSceneDelegate - The main scene visible on your mobile device
 - HeadUnitSceneDelegate - The main scene on CarPlay device
@@ -219,6 +219,61 @@ You can customize certain behaviors of the library on Android Auto by setting pr
     ReactNativeAutoPlay_clusterSplashDurationMs=500
     ```
     The default values are `1000` for the delay and `500` for the duration.
+
+### Android Automotive
+
+This library also supports Android Automotive. To enable Android Automotive support, you need to configure a few properties in your Android project.
+
+-   **`minSdkVersion`**: The minimum API level for Android Automotive is 29. You must set `minSdkVersion` to at least `29`. For Android Auto, the minimum is `24`.
+
+-   **`isAutomotiveApp` flag**: You need to inform the library if this is an Automotive app by setting the `isAutomotiveApp` property to `true`. For Android Auto, it should be `false`.
+
+You can set these properties directly in your `android/gradle.properties` file:
+```properties
+# For Android Automotive
+minSdkVersion=29
+isAutomotiveApp=true
+```
+
+Alternatively, if you need to support different build variants (e.g., for both Android Auto and Android Automotive from the same codebase), using `react-native-config` is the recommended approach.
+
+1.  Install `react-native-config`:
+    ```bash
+    yarn add react-native-config
+    ```
+
+2.  Create different `.env` files for your variants. Create a default `.env` for Android Auto:
+    ```
+    # .env (for Android Auto)
+    isAutomotiveApp=false
+    minSdkVersion=24
+    ```
+    And an `.env.automotive` for Android Automotive:
+    ```
+    # .env.automotive
+    minSdkVersion=29
+    isAutomotiveApp=true
+    ```
+
+3.  In your `android/app/build.gradle`, apply the configuration from `react-native-config` based on your build flavors.
+    ```groovy
+    // android/app/build.gradle
+
+    project.ext.envConfigFiles = [
+        automotive: ".env.automotive",
+        // other flavors...
+    ]
+    apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+    ```
+Adjust to the build variants your app provides. Check the example app for details.
+
+This approach allows you to dynamically set the required flags based on your build variant, which is demonstrated in the example app.
+
+#### A Note on Android Studio
+
+When using build variants, Android Studio may not be aware of the selected variant during a Gradle sync. This can cause the IDE to show the incorrect implementation of native classes like `AndroidTelemetryObserver` (e.g., it might show the Android Auto version instead of the Automotive version).
+
+To work around this and allow for debugging or enhancing the Android Automotive-specific implementation, you can temporarily set the automotive flags in your `gradle.properties` file or your default `.env` file before running a Gradle sync.
 
 ## Icons
 The library is using [Material Symbols](https://fonts.google.com/icons) for iconography. The font is bundled with the library, so no extra setup is required. You can use these icons on both Android Auto and CarPlay.
@@ -657,20 +712,39 @@ new ListTemplate({
 -   `useVoiceInput()`: Access voice input functionality - Android Auto only.
 -   `useSafeAreaInsets()`: Get safe area insets for any root component.
 -   `useFocusedEffect()`: A useEffect alternative that executes when the specified component is visible to the user - use any of the `AutoPlayModules` enum or a cluster uuid to sepcify the component the effect should listen for.
--   `useAndroidAutoTelemetry()`: Access to car telemetry data on Android Auto.
+-   `useAndroidAutoTelemetry()`: Access to car telemetry data on Android Auto and Android Automotive.
     ```tsx
     import {
       useAndroidAutoTelemetry,
       AndroidAutoTelemetryPermissions,
+      AndroidAutomotiveTelemetryPermissions,
     } from '@iternio/react-native-auto-play';
+    import Config from 'react-native-config';
 
     const MyComponent = () => {
       const { telemetry, permissionsGranted, error } = useAndroidAutoTelemetry({
-        requiredPermissions: [
-          AndroidAutoTelemetryPermissions.Speed,
-          AndroidAutoTelemetryPermissions.Energy,
-          AndroidAutoTelemetryPermissions.Odometer,
-        ],
+        requiredPermissions:
+          Config.isAutomotiveApp === 'true'
+            ? [
+                AndroidAutomotiveTelemetryPermissions.Info,
+                AndroidAutomotiveTelemetryPermissions.Speed,
+                AndroidAutomotiveTelemetryPermissions.Energy,
+                AndroidAutomotiveTelemetryPermissions.ExteriorEnvironment,
+                AndroidAutomotiveTelemetryPermissions.EnergyPorts,
+              ]
+            : [
+                AndroidAutoTelemetryPermissions.Speed,
+                AndroidAutoTelemetryPermissions.Energy,
+                AndroidAutoTelemetryPermissions.Odometer,
+              ],
+        automotivePermissionRequest:
+          Config.isAutomotiveApp === 'true'
+            ? {
+                cancelButtonText: 'Cancel',
+                grantButtonText: 'Grant',
+                message: 'Grant permission for vehicle telemetry access.',
+              }
+            : undefined,
       });
 
       if (!permissionsGranted) {
@@ -688,6 +762,14 @@ new ListTemplate({
           <Text>Battery Level: {telemetry?.batteryLevel?.value}%</Text>
           <Text>Range: {telemetry?.range?.value} km</Text>
           <Text>Odometer: {telemetry?.odometer?.value} km</Text>
+          <Text>Selected Gear: {telemetry?.selectedGear?.value}</Text>
+          <Text>Outside Temperature: {telemetry?.envOutsideTemperature?.value}°C</Text>
+          <Text>EV Charge Port Connected: {String(telemetry?.evChargePortConnected?.value)}</Text>
+          <Text>EV Battery Charge Rate: {telemetry?.evBatteryInstantaneousChargeRate?.value} kW</Text>
+          <Text>Parking Brake On: {String(telemetry?.parkingBrakeOn?.value)}</Text>
+          <Text>Vehicle Name: {telemetry?.vehicle?.name?.value}</Text>
+          <Text>Vehicle Manufacturer: {telemetry?.vehicle?.manufacturer?.value}</Text>
+          <Text>Vehicle Year: {telemetry?.vehicle?.year?.value}</Text>
         </View>
       );
     }
@@ -699,6 +781,11 @@ new ListTemplate({
     - `range`: Range in km.
     - `odometer`: Odometer in km.
     - `vehicle`: Vehicle information (model name, model year, manufacturer).
+    - `selectedGear`: The currently selected gear.
+    - `envOutsideTemperature`: The outside temperature in °C.
+    - `evChargePortConnected`: Whether the EV charge port is connected.
+    - `evBatteryInstantaneousChargeRate`: The instantaneous charge rate of the EV battery in kW.
+    - `parkingBrakeOn`: Whether the parking brake is on.
 
 
 ### Scenes

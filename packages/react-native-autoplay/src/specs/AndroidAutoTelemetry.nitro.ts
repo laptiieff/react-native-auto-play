@@ -2,6 +2,11 @@ import type { HybridObject } from 'react-native-nitro-modules';
 import type { CleanupCallback } from '../types/Event';
 import type { Telemetry } from '../types/Telemetry';
 
+type PermissionRequestResult = {
+  granted: Array<string>;
+  denied: Array<string>;
+};
+
 export interface AndroidAutoTelemetry extends HybridObject<{ android: 'kotlin' }> {
   /**
    * Register a listener for Android Auto telemetry data. Should be registered only after the telemetry permissions are granted otherwise no data will be received.
@@ -10,5 +15,11 @@ export interface AndroidAutoTelemetry extends HybridObject<{ android: 'kotlin' }
    * @returns callback to remove the listener
    * @namespace Android
    */
-  registerTelemetryListener(callback: (tlm?: Telemetry, error?: string) => void): CleanupCallback;
+  registerTelemetryListener(callback: (tlm?: Telemetry) => void): Promise<CleanupCallback>;
+  requestAutomotivePermissions(
+    permissions: Array<string>,
+    message: string,
+    grantButtonText: string,
+    cancelButtonText?: string
+  ): Promise<PermissionRequestResult>;
 }

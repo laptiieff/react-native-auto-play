@@ -17,7 +17,7 @@
 
 #include "JHybridAndroidAutoTelemetrySpec.hpp"
 #include "JFunc_void.hpp"
-#include "JFunc_void_std__optional_Telemetry__std__optional_std__string_.hpp"
+#include "JFunc_void_std__optional_Telemetry_.hpp"
 #include "JHybridAutoPlaySpec.hpp"
 #include "JFunc_void_VisibilityState.hpp"
 #include "JFunc_void_std__optional_Location__std__optional_std__string_.hpp"
@@ -54,7 +54,7 @@ int initialize(JavaVM* vm) {
     // Register native JNI methods
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridAndroidAutoTelemetrySpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_cxx::registerNatives();
-    margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_std__optional_Telemetry__std__optional_std__string__cxx::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_std__optional_Telemetry__cxx::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridAutoPlaySpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_VisibilityState_cxx::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_std__optional_Location__std__optional_std__string__cxx::registerNatives();

@@ -1,9 +1,12 @@
 import {
+  AndroidAutomotiveTelemetryPermissions,
   type AndroidAutoPermissions,
   AndroidAutoTelemetryPermissions,
   useAndroidAutoTelemetry,
 } from '@iternio/react-native-auto-play';
+import React from 'react';
 import { Text } from 'react-native';
+import Config from 'react-native-config';
 
 const ANDROID_AUTO_PERMISSIONS: Array<AndroidAutoPermissions> = [
   AndroidAutoTelemetryPermissions.Speed,
@@ -11,9 +14,26 @@ const ANDROID_AUTO_PERMISSIONS: Array<AndroidAutoPermissions> = [
   AndroidAutoTelemetryPermissions.Odometer,
 ];
 
-export function TelemetryView() {
+const ANDROID_AUTOMOTIVE_PERMISSIONS = [
+  AndroidAutomotiveTelemetryPermissions.Energy,
+  AndroidAutomotiveTelemetryPermissions.EnergyPorts,
+  AndroidAutomotiveTelemetryPermissions.ExteriorEnvironment,
+  AndroidAutomotiveTelemetryPermissions.Info,
+  AndroidAutomotiveTelemetryPermissions.Speed,
+];
+
+function TelemetryView() {
   const { permissionsGranted, telemetry, error } = useAndroidAutoTelemetry({
-    requiredPermissions: ANDROID_AUTO_PERMISSIONS,
+    requiredPermissions:
+      Config.isAutomotiveApp === 'true' ? ANDROID_AUTOMOTIVE_PERMISSIONS : ANDROID_AUTO_PERMISSIONS,
+    automotivePermissionRequest:
+      Config.isAutomotiveApp === 'true'
+        ? {
+            cancelButtonText: 'Cancel',
+            grantButtonText: 'Grant',
+            message: 'Grant permission for vehicle telemetry access.',
+          }
+        : undefined,
   });
 
   return (
@@ -21,31 +41,18 @@ export function TelemetryView() {
       <Text>telemetry permissions granted: {String(permissionsGranted)}</Text>
       {error ? <Text>error: {error}</Text> : null}
       {telemetry ? <Text>---- last incoming tlm ----</Text> : null}
-      {telemetry?.batteryLevel ? (
-        <Text>
-          batteryLevel: {telemetry.batteryLevel.value} ({telemetry.batteryLevel.timestamp})
-        </Text>
-      ) : null}
-      {telemetry?.fuelLevel ? (
-        <Text>
-          fuelLevel: {telemetry.fuelLevel.value} ({telemetry.fuelLevel.timestamp})
-        </Text>
-      ) : null}
-      {telemetry?.speed ? (
-        <Text>
-          speed: {telemetry.speed.value} ({telemetry.speed.timestamp})
-        </Text>
-      ) : null}
-      {telemetry?.range ? (
-        <Text>
-          range: {telemetry.range.value} ({telemetry.range.timestamp})
-        </Text>
-      ) : null}
-      {telemetry?.odometer ? (
-        <Text>
-          odometer: {telemetry.odometer.value} ({telemetry.odometer.timestamp})
-        </Text>
-      ) : null}
+      {Object.entries(telemetry ?? {}).map(([key, value]) => {
+        if (key === 'vehicle' || value == null) {
+          return null;
+        }
+
+        return (
+          <Text key={key}>
+            {`${key}: ${'value' in value ? value.value : ''}`}
+            {'timestamp' in value ? ` (${value.timestamp})` : ''}
+          </Text>
+        );
+      })}
       {telemetry?.vehicle?.name ? (
         <Text>
           vehicle name: {telemetry.vehicle.name.value} ({telemetry.vehicle.name.timestamp})
@@ -65,3 +72,5 @@ export function TelemetryView() {
     </>
   );
 }
+
+export default React.memo(TelemetryView);
