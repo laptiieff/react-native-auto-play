@@ -274,6 +274,24 @@ Adjust to the build variants your app provides. Check the example app for detail
 
 This approach allows you to dynamically set the required flags based on your build variant, which is demonstrated in the example app.
 
+#### App launch on Android Automotive
+
+Android Automotive requires you to remove your app activity since it invokes the libraries Android Auto service in a different way. Not doing so will bring up 2 app icons on the Android Automotive launcher.
+To get rid of you default activity do a automotive specific build variant and add this AndroidManifest.xml for that variant.
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <activity
+            android:name=".MainActivity"
+            tools:node="remove" /> <!-- remove main activity -->
+    </application>
+
+</manifest>
+```
+For details check the example app and its build variants.
+
 #### A Note on Android Studio
 
 When using build variants, Android Studio may not be aware of the selected variant during a Gradle sync. This can cause the IDE to show the incorrect implementation of native classes like `AndroidTelemetryObserver` (e.g., it might show the Android Auto version instead of the Automotive version).
