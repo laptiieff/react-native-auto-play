@@ -348,9 +348,9 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
             return
         }
 
-        let title = Parser.parseText(text: alertConfig.title)!
-        let subtitle = alertConfig.subtitle.map { subtitle in
-            [Parser.parseText(text: subtitle)!]
+        guard let title = Parser.parseText(text: alertConfig.title) else { return }
+        let subtitle = alertConfig.subtitle.flatMap { subtitle in
+            [Parser.parseText(text: subtitle)].compactMap { $0 }
         }
 
         let image = Parser.parseNitroImage(
@@ -412,10 +412,10 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
             return
         }
 
-        let title = Parser.parseText(text: title)!
+        guard let title = Parser.parseText(text: title) else { return }
         let subtitle =
-            subtitle.map { subtitle in
-                [Parser.parseText(text: subtitle)!]
+            subtitle.flatMap { subtitle in
+                [Parser.parseText(text: subtitle)].compactMap { $0 }
             } ?? []
 
         alert.updateTitleVariants([title], subtitleVariants: subtitle)
@@ -655,10 +655,11 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
                 )
 
                 if index != maneuverIndex {
-                    let maneuver = navigationSession.upcomingManeuvers.first(
+                    if let maneuver = navigationSession.upcomingManeuvers.first(
                         where: { $0.id == nitroManeuver.id }
-                    )!
-                    upcomingManeuvers.append(maneuver)
+                    ) {
+                        upcomingManeuvers.append(maneuver)
+                    }
                 }
                 continue
             }

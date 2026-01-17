@@ -91,16 +91,22 @@ class DashboardSceneDelegate: AutoPlayScene,
                 .dashboardWindow.traitCollection
         else { return }
 
-        dashboardController?.shortcutButtons = buttons.map { button in
-            CPDashboardButton(
-                titleVariants: button.titleVariants,
-                subtitleVariants: button.subtitleVariants,
-                image: Parser.parseNitroImage(
+        dashboardController?.shortcutButtons = buttons.compactMap { button in
+            guard
+                let image = Parser.parseNitroImage(
                     image: button.image,
                     traitCollection: traitCollection
-                )!
+                )
+            else {
+                return nil
+            }
+            let dashboardButton = CPDashboardButton(
+                titleVariants: button.titleVariants,
+                subtitleVariants: button.subtitleVariants,
+                image: image
             ) { _ in
                 button.onPress()
+
                 if button.launchHeadUnitScene == true {
                     guard let url = self.launchHeadUnitSceneUrl
                     else { return }
@@ -110,6 +116,7 @@ class DashboardSceneDelegate: AutoPlayScene,
                     )
                 }
             }
+            return dashboardButton
         }
     }
 

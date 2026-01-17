@@ -47,28 +47,33 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
         } else {
             gridButtonHeight = 44
         }
+        
+        let traitCollection = SceneStore.getRootTraitCollection()
 
-        return buttons.map { button in
+        return buttons.compactMap { button in
             var image: UIImage?
 
             if let glyphImage = button.image.glyphImage {
                 image = SymbolFont.imageFromNitroImage(
                     image: glyphImage,
                     size: gridButtonHeight,
-                    traitCollection: SceneStore.getRootTraitCollection()
-                )!
+                    traitCollection: traitCollection
+                )
             }
 
             if let assetImage = button.image.assetImage {
                 image = Parser.parseAssetImage(
                     assetImage: assetImage,
-                    traitCollection: SceneStore.getRootTraitCollection()
+                    traitCollection: traitCollection
                 )
             }
+            
+            guard let image = image else { return nil }
+            guard let title = Parser.parseText(text: button.title) else { return nil }
 
             return CPGridButton(
-                titleVariants: [Parser.parseText(text: button.title)!],
-                image: image!
+                titleVariants: [title],
+                image: image
             ) { _ in
                 button.onPress()
             }
