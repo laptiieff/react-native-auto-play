@@ -21,11 +21,11 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
         }
     }
 
-    var autoDismissMs: Double? {
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
     
-    func getTemplate() -> CPTemplate {
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -75,30 +75,31 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
         }
     }
 
-    func invalidate() {
+    @MainActor
+    override func _invalidate() {
         setBarButtons(template: template, barButtons: config.headerActions)
 
         let buttons = GridTemplate.parseButtons(buttons: config.buttons)
         template.updateGridButtons(buttons)
     }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 

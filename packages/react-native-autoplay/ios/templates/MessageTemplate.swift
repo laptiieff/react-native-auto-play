@@ -11,11 +11,11 @@ class MessageTemplate: AutoPlayTemplate {
     let template: CPAlertTemplate
     var config: MessageTemplateConfig
     
-    var autoDismissMs: Double? {
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
 
-    func getTemplate() -> CPTemplate {
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -28,28 +28,24 @@ class MessageTemplate: AutoPlayTemplate {
             id: config.id
         )
     }
-    
-    func invalidate() {
-        // this template can not be updated
-    }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 }

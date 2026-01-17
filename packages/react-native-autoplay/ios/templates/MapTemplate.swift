@@ -11,7 +11,7 @@ struct NavigationAlertWrapper {
     let config: NitroNavigationAlert
 }
 
-class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
+class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     CPMapTemplateDelegate
 {
     let template: CPMapTemplate
@@ -29,11 +29,11 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
         }
     }
 
-    var autoDismissMs: Double? {
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
 
-    func getTemplate() -> CPTemplate {
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -119,7 +119,7 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
     }
 
     @MainActor
-    func invalidate() {
+    override func _invalidate() {
         if tripSelectorVisible {
             // ignore invalidate calls to not break the trip selectors back button
             return
@@ -153,27 +153,28 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
         }
     }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 
-    func traitCollectionDidChange() {
+    @MainActor
+    override func traitCollectionDidChange() {
         let traitCollection = SceneStore.getRootTraitCollection()
         let isDark = traitCollection.userInterfaceStyle == .dark
 
