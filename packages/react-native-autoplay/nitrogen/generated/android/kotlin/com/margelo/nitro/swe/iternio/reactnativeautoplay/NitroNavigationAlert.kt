@@ -25,25 +25,25 @@ data class NitroNavigationAlert(
   val title: AutoText,
   @DoNotStrip
   @Keep
-  val subtitle: AutoText?,
+  val subtitle: AutoText? = null,
   @DoNotStrip
   @Keep
-  val image: Variant_GlyphImage_AssetImage?,
+  val image: Variant_GlyphImage_AssetImage? = null,
   @DoNotStrip
   @Keep
   val primaryAction: NavigationAlertAction,
   @DoNotStrip
   @Keep
-  val secondaryAction: NavigationAlertAction?,
+  val secondaryAction: NavigationAlertAction? = null,
   @DoNotStrip
   @Keep
   val durationMs: Double,
   @DoNotStrip
   @Keep
-  val onWillShow: Func_void?,
+  val onWillShow: Func_void? = null,
   @DoNotStrip
   @Keep
-  val onDidDismiss: Func_void_AlertDismissalReason?,
+  val onDidDismiss: Func_void_AlertDismissalReason? = null,
   @DoNotStrip
   @Keep
   val priority: Double
@@ -54,7 +54,7 @@ data class NitroNavigationAlert(
   constructor(id: Double, title: AutoText, subtitle: AutoText?, image: Variant_GlyphImage_AssetImage?, primaryAction: NavigationAlertAction, secondaryAction: NavigationAlertAction?, durationMs: Double, onWillShow: (() -> Unit)?, onDidDismiss: ((reason: AlertDismissalReason) -> Unit)?, priority: Double):
          this(id, title, subtitle, image, primaryAction, secondaryAction, durationMs, onWillShow?.let { Func_void_java(it) }, onDidDismiss?.let { Func_void_AlertDismissalReason_java(it) }, priority)
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

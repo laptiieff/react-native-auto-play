@@ -26,7 +26,7 @@ data class Location(
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

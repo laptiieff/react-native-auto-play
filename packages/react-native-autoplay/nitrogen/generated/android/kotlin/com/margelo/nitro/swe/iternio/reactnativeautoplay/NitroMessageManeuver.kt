@@ -22,17 +22,17 @@ data class NitroMessageManeuver(
   val title: String,
   @DoNotStrip
   @Keep
-  val text: String?,
+  val text: String? = null,
   @DoNotStrip
   @Keep
-  val image: Variant_GlyphImage_AssetImage?,
+  val image: Variant_GlyphImage_AssetImage? = null,
   @DoNotStrip
   @Keep
   val cardBackgroundColor: NitroColor
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

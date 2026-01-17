@@ -26,7 +26,7 @@ data class Distance(
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */
