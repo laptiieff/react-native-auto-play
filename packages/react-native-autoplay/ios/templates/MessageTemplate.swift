@@ -10,7 +10,7 @@ import CarPlay
 class MessageTemplate: AutoPlayTemplate {
     let template: CPAlertTemplate
     var config: MessageTemplateConfig
-    
+
     override var autoDismissMs: Double? {
         return config.autoDismissMs
     }

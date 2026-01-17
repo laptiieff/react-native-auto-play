@@ -24,7 +24,7 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
     override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
-    
+
     override func getTemplate() -> CPTemplate {
         return template
     }
@@ -44,10 +44,11 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
         if #available(iOS 26.0, *) {
             gridButtonHeight = CPGridTemplate.maximumGridButtonImageSize.height
-        } else {
+        }
+        else {
             gridButtonHeight = 44
         }
-        
+
         let traitCollection = SceneStore.getRootTraitCollection()
 
         return buttons.compactMap { button in
@@ -67,7 +68,7 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
                     traitCollection: traitCollection
                 )
             }
-            
+
             guard let image = image else { return nil }
             guard let title = Parser.parseText(text: button.title) else { return nil }
 

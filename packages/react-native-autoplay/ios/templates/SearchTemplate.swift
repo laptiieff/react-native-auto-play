@@ -159,7 +159,8 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
                         animated: true
                     )
                 }
-            } catch {
+            }
+            catch {
                 print("Failed to push list template: \(error)")
             }
         }

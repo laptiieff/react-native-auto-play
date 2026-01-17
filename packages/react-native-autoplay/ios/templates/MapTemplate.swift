@@ -58,7 +58,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
                 width: width,
                 height: height
             )
-        } else {
+        }
+        else {
             screenDimensions = CGSize(width: 0, height: 0)
         }
 
@@ -70,7 +71,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     func onPanButtonPress() {
         if template.isPanningInterfaceVisible {
             template.dismissPanningInterface(animated: true)
-        } else {
+        }
+        else {
             template.showPanningInterface(animated: true)
         }
     }
@@ -394,7 +396,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
             template.dismissNavigationAlert(animated: true) { _ in
                 setNavigationAlert()
             }
-        } else {
+        }
+        else {
             setNavigationAlert()
         }
     }
@@ -496,7 +499,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     }
 
     func hideTripSelector() {
-        currentTripId = nil;
+        currentTripId = nil
         template.hideTripPreviews()
 
         tripSelectorVisible = false
@@ -512,13 +515,13 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
         using routeChoice: CPRouteChoice
     ) {
         let tripId = trip.id
-        
-        if (currentTripId != nil && currentTripId == tripId) {
+
+        if currentTripId != nil && currentTripId == tripId {
             return
         }
-        
+
         currentTripId = trip.id
-        
+
         let routeId = routeChoice.id
         self.onTripSelected?(tripId, routeId)
 
@@ -542,14 +545,14 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
         )
 
         startNavigation(trip: trip)
-        
+
         if let onTripStarted = self.onTripStarted {
             let tripId = trip.id
             let routeId = routeChoice.id
 
             onTripStarted(tripId, routeId)
         }
-        
+
         hideTripSelector()
     }
 
@@ -599,7 +602,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
 
         if #available(iOS 15.4, *) {
             maneuver.cardBackgroundColor = cardBackgroundColor
-        } else {
+        }
+        else {
             template.guidanceBackgroundColor = cardBackgroundColor
         }
 
@@ -689,7 +693,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
                         secondaryManeuver.cardBackgroundColor =
                             maneuver.cardBackgroundColor
                         return [maneuver, secondaryManeuver]
-                    } else {
+                    }
+                    else {
                         return [maneuver]
                     }
                 }
@@ -707,7 +712,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
                 }
                 if laneGuidances.isEmpty {
                     navigationSession.currentLaneGuidance = nil
-                } else {
+                }
+                else {
                     navigationSession.add(laneGuidances)
                     navigationSession.currentLaneGuidance = laneGuidances.first
                 }

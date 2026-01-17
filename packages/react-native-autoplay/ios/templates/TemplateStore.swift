@@ -46,7 +46,7 @@ class TemplateStore {
     func traitCollectionDidChange() {
         store.values.forEach { template in template.traitCollectionDidChange() }
     }
-    
+
     func disconnect() {
         store = [:]
     }

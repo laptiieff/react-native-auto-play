@@ -20,7 +20,8 @@ class DashboardSceneDelegate: AutoPlayScene,
             launchHeadUnitSceneUrl = URL(
                 string: "\(bundleIdentifier)://\(UUID())"
             )
-        } else {
+        }
+        else {
             launchHeadUnitSceneUrl = nil
         }
 

@@ -59,7 +59,8 @@ class RootModule {
             (autoPlayTemplate: AutoPlayTemplate) in
             if let template = autoPlayTemplate.getTemplate() as? T {
                 try! action(template)
-            } else {
+            }
+            else {
                 throw AutoPlayError.invalidTemplateType(
                     "\(autoPlayTemplate) is not a \(T.self) template"
                 )

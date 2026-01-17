@@ -154,22 +154,22 @@ class HybridAutoPlay: HybridAutoPlaySpec {
                 let template = try await scene.templateStore.getTemplate(
                     templateId: templateId
                 )
-                
+
                 await template.invalidate()
 
                 let carPlayTemplate = template.getTemplate()
 
                 if carPlayTemplate is CPAlertTemplate {
-                    let animated = try await
-                        !interfaceController.dismissTemplate(
-                            animated: false
-                        )
+                    let animated = try await !interfaceController.dismissTemplate(
+                        animated: false
+                    )
 
                     let _ = try await interfaceController.presentTemplate(
                         carPlayTemplate,
                         animated: animated
                     )
-                } else {
+                }
+                else {
                     let _ = try await interfaceController.pushTemplate(
                         carPlayTemplate,
                         animated: true
@@ -215,8 +215,7 @@ class HybridAutoPlay: HybridAutoPlaySpec {
         }
     }
 
-    func popToRootTemplate(animate: Bool?) throws -> NitroModules.Promise<Void>
-    {
+    func popToRootTemplate(animate: Bool?) throws -> NitroModules.Promise<Void> {
         return Promise.async {
             try await RootModule.withInterfaceController {
                 interfaceController in

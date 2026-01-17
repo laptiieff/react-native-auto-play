@@ -10,7 +10,7 @@ import CarPlay
 class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
     let template: CPInformationTemplate
     var config: InformationTemplateConfig
-    
+
     var barButtons: [NitroAction]? {
         get {
             return config.headerActions
@@ -20,11 +20,11 @@ class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
             setBarButtons(template: template, barButtons: newValue)
         }
     }
-    
+
     override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
-    
+
     override func getTemplate() -> CPTemplate {
         return template
     }
