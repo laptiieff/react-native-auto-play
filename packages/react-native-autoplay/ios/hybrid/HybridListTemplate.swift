@@ -11,8 +11,8 @@ class HybridListTemplate: HybridListTemplateSpec {
     func createListTemplate(config: ListTemplateConfig) throws {
         let template = ListTemplate(config: config)
 
-        try RootModule.withScene { rootScene in
-            rootScene.templateStore.addTemplate(
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.addTemplate(
                 template: template,
                 templateId: config.id
             )

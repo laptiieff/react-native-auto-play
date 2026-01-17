@@ -11,8 +11,8 @@ class HybridGridTemplate: HybridGridTemplateSpec {
     func createGridTemplate(config: GridTemplateConfig) throws {
         let template = GridTemplate(config: config)
 
-        try RootModule.withScene { rootScene in
-            rootScene.templateStore.addTemplate(
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.addTemplate(
                 template: template,
                 templateId: config.id
             )
