@@ -58,7 +58,14 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                             // this one reports only the basic gears like drive, park....
                             val selectedGear = getValue<Int>(p0)
                             telemetryHolder.updateSelectedGear(selectedGear)
-                            // TODO: sendEvent("automotive_gear_changed", getIsDriving(newSelectedGear))
+                            emit(
+                                Telemetry(
+                                    selectedGear = NumericTelemetryItem(
+                                        timestamp = System.currentTimeMillis() / 1000.0,
+                                        value = selectedGear.toDouble()
+                                    )
+                                )
+                            )
                         }
 
                         VehiclePropertyIds.CURRENT_GEAR -> {
@@ -72,7 +79,14 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                                     VehicleGear.GEAR_DRIVE
                                 }
                             telemetryHolder.updateSelectedGear(selectedGear)
-                            // TODO: sendEvent("automotive_gear_changed", getIsDriving(newSelectedGear))
+                            emit(
+                                Telemetry(
+                                    selectedGear = NumericTelemetryItem(
+                                        timestamp = System.currentTimeMillis() / 1000.0,
+                                        value = selectedGear.toDouble()
+                                    )
+                                )
+                            )
                         }
 
                         VehiclePropertyIds.ENV_OUTSIDE_TEMPERATURE -> telemetryHolder.updateEnvOutsideTemperature(

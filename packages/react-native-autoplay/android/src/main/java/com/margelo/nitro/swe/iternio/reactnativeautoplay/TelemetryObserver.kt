@@ -39,16 +39,17 @@ abstract class TelemetryObserver {
         }
     }
 
+    fun emit(tlm: Telemetry) {
+        telemetryCallbacks.forEach { callback ->
+            callback(tlm)
+        }
+    }
+
     private val emitter = object : Runnable {
         override fun run() {
-            val tlm = telemetryHolder.toTelemetry()
-
-            if (tlm != null) {
-                telemetryCallbacks.forEach { callback ->
-                    callback(tlm)
-                }
+            telemetryHolder.toTelemetry()?.let {
+                emit(it)
             }
-
             handler.postDelayed(this, BuildConfig.TELEMETRY_UPDATE_INTERVAL)
         }
     }

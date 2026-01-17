@@ -2,9 +2,10 @@ import {
   AndroidAutomotiveTelemetryPermissions,
   type AndroidAutoPermissions,
   AndroidAutoTelemetryPermissions,
+  type Telemetry,
   useAndroidAutoTelemetry,
 } from '@iternio/react-native-auto-play';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text } from 'react-native';
 import Config from 'react-native-config';
 
@@ -36,12 +37,25 @@ function TelemetryView() {
         : undefined,
   });
 
+  const [mergedTelemetry, setMergedTelemetry] = useState<Telemetry>();
+
+  useEffect(() => {
+    setMergedTelemetry((value) => {
+      return {
+        ...value,
+        ...Object.fromEntries(
+          Object.entries(telemetry ?? {}).filter(([_, entry]) => entry != null)
+        ),
+      };
+    });
+  }, [telemetry]);
+
   return (
     <>
       <Text>telemetry permissions granted: {String(permissionsGranted)}</Text>
       {error ? <Text>error: {error}</Text> : null}
-      {telemetry ? <Text>---- last incoming tlm ----</Text> : null}
-      {Object.entries(telemetry ?? {}).map(([key, value]) => {
+      {mergedTelemetry ? <Text>---- latest telemetry ----</Text> : null}
+      {Object.entries(mergedTelemetry ?? {}).map(([key, value]) => {
         if (key === 'vehicle' || value == null) {
           return null;
         }
@@ -53,20 +67,23 @@ function TelemetryView() {
           </Text>
         );
       })}
-      {telemetry?.vehicle?.name ? (
+      {mergedTelemetry?.vehicle ? <Text>---- vehicle data ----</Text> : null}
+      {mergedTelemetry?.vehicle?.name ? (
         <Text>
-          vehicle name: {telemetry.vehicle.name.value} ({telemetry.vehicle.name.timestamp})
+          vehicle name: {mergedTelemetry.vehicle.name.value} (
+          {mergedTelemetry.vehicle.name.timestamp})
         </Text>
       ) : null}
-      {telemetry?.vehicle?.year ? (
+      {mergedTelemetry?.vehicle?.year ? (
         <Text>
-          vehicle year: {telemetry.vehicle.year.value} ({telemetry.vehicle.year.timestamp})
+          vehicle year: {mergedTelemetry.vehicle.year.value} (
+          {mergedTelemetry.vehicle.year.timestamp})
         </Text>
       ) : null}
-      {telemetry?.vehicle?.manufacturer ? (
+      {mergedTelemetry?.vehicle?.manufacturer ? (
         <Text>
-          vehicle manufacturer: {telemetry.vehicle.manufacturer.value} (
-          {telemetry.vehicle.manufacturer.timestamp})
+          vehicle manufacturer: {mergedTelemetry.vehicle.manufacturer.value} (
+          {mergedTelemetry.vehicle.manufacturer.timestamp})
         </Text>
       ) : null}
     </>

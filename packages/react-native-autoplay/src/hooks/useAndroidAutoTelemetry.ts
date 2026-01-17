@@ -153,7 +153,8 @@ export const useAndroidAutoTelemetry = ({
      */
     permissionsGranted,
     /**
-     * The telemetry data.
+     * The telemetry data, might be a partial update not containing all properties of the regular timed updates.
+     * For example gear changes are emitted immediately without all the other telemetry data.
      */
     telemetry,
     /**
