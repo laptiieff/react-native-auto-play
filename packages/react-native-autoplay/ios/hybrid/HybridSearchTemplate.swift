@@ -10,26 +10,25 @@ import NitroModules
 class HybridSearchTemplate: HybridSearchTemplateSpec {
     func createSearchTemplate(config: SearchTemplateConfig) throws {
         let template = SearchTemplate(config: config)
-        TemplateStore.addTemplate(
-            template: template,
-            templateId: config.id
-        )
+
+        try RootModule.withScene { rootScene in
+            rootScene.templateStore.addTemplate(
+                template: template,
+                templateId: config.id
+            )
+        }
     }
 
     func updateSearchResults(templateId: String, results: NitroSection) throws
         -> Promise<Void>
     {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(templateId: templateId)
-                    as? SearchTemplate
-            else {
-                throw AutoPlayError.invalidTemplateType(
-                    "\(templateId) is not a SearchTemplate"
-                )
+            try await MainActor.run {
+                try RootModule.withAutoPlayTemplate(templateId: templateId) {
+                    (template: SearchTemplate) in
+                    template.updateSearchResults(results: results)
+                }
             }
-
-            await template.updateSearchResults(results: results)
         }
     }
 }

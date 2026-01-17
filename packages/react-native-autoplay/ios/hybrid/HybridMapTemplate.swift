@@ -11,28 +11,25 @@ import NitroModules
 class HybridMapTemplate: HybridMapTemplateSpec {
     func createMapTemplate(config: MapTemplateConfig) throws {
         let template = MapTemplate(config: config)
-        TemplateStore.addTemplate(
-            template: template,
-            templateId: config.id
-        )
+
+        try RootModule.withScene { rootScene in
+            rootScene.templateStore.addTemplate(
+                template: template,
+                templateId: config.id
+            )
+        }
     }
 
     func setTemplateMapButtons(templateId: String, buttons: [NitroMapButton]?)
         throws -> Promise<Void>
     {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(templateId: templateId)
-                    as? MapTemplate
-            else {
-                throw AutoPlayError.invalidTemplateError(
-                    "\(templateId) is not a MapTemplate"
-                )
-            }
-
-            await MainActor.run {
-                template.config.mapButtons = buttons
-                template.invalidate()
+            try await MainActor.run {
+                try RootModule.withAutoPlayTemplate(templateId: templateId) {
+                    (template: MapTemplate) in
+                    template.config.mapButtons = buttons
+                    template.invalidate()
+                }
             }
         }
     }

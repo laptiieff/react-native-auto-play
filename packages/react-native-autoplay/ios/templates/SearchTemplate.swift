@@ -140,17 +140,18 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
         // execute callback after creating the template to avoid race condition in updateSearchResults
         config.onSearchTextSubmitted(searchText)
 
-        TemplateStore.addTemplate(
-            template: listTemplate,
-            templateId: listConfig.id
-        )
-
         // Push the template
         Task { @MainActor in
             do {
-                try await RootModule.withInterfaceController {
+                try await RootModule.withSceneAndInterfaceController {
+                    scene,
                     interfaceController in
-                    
+
+                    scene.templateStore.addTemplate(
+                        template: listTemplate,
+                        templateId: listConfig.id
+                    )
+
                     listTemplate.invalidate()
 
                     let _ = try await interfaceController.pushTemplate(

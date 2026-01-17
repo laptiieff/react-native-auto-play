@@ -77,7 +77,9 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
             animated: animated
         )
 
-        TemplateStore.removeTemplate(templateId: templateId)
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.removeTemplate(templateId: templateId)
+        }
 
         return templateId
     }
@@ -103,7 +105,9 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
             animated: animated
         )
 
-        TemplateStore.removeTemplates(templateIds: templateIds)
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.removeTemplates(templateIds: templateIds)
+        }
 
         return templateIds
     }
@@ -171,9 +175,12 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
     ) {
         let templateId = aTemplate.id
 
-        TemplateStore.getTemplate(templateId: templateId)?.onWillAppear(
-            animated: animated
-        )
+        try? RootModule.withAutoPlayTemplate(templateId: templateId) {
+            (template: AutoPlayTemplate) in
+            template.onWillAppear(
+                animated: animated
+            )
+        }
     }
 
     func templateDidAppear(
@@ -184,11 +191,18 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
 
         if rootTemplateId == templateId {
             // this makes sure we purge outdated CPSearchTemplate since that one can be popped on with a CarPlay native button we can not intercept
-            TemplateStore.purge()
+            try? RootModule.withTemplateStore { templateStore in
+                templateStore.purge()
+            }
         }
 
-        TemplateStore.getTemplate(templateId: templateId)?.onDidAppear(
-            animated: animated
+        try? RootModule.withAutoPlayTemplate(
+            templateId: templateId,
+            perform: { (template: AutoPlayTemplate) in
+                template.onDidAppear(
+                    animated: animated
+                )
+            }
         )
     }
 
@@ -198,8 +212,15 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
     ) {
         let templateId = aTemplate.id
 
-        TemplateStore.getTemplate(templateId: templateId)?.onWillDisappear(
-            animated: animated
+        try? RootModule.withAutoPlayTemplate(
+            templateId: templateId,
+            perform: {
+                (template: AutoPlayTemplate)
+                in
+                template.onWillDisappear(
+                    animated: animated
+                )
+            }
         )
     }
 
@@ -209,12 +230,19 @@ class AutoPlayInterfaceController: NSObject, CPInterfaceControllerDelegate {
     ) {
         let templateId = aTemplate.id
 
-        TemplateStore.getTemplate(templateId: templateId)?.onDidDisappear(
-            animated: animated
+        try? RootModule.withAutoPlayTemplate(
+            templateId: templateId,
+            perform: { (template: AutoPlayTemplate) in
+                template.onDidDisappear(
+                    animated: animated
+                )
+            }
         )
 
         if aTemplate is CPAlertTemplate {
-            TemplateStore.removeTemplate(templateId: templateId)
+            try? RootModule.withTemplateStore { templateStore in
+                templateStore.removeTemplate(templateId: templateId)
+            }
 
             HybridAutoPlay.removeListeners(
                 templateId: templateId
