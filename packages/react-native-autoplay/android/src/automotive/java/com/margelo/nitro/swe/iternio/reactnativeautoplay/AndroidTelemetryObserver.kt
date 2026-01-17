@@ -61,7 +61,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                             emit(
                                 Telemetry(
                                     selectedGear = NumericTelemetryItem(
-                                        timestamp = System.currentTimeMillis() / 1000.0,
+                                        timestamp = floor(System.currentTimeMillis() / 1000.0),
                                         value = selectedGear.toDouble()
                                     )
                                 )
@@ -82,7 +82,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                             emit(
                                 Telemetry(
                                     selectedGear = NumericTelemetryItem(
-                                        timestamp = System.currentTimeMillis() / 1000.0,
+                                        timestamp = floor(System.currentTimeMillis() / 1000.0),
                                         value = selectedGear.toDouble()
                                     )
                                 )
