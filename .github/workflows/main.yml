@@ -8,12 +8,12 @@ on:
         default: run
         options:
           [
-            run,
-            run-inline,
+            #run,
+            #run-inline,
             run-context,
             run-summary,
-            run-inline-reply,
-            run-summary-reply,
+            ##run-inline-reply,
+            #run-summary-reply,
           ]
       pull-request-number:
         type: string
