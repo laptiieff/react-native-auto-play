@@ -122,37 +122,19 @@ const getUserPrompt = (title, description, diff) => {
 const regex = /^diff --git "?a\/(.+?)"? "?b\/(.+?)"?\n(?!deleted file mode)/gm;
 
 const getTouchedFilesContent = async (diff, commit) => {
-  // Debug: Log the first 2000 chars of the diff to understand the format
-  console.log('=== DEBUG: Raw diff format (first 2000 chars) ===');
-  console.log(diff?.substring(0, 2000));
-  console.log('=== END DEBUG ===');
-
   const files = [];
   let match;
   while ((match = regex.exec(diff)) !== null) {
-    // Debug: Log what the regex matched
-    console.log('=== DEBUG: Regex match ===');
-    console.log('Full match:', match[0]);
-    console.log('Group 1 (a/ path):', match[1]);
-    console.log('Group 2 (b/ path):', match[2]);
-    console.log('=== END DEBUG ===');
-
     // Strip any remaining quotes from the path
     const path = match[2].replace(/^"|"$/g, '');
     if (ignoredRegex.test(path)) {
-      console.log('Ignoring file (matches ignore pattern):', path);
       continue;
     }
     files.push(path);
   }
 
-  console.log('=== DEBUG: Files to fetch ===');
-  console.log(files);
-  console.log('=== END DEBUG ===');
-
   const fileContents = await Promise.all(
     files.map(async (path) => {
-      console.log('fetching file content for', path);
       try {
         const { data } = await octokit.repos.getContent({
           owner,
