@@ -124,11 +124,14 @@ Respond with ONLY a JSON object in this exact structure:
   "issues": [
     {
       "filePath": "full/path/to/file.ts",
+      "lineNumber": 42,
       "lineContent": "    exact line content with leading whitespace preserved",
       "comment": "Brief explanation of the issue"
     }
   ]
 }
+
+The lineNumber must be the line number in the NEW version of the file (right side of the diff). You can determine this from the diff hunk headers like "@@ -10,5 +12,7 @@" where +12 is the starting line number, then count the lines that are context (no prefix) or additions (+) to find the exact line.
 
 ## GitHub Suggestions
 When you can propose a concrete code fix (typos, simple bugs, improvements), use GitHub's suggestion syntax in the comment field:
@@ -141,6 +144,7 @@ IMPORTANT: Preserve the EXACT indentation from the original line in your suggest
 Example for a typo fix (notice the 2-space indent is preserved):
 {
   "filePath": "src/utils.ts",
+  "lineNumber": 15,
   "lineContent": "  const nubmer = 42;",
   "comment": "Typo in variable name:\n\`\`\`suggestion\n  const number = 42;\n\`\`\`"
 }
@@ -386,7 +390,7 @@ function getLineNumber(text, searchStringArray) {
 function getLineNumberMultiLine(text, searchString) {
   console.log('=== DEBUG: getLineNumberMultiLine ===');
   console.log('Searching for lineContent:', JSON.stringify(searchString));
-  
+
   const regexPattern = convertToRegexPattern(searchString);
   const regex = new RegExp(regexPattern);
   const match = regex.exec(text);
@@ -419,36 +423,47 @@ const getReviewAndSendToGitHub = async () => {
 
       console.log('=== DEBUG: Processing issues ===');
       console.log('Number of issues:', review.issues?.length || 0);
-      
+
       review.issues?.forEach((element, index) => {
         console.log(`\n--- Issue ${index + 1} ---`);
         console.log('filePath:', element.filePath);
+        console.log('AI-provided lineNumber:', element.lineNumber);
         console.log('lineContent:', JSON.stringify(element.lineContent));
         console.log('comment:', element.comment?.substring(0, 100) + '...');
-        
+
         const filePath = element.filePath;
         const fileContent = fileContents.find((file) => file.path === filePath);
-        if (fileContent) {
+
+        // Compare AI-provided lineNumber with calculated one (for debugging)
+        if (fileContent && element.lineContent) {
           try {
-            const lineNumber = getLineNumberMultiLine(fileContent.content, element.lineContent);
-            if (lineNumber === -1) {
+            const calculatedLineNumber = getLineNumberMultiLine(fileContent.content, element.lineContent);
+            console.log('Calculated lineNumber:', calculatedLineNumber);
+            console.log('Match:', element.lineNumber === calculatedLineNumber ? 'YES' : 'NO');
+
+            // Use AI-provided lineNumber if available, otherwise fall back to calculated
+            if (!element.lineNumber || element.lineNumber <= 0) {
+              console.log('Using calculated lineNumber (AI did not provide valid one)');
+              element.lineNumber = calculatedLineNumber;
+            }
+
+            if (element.lineNumber === -1 || !element.lineNumber) {
               // we probably got a part of the diff
               // write a normal comment and attach the mentioned code
               element.comment =
                 element.comment + '\n' + filePath + ':\n```\n' + element.lineContent + '\n```';
             }
-
-            element.lineNumber = lineNumber;
-            console.log('Final lineNumber:', lineNumber);
           } catch (error) {
             console.error(
-              `Failed to get line number for:\n${element.lineContent}\nError:\n`,
+              `Failed to calculate line number for:\n${element.lineContent}\nError:\n`,
               error
             );
           }
-        } else {
+        } else if (!fileContent) {
           console.log('WARNING: File content not found for', filePath);
         }
+
+        console.log('Final lineNumber used:', element.lineNumber);
       });
       console.log('=== END DEBUG: Processing issues ===');
 
