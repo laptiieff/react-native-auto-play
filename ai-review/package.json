@@ -1,7 +1,7 @@
 {
   "name": "chatgpt-reviewer",
   "version": "1.0.0",
-  "main": "action.js",
+  "main": "ai-review.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

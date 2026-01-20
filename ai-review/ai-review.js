@@ -1,17 +1,12 @@
-const { Octokit } = require("@octokit/rest");
-const core = require("@actions/core");
-const github = require("@actions/github");
+const { Octokit } = require('@octokit/rest');
+const core = require('@actions/core');
+const github = require('@actions/github');
 
-const IGNORED_FILES = [
-  "ios/Podfile.lock",
-  "package.json",
-  "package-lock.json",
-  "yarn.lock",
-];
+const IGNORED_FILES = ['ios/Podfile.lock', 'package.json', 'package-lock.json', 'yarn.lock'];
 const ignoredRegex = new RegExp(
   `^(${IGNORED_FILES.join(
-    "|"
-  )})$|^node_modules/|^.*png$|.*res\/drawable.*|^.*svg$|^.*gpx$|^.*txt$|^.*jp.?g$|^.*\.test\.json$`
+    '|'
+  )})$|^node_modules/|^.*png$|.*res/drawable.*|^.*svg$|^.*gpx$|^.*txt$|^.*jp.?g$|^.*.test.json$`
 );
 
 /**
@@ -29,7 +24,7 @@ const filterDiffByIgnoredFiles = (diff) => {
   }
   if (matches.length === 0) return diff;
 
-  let result = "";
+  let result = '';
   if (matches[0].index > 0) {
     result += diff.slice(0, matches[0].index);
   }
@@ -78,45 +73,42 @@ const getPullRequestDiff = async () => {
   });
 
   // Get diff using Octokit's request method with diff media type
-  const diffResponse = await octokit.request(
-    `GET /repos/${owner}/${repo}/pulls/${PR_NUMBER}`,
-    {
-      mediaType: {
-        format: "diff",
-      },
-    }
-  );
+  const diffResponse = await octokit.request(`GET /repos/${owner}/${repo}/pulls/${PR_NUMBER}`, {
+    mediaType: {
+      format: 'diff',
+    },
+  });
 
   return {
-    diff: diffResponse.data || "",
+    diff: diffResponse.data || '',
     title: pr.title,
-    description: pr.body || "",
+    description: pr.body || '',
     commit: pr.head.sha,
   };
 };
 
 const SYSTEM_PROMPT = {
-  role: "system",
+  role: 'system',
   content:
-    "You are an experienced software developer, mainly focusing on react-native development for iOS, Android and web. Your other tasks are maintaining the Android Auto, Android Automotive and Carplay implementation for a route planner and navigation app for EVs."
+    'You are an experienced software developer, mainly focusing on react-native development for iOS, Android and web. Your other tasks are maintaining the Android Auto, Android Automotive and Carplay implementation for a route planner and navigation app for EVs.',
 };
 
 const getUserPrompt = (title, description, diff) => {
   return {
-    role: "user",
+    role: 'user',
     content:
-      "Please review only the code changes provided in the diff at the end of this message for any major issues, bugs, best-practice shortcomings, potential security concerns, and thread-safety issues." +
-      "Do not comment on files with the name *.test.ts, but you can use them as additional context.\n" +
+      'Please review only the code changes provided in the diff at the end of this message for any major issues, bugs, best-practice shortcomings, potential security concerns, and thread-safety issues.' +
+      'Do not comment on files with the name *.test.ts, but you can use them as additional context.\n' +
       "Highlight typos in the changed code (not in the title or description) and propose a correction. If there are no typos, don't comment on it.\n" +
-      "Do not provide comments on minor things, unless they provide better code readability.\n" +
-      "Do not highlight issues, that a linter or typescript check would detect.\n" +
-      "Do not provide positive feedback, only focus on negative issues.\n" +
-      "Be brief - ignore minor improvements and keep the amount of text down.\n" +
-      "Please check, that javascript requires and typescript imports use the same file name suffix, as the current file name. *.android.ts* imports should only happen if the file itself has the .android.ts* suffix. Same for *.web.ts* and *.ios.ts*.\n" +
+      'Do not provide comments on minor things, unless they provide better code readability.\n' +
+      'Do not highlight issues, that a linter or typescript check would detect.\n' +
+      'Do not provide positive feedback, only focus on negative issues.\n' +
+      'Be brief - ignore minor improvements and keep the amount of text down.\n' +
+      'Please check, that javascript requires and typescript imports use the same file name suffix, as the current file name. *.android.ts* imports should only happen if the file itself has the .android.ts* suffix. Same for *.web.ts* and *.ios.ts*.\n' +
       "Provide the review as json object. In the root there should be a property 'summary', that contains the review summary and an array 'issues', that contains inline comments with properties 'comment', 'filePath' (full path), 'lineContent' (include whitespaces)." +
-      `${title ? "Title: " + title + "\n" : ""}${
-        description ? "Description: " + description + "\n" : ""
-      }"Diff:\n" + ${diff}`,
+      `${title ? `Title: ${title}\n` : ''}${
+        description ? `Description: ${description}\n` : ''
+      }\nDiff:\n${diff}`,
   };
 };
 
@@ -135,7 +127,7 @@ const getTouchedFilesContent = async (diff, commit) => {
 
   const fileContents = await Promise.all(
     files.map(async (path) => {
-      console.log("fetching file content for", path);
+      console.log('fetching file content for', path);
       try {
         const { data } = await octokit.repos.getContent({
           owner,
@@ -146,9 +138,9 @@ const getTouchedFilesContent = async (diff, commit) => {
 
         // GitHub API returns content as base64 encoded string
         let content = null;
-        if (data.type === "file" && data.encoding === "base64") {
-          content = Buffer.from(data.content, "base64").toString("utf-8");
-        } else if (data.type === "file" && typeof data.content === "string") {
+        if (data.type === 'file' && data.encoding === 'base64') {
+          content = Buffer.from(data.content, 'base64').toString('utf-8');
+        } else if (data.type === 'file' && typeof data.content === 'string') {
           content = data.content;
         }
 
@@ -166,14 +158,10 @@ const getTouchedFilesContent = async (diff, commit) => {
 const createPrompt = async (title, description, diff, fileContents) => {
   // Check basic token count for system prompt and diff
   const systemPromptTokens = estimateTokenCount(SYSTEM_PROMPT.content);
-  const userPromptTokens = estimateTokenCount(
-    getUserPrompt(title, description, diff).content
-  );
+  const userPromptTokens = estimateTokenCount(getUserPrompt(title, description, diff).content);
   const baseTokenCount = systemPromptTokens + userPromptTokens;
 
-  console.log(
-    `Base token count (system prompt + user prompt with diff): ${baseTokenCount}`
-  );
+  console.log(`Base token count (system prompt + user prompt with diff): ${baseTokenCount}`);
 
   // Check if we can include file contents without exceeding token limit
   let includeFileContents = true;
@@ -185,9 +173,7 @@ const createPrompt = async (title, description, diff, fileContents) => {
     fileContentTokens += estimateTokenCount(filePrompt);
   });
 
-  console.log(
-    `File contents would add approximately ${fileContentTokens} tokens`
-  );
+  console.log(`File contents would add approximately ${fileContentTokens} tokens`);
 
   // Check if including file contents would exceed token limit
   if (baseTokenCount + fileContentTokens > MAX_TOKEN_LIMIT) {
@@ -205,25 +191,25 @@ const createPrompt = async (title, description, diff, fileContents) => {
   if (includeFileContents) {
     messages.push(
       ...fileContents.map((file) => ({
-        role: "system",
+        role: 'system',
         content: `Additional context of the source code of the changed file ${file.path}:\n${file.content}`,
       }))
     );
   } else {
     messages.push({
-      role: "system",
+      role: 'system',
       content:
-        "File contents were excluded due to token limit constraints. Review will be based only on the diff.",
+        'File contents were excluded due to token limit constraints. Review will be based only on the diff.',
     });
   }
 
   const prompt = { messages };
-  console.log("Got diff, requesting review now...");
+  console.log('Got diff, requesting review now...');
 
   return prompt;
 };
 
-const axios = require("axios");
+const axios = require('axios');
 
 const requestReview = async () => {
   const { diff, title, description, commit } = await getPullRequestDiff();
@@ -231,17 +217,17 @@ const requestReview = async () => {
   const fileContents = await getTouchedFilesContent(filteredDiff, commit);
 
   const prompt = await createPrompt(title, description, filteredDiff, fileContents);
-  
+
   // Construct Azure OpenAI URL from secrets
   const openAiUrl = `${AZURE_OPEN_AI_URL}/openai/deployments/${AZURE_OPEN_AI_DEPLOYMENT}/chat/completions?api-version=2024-12-01-preview`;
-  
+
   const config = {
-    method: "post",
-    maxBodyLength: Infinity,
+    method: 'post',
+    maxBodyLength: Number.POSITIVE_INFINITY,
     url: openAiUrl,
     headers: {
-      "api-key": AZURE_OPEN_AI_SECRET,
-      "Content-Type": "application/json",
+      'api-key': AZURE_OPEN_AI_SECRET,
+      'Content-Type': 'application/json',
     },
     data: JSON.stringify(prompt),
   };
@@ -251,13 +237,13 @@ const requestReview = async () => {
       .request(config)
       .then((response) => {
         const review = response.data.choices[0].message.content;
-        console.log("OpenAI Usage statistics", response.data.usage);
+        console.log('OpenAI Usage statistics', response.data.usage);
 
         try {
           const json = JSON.parse(review);
           resolve({ review: json, fileContents });
         } catch (error) {
-          console.error("Failed to JSON.parse review", review);
+          console.error('Failed to JSON.parse review', review);
           reject(error);
         }
       })
@@ -287,12 +273,8 @@ const deleteCommentsByUser = async (username) => {
     const issueComments = issueCommentsResponse.data || [];
 
     // Step 3: Filter comments by the specific user
-    const userReviewComments = reviewComments.filter(
-      (comment) => comment.user.login === username
-    );
-    const userIssueComments = issueComments.filter(
-      (comment) => comment.user.login === username
-    );
+    const userReviewComments = reviewComments.filter((comment) => comment.user.login === username);
+    const userIssueComments = issueComments.filter((comment) => comment.user.login === username);
 
     // Step 4: Delete each review comment made by that user
     await Promise.allSettled(
@@ -323,18 +305,18 @@ const deleteCommentsByUser = async (username) => {
       );
     }
   } catch (error) {
-    console.error("Failed to delete comments by user", error);
+    console.error('Failed to delete comments by user', error);
   }
 };
 
 const convertToRegexPattern = (input) => {
   return input
-    .replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1") // Escape special characters
-    .replace(/\s+/g, "[\\s\\n]+"); // Replace spaces and newlines with [\s\n]+
+    .replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1') // Escape special characters
+    .replace(/\s+/g, '[\\s\\n]+'); // Replace spaces and newlines with [\s\n]+
 };
 
 function getLineNumber(text, searchStringArray) {
-  const lines = text.split("\n");
+  const lines = text.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const firstLine = searchStringArray[0];
     if (lines[i].includes(firstLine)) {
@@ -360,7 +342,7 @@ function getLineNumberMultiLine(text, searchString) {
   const match = regex.exec(text);
   if (match?.length) {
     const matchedText = match[0];
-    const matchedTextLines = matchedText.split("\n");
+    const matchedTextLines = matchedText.split('\n');
     return getLineNumber(text, matchedTextLines);
   }
 
@@ -371,7 +353,7 @@ const getReviewAndSendToGitHub = async () => {
   return requestReview()
     .then(async ({ review, fileContents }) => {
       // log review for debugging purposes
-      console.log("Review:\n", review);
+      console.log('Review:\n', review);
 
       // Get PR details to get the base and head commits for inline comments
       const { data: pr } = await octokit.pulls.get({
@@ -382,25 +364,15 @@ const getReviewAndSendToGitHub = async () => {
 
       review.issues?.forEach((element) => {
         const filePath = element.filePath;
-        const fileContent = fileContents.find(
-          (file) => file.path === filePath
-        );
+        const fileContent = fileContents.find((file) => file.path === filePath);
         if (fileContent) {
           try {
-            const lineNumber = getLineNumberMultiLine(
-              fileContent.content,
-              element.lineContent
-            );
+            const lineNumber = getLineNumberMultiLine(fileContent.content, element.lineContent);
             if (lineNumber === -1) {
               // we probably got a part of the diff
               // write a normal comment and attach the mentioned code
               element.comment =
-                element.comment +
-                "\n" +
-                filePath +
-                ":\n```\n" +
-                element.lineContent +
-                "\n```";
+                element.comment + '\n' + filePath + ':\n```\n' + element.lineContent + '\n```';
             }
 
             element.lineNumber = lineNumber;
@@ -416,7 +388,7 @@ const getReviewAndSendToGitHub = async () => {
       // Delete previous comments by the bot
       await deleteCommentsByUser(context.actor);
 
-      console.log("Creating comments...");
+      console.log('Creating comments...');
 
       try {
         if (review.issues?.length) {
@@ -452,7 +424,7 @@ const getReviewAndSendToGitHub = async () => {
                     commit_id: pr.head.sha,
                     path: filePath,
                     line: lineNumber,
-                    side: "RIGHT",
+                    side: 'RIGHT',
                   });
                 } catch (error) {
                   console.error(
@@ -480,12 +452,12 @@ const getReviewAndSendToGitHub = async () => {
           body: review.summary,
         });
       } catch (error) {
-        console.error("failed to create comment", error);
+        console.error('failed to create comment', error);
         core.setFailed(`Failed to create comments: ${error.message}`);
       }
     })
     .catch((error) => {
-      console.error("failed to query review", error.message);
+      console.error('failed to query review', error.message);
       core.setFailed(`Failed to get review: ${error.message}`);
       return;
     });
