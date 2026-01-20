@@ -93,26 +93,64 @@ const getPullRequestDiff = async () => {
 
 const SYSTEM_PROMPT = {
   role: 'system',
-  content:
-    'You are an experienced software developer, mainly focusing on react-native development for iOS, Android and web. Your other tasks are maintaining the Android Auto, Android Automotive and Carplay implementation for a route planner and navigation app for EVs.',
+  content: `You are an experienced software developer specializing in React Native development for iOS, Android, and web platforms. You also maintain Android Auto, Android Automotive, and CarPlay implementations for an EV route planner and navigation app.
+
+Your task is to review code changes and provide feedback in a specific JSON format. Always respond with valid JSON only - no markdown, no explanations outside the JSON.`,
 };
 
 const getUserPrompt = (title, description, diff) => {
   return {
     role: 'user',
-    content:
-      'Please review only the code changes provided in the diff at the end of this message for any major issues, bugs, best-practice shortcomings, potential security concerns, and thread-safety issues.' +
-      'Do not comment on files with the name *.test.ts, but you can use them as additional context.\n' +
-      "Highlight typos in the changed code (not in the title or description) and propose a correction. If there are no typos, don't comment on it.\n" +
-      'Do not provide comments on minor things, unless they provide better code readability.\n' +
-      'Do not highlight issues, that a linter or typescript check would detect.\n' +
-      'Do not provide positive feedback, only focus on negative issues.\n' +
-      'Be brief - ignore minor improvements and keep the amount of text down.\n' +
-      'Please check, that javascript requires and typescript imports use the same file name suffix, as the current file name. *.android.ts* imports should only happen if the file itself has the .android.ts* suffix. Same for *.web.ts* and *.ios.ts*.\n' +
-      "Provide the review as json object. In the root there should be a property 'summary', that contains the review summary and an array 'issues', that contains inline comments with properties 'comment', 'filePath' (full path), 'lineContent' (include whitespaces)." +
-      `${title ? `Title: ${title}\n` : ''}${
-        description ? `Description: ${description}\n` : ''
-      }\nDiff:\n${diff}`,
+    content: `Review the code changes in the diff below. Follow these rules strictly:
+
+## What to Review
+1. Major bugs and logic errors
+2. Security vulnerabilities
+3. Thread-safety issues
+4. Best-practice violations (only significant ones)
+5. Typos in code (variable names, strings) - not in comments or descriptions
+
+## What NOT to Review
+1. Test files (*.test.ts) - use them only as context
+2. Minor style issues or nitpicks
+3. Issues that linters or TypeScript would catch
+4. Positive feedback - only report problems
+5. Missing documentation or comments
+
+## Output Format
+Respond with ONLY a JSON object in this exact structure:
+{
+  "summary": "Brief 1-2 sentence summary of findings, or 'No significant issues found.' if none",
+  "issues": [
+    {
+      "filePath": "full/path/to/file.ts",
+      "lineContent": "    exact line content with leading whitespace preserved",
+      "comment": "Brief explanation of the issue"
+    }
+  ]
+}
+
+## GitHub Suggestions
+When you can propose a concrete code fix (typos, simple bugs, improvements), use GitHub's suggestion syntax in the comment field:
+\`\`\`suggestion
+corrected code here
+\`\`\`
+
+IMPORTANT: Preserve the EXACT indentation from the original line in your suggestion. The suggestion replaces the entire line, so wrong indentation will break the code.
+
+Example for a typo fix (notice the 2-space indent is preserved):
+{
+  "filePath": "src/utils.ts",
+  "lineContent": "  const nubmer = 42;",
+  "comment": "Typo in variable name:\n\`\`\`suggestion\n  const number = 42;\n\`\`\`"
+}
+
+Only use suggestions when you have a specific fix. For general issues without a clear fix, just explain the problem.
+
+If there are no issues, return: {"summary": "No significant issues found.", "issues": []}
+
+${title ? `## PR Title\n${title}\n\n` : ''}${description ? `## PR Description\n${description}\n\n` : ''}## Diff
+${diff}`,
   };
 };
 
@@ -210,6 +248,8 @@ const createPrompt = async (title, description, diff, fileContents) => {
     });
   }
 
+  // Note: o3-mini and other reasoning models don't support temperature/top_p
+  // They are inherently more deterministic. Use reasoning_effort if needed.
   const prompt = { messages };
   console.log('Got diff, requesting review now...');
 
