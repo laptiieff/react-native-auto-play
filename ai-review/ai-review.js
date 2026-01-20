@@ -124,14 +124,11 @@ Respond with ONLY a JSON object in this exact structure:
   "issues": [
     {
       "filePath": "full/path/to/file.ts",
-      "lineNumber": 42,
       "lineContent": "    exact line content with leading whitespace preserved",
       "comment": "Brief explanation of the issue"
     }
   ]
 }
-
-The lineNumber must be the line number in the NEW version of the file (right side of the diff). You can determine this from the diff hunk headers like "@@ -10,5 +12,7 @@" where +12 is the starting line number, then count the lines that are context (no prefix) or additions (+) to find the exact line.
 
 ## GitHub Suggestions
 When you can propose a concrete code fix (typos, simple bugs, improvements), use GitHub's suggestion syntax in the comment field:
@@ -144,7 +141,6 @@ IMPORTANT: Preserve the EXACT indentation from the original line in your suggest
 Example for a typo fix (notice the 2-space indent is preserved):
 {
   "filePath": "src/utils.ts",
-  "lineNumber": 15,
   "lineContent": "  const nubmer = 42;",
   "comment": "Typo in variable name:\n\`\`\`suggestion\n  const number = 42;\n\`\`\`"
 }
@@ -161,12 +157,12 @@ ${diff}`,
 // Handle both quoted and unquoted paths in git diff headers
 // Use ^ with multiline flag to only match actual diff headers at start of lines,
 // not strings inside file contents that happen to look like diff headers
-const regex = /^diff --git "?a\/(.+?)"? "?b\/(.+?)"?\n(?!deleted file mode)/gm;
+const pathRegex = /^diff --git "?a\/(.+?)"? "?b\/(.+?)"?\n(?!deleted file mode)/gm;
 
 const getTouchedFilesContent = async (diff, commit) => {
   const files = [];
   let match;
-  while ((match = regex.exec(diff)) !== null) {
+  while ((match = pathRegex.exec(diff)) !== null) {
     // Strip any remaining quotes from the path
     const path = match[2].replace(/^"|"$/g, '');
     if (ignoredRegex.test(path)) {
@@ -388,23 +384,14 @@ function getLineNumber(text, searchStringArray) {
 }
 
 function getLineNumberMultiLine(text, searchString) {
-  console.log('=== DEBUG: getLineNumberMultiLine ===');
-  console.log('Searching for lineContent:', JSON.stringify(searchString));
-
   const regexPattern = convertToRegexPattern(searchString);
   const regex = new RegExp(regexPattern);
   const match = regex.exec(text);
   if (match?.length) {
     const matchedText = match[0];
     const matchedTextLines = matchedText.split('\n');
-    const lineNum = getLineNumber(text, matchedTextLines);
-    console.log('Found at line:', lineNum);
-    console.log('=== END DEBUG ===');
-    return lineNum;
+    return getLineNumber(text, matchedTextLines);
   }
-
-  console.log('NOT FOUND in file content');
-  console.log('=== END DEBUG ===');
   return -1;
 }
 
@@ -421,51 +408,25 @@ const getReviewAndSendToGitHub = async () => {
         pull_number: PR_NUMBER,
       });
 
-      console.log('=== DEBUG: Processing issues ===');
-      console.log('Number of issues:', review.issues?.length || 0);
-
-      review.issues?.forEach((element, index) => {
-        console.log(`\n--- Issue ${index + 1} ---`);
-        console.log('filePath:', element.filePath);
-        console.log('AI-provided lineNumber:', element.lineNumber);
-        console.log('lineContent:', JSON.stringify(element.lineContent));
-        console.log('comment:', element.comment?.substring(0, 100) + '...');
-
+      review.issues?.forEach((element) => {
         const filePath = element.filePath;
         const fileContent = fileContents.find((file) => file.path === filePath);
-
-        // Compare AI-provided lineNumber with calculated one (for debugging)
-        if (fileContent && element.lineContent) {
+        if (fileContent) {
           try {
-            const calculatedLineNumber = getLineNumberMultiLine(fileContent.content, element.lineContent);
-            console.log('Calculated lineNumber:', calculatedLineNumber);
-            console.log('Match:', element.lineNumber === calculatedLineNumber ? 'YES' : 'NO');
-
-            // Use AI-provided lineNumber if available, otherwise fall back to calculated
-            if (!element.lineNumber || element.lineNumber <= 0) {
-              console.log('Using calculated lineNumber (AI did not provide valid one)');
-              element.lineNumber = calculatedLineNumber;
+            const lineNumber = getLineNumberMultiLine(fileContent.content, element.lineContent);
+            if (lineNumber === -1) {
+              // Line not found in file - attach the code to the comment
+              element.comment = `${element.comment}\n${filePath}:\n\`\`\`\n${element.lineContent}\n\`\`\``;
             }
-
-            if (element.lineNumber === -1 || !element.lineNumber) {
-              // we probably got a part of the diff
-              // write a normal comment and attach the mentioned code
-              element.comment =
-                element.comment + '\n' + filePath + ':\n```\n' + element.lineContent + '\n```';
-            }
+            element.lineNumber = lineNumber;
           } catch (error) {
             console.error(
-              `Failed to calculate line number for:\n${element.lineContent}\nError:\n`,
+              `Failed to get line number for:\n${element.lineContent}\nError:\n`,
               error
             );
           }
-        } else if (!fileContent) {
-          console.log('WARNING: File content not found for', filePath);
         }
-
-        console.log('Final lineNumber used:', element.lineNumber);
       });
-      console.log('=== END DEBUG: Processing issues ===');
 
       // Delete previous comments by the bot
       await deleteCommentsByUser('github-actions[bot]');
