@@ -369,7 +369,7 @@ function getLineNumber(text, searchStringArray) {
     if (lines[i].includes(firstLine)) {
       let containsAllLines = true;
       for (let j = 1; j < searchStringArray.length; j++) {
-        if (!lines[i + j].includes(searchStringArray[j])) {
+        if (i + j >= lines.length || !lines[i + j].includes(searchStringArray[j])) {
           containsAllLines = false;
           break;
         }
