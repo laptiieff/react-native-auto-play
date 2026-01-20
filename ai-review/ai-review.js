@@ -13,14 +13,18 @@ const ignoredRegex = new RegExp(
  * Removes entire diff sections for files matching the ignore patterns.
  * Keeps any text before the first diff header intact.
  * GitHub uses unified diff format: "diff --git a/path b/path"
+ * Paths may be quoted when they contain special characters: "diff --git "a/path" "b/path""
  */
 const filterDiffByIgnoredFiles = (diff) => {
   if (!diff) return diff;
-  const headerRegex = /^diff --git a\/(.+) b\/(.+)$/gm;
+  // Handle both quoted and unquoted paths in git diff headers
+  const headerRegex = /^diff --git "?a\/(.+?)"? "?b\/(.+?)"?$/gm;
   const matches = [];
   let m;
   while ((m = headerRegex.exec(diff)) !== null) {
-    matches.push({ index: m.index, path: m[2] });
+    // Strip any remaining quotes from the path
+    const path = m[2].replace(/^"|"$/g, '');
+    matches.push({ index: m.index, path });
   }
   if (matches.length === 0) return diff;
 
@@ -112,13 +116,15 @@ const getUserPrompt = (title, description, diff) => {
   };
 };
 
-const regex = /diff --git a\/(.+) b\/(.+)\n(?!deleted file mode)/g;
+// Handle both quoted and unquoted paths in git diff headers
+const regex = /diff --git "?a\/(.+?)"? "?b\/(.+?)"?\n(?!deleted file mode)/g;
 
 const getTouchedFilesContent = async (diff, commit) => {
   const files = [];
   let match;
   while ((match = regex.exec(diff)) !== null) {
-    const path = match[2];
+    // Strip any remaining quotes from the path
+    const path = match[2].replace(/^"|"$/g, '');
     if (ignoredRegex.test(path)) {
       continue;
     }
