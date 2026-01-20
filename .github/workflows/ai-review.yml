@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: '20'
 
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Install dependencies
         run: cd ai-review && npm install
 
