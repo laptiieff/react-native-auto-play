@@ -20,7 +20,7 @@ jobs:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: cd ai-review && npm install
 
       - name: Run AI Code Review
         env:
@@ -29,4 +29,4 @@ jobs:
           AZURE_OPEN_AI_URL: ${{ secrets.AZURE_OPEN_AI_URL }}
           AZURE_OPEN_AI_DEPLOYMENT: ${{ secrets.AZURE_OPEN_AI_DEPLOYMENT }}
           PR_NUMBER: ${{ github.event.number }}
-        run: node ai-review.js
+        run: node ai-review/ai-review.js
