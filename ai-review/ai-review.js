@@ -117,7 +117,9 @@ const getUserPrompt = (title, description, diff) => {
 };
 
 // Handle both quoted and unquoted paths in git diff headers
-const regex = /diff --git "?a\/(.+?)"? "?b\/(.+?)"?\n(?!deleted file mode)/g;
+// Use ^ with multiline flag to only match actual diff headers at start of lines,
+// not strings inside file contents that happen to look like diff headers
+const regex = /^diff --git "?a\/(.+?)"? "?b\/(.+?)"?\n(?!deleted file mode)/gm;
 
 const getTouchedFilesContent = async (diff, commit) => {
   // Debug: Log the first 2000 chars of the diff to understand the format
