@@ -433,7 +433,7 @@ const getReviewAndSendToGitHub = async () => {
       });
 
       // Delete previous comments by the bot
-      await deleteCommentsByUser(context.actor);
+      await deleteCommentsByUser('github-actions[bot]');
 
       console.log('Creating comments...');
 
