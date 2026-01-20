@@ -6,7 +6,7 @@ const IGNORED_FILES = ['ios/Podfile.lock', 'package.json', 'package-lock.json', 
 const ignoredRegex = new RegExp(
   `^(${IGNORED_FILES.join(
     '|'
-  )})$|^node_modules/|^.*png$|.*res/drawable.*|^.*svg$|^.*gpx$|^.*txt$|^.*jp.?g$|^.*.test.json$`
+  )})$|^node_modules/|^.*png$|.*res/drawable.*|^.*svg$|^.*gpx$|^.*txt$|^.*jp.?g$|^.*.test.json$|^.*/nitrogen/generated/.*$`
 );
 
 /**
