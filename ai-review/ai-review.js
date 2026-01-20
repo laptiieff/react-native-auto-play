@@ -384,15 +384,23 @@ function getLineNumber(text, searchStringArray) {
 }
 
 function getLineNumberMultiLine(text, searchString) {
+  console.log('=== DEBUG: getLineNumberMultiLine ===');
+  console.log('Searching for lineContent:', JSON.stringify(searchString));
+  
   const regexPattern = convertToRegexPattern(searchString);
   const regex = new RegExp(regexPattern);
   const match = regex.exec(text);
   if (match?.length) {
     const matchedText = match[0];
     const matchedTextLines = matchedText.split('\n');
-    return getLineNumber(text, matchedTextLines);
+    const lineNum = getLineNumber(text, matchedTextLines);
+    console.log('Found at line:', lineNum);
+    console.log('=== END DEBUG ===');
+    return lineNum;
   }
 
+  console.log('NOT FOUND in file content');
+  console.log('=== END DEBUG ===');
   return -1;
 }
 
@@ -409,7 +417,15 @@ const getReviewAndSendToGitHub = async () => {
         pull_number: PR_NUMBER,
       });
 
-      review.issues?.forEach((element) => {
+      console.log('=== DEBUG: Processing issues ===');
+      console.log('Number of issues:', review.issues?.length || 0);
+      
+      review.issues?.forEach((element, index) => {
+        console.log(`\n--- Issue ${index + 1} ---`);
+        console.log('filePath:', element.filePath);
+        console.log('lineContent:', JSON.stringify(element.lineContent));
+        console.log('comment:', element.comment?.substring(0, 100) + '...');
+        
         const filePath = element.filePath;
         const fileContent = fileContents.find((file) => file.path === filePath);
         if (fileContent) {
@@ -423,14 +439,18 @@ const getReviewAndSendToGitHub = async () => {
             }
 
             element.lineNumber = lineNumber;
+            console.log('Final lineNumber:', lineNumber);
           } catch (error) {
             console.error(
               `Failed to get line number for:\n${element.lineContent}\nError:\n`,
               error
             );
           }
+        } else {
+          console.log('WARNING: File content not found for', filePath);
         }
       });
+      console.log('=== END DEBUG: Processing issues ===');
 
       // Delete previous comments by the bot
       await deleteCommentsByUser('github-actions[bot]');
