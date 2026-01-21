@@ -6,7 +6,7 @@
     "test": "jest --coverage"
   },
   "author": "Samuel Brucksch",
-  "license": "ISC",
+  "license": "MIT",
   "description": "GitHub Action for AI-powered code review using OpenAI",
   "dependencies": {
     "@actions/core": "^1.10.1",
