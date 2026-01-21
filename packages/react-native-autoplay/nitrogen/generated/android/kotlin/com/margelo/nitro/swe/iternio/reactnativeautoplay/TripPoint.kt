@@ -32,7 +32,7 @@ data class TripPoint(
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

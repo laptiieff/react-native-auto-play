@@ -37,6 +37,7 @@
     "generate:fonts": "node ./assets/symbolFont/bundleAsset.js",
     "specs": "nitrogen --logLevel=\"debug\"",
     "prepare": "tsc && nitrogen && npm run generate:fonts",
+    "postinstall": "cd ../.. && node scripts/conditional-patch.js && cd -",
     "swift:format": "swift-format format ./ios --in-place --recursive"
   },
   "keywords": [

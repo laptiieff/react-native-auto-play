@@ -15,6 +15,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     // load custom methods/properties
     registerHybrids(this, [](Prototype& prototype) {
       prototype.registerHybridMethod("registerTelemetryListener", &HybridAndroidAutoTelemetrySpec::registerTelemetryListener);
+      prototype.registerHybridMethod("requestAutomotivePermissions", &HybridAndroidAutoTelemetrySpec::requestAutomotivePermissions);
     });
   }
 

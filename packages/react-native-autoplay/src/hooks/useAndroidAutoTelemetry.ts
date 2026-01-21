@@ -15,6 +15,23 @@ interface Props {
    * The permissions to check.
    */
   requiredPermissions: Array<AndroidAutoPermissions>;
+  /**
+   * Android Automotive specific permission request properties
+   */
+  automotivePermissionRequest?: {
+    /**
+     * message to be shown on the permission request screen
+     */
+    message: string;
+    /**
+     * primary action button text
+     */
+    grantButtonText: string;
+    /**
+     * secondary action button text, if not specified button will not be shown
+     */
+    cancelButtonText?: string;
+  };
 }
 
 /**
@@ -27,8 +44,9 @@ interface Props {
 export const useAndroidAutoTelemetry = ({
   requestTelemetryPermissions = true,
   requiredPermissions,
+  automotivePermissionRequest,
 }: Props) => {
-  const [permissionsGranted, setPermissionsGranted] = useState(false);
+  const [permissionsGranted, setPermissionsGranted] = useState<boolean | null>(null);
   const [telemetry, setTelemetry] = useState<Telemetry | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
   const [isConnected, setIsConnected] = useState(false);
@@ -58,7 +76,7 @@ export const useAndroidAutoTelemetry = ({
       setPermissionsGranted(state.every((granted) => granted));
     };
 
-    checkPermissions();
+    void checkPermissions();
   }, [requiredPermissions]);
 
   useEffect(() => {
@@ -66,42 +84,77 @@ export const useAndroidAutoTelemetry = ({
       return;
     }
 
-    const remove = HybridAndroidAutoTelemetry?.registerTelemetryListener((tlm, errorMessage) => {
-      setError(errorMessage);
-      setTelemetry(tlm);
-    });
+    try {
+      const remove = HybridAndroidAutoTelemetry?.registerTelemetryListener(setTelemetry);
+      return () => remove?.();
+    } catch (e) {
+      if (e instanceof Error) {
+        setError(`${e.name}: ${e.message}\n${e.stack ?? ''}`.trim());
+      } else {
+        setError(String(e));
+      }
+    }
 
-    return () => {
-      remove?.();
-    };
+    return;
   }, [isConnected, permissionsGranted]);
 
   useEffect(() => {
-    if (requestTelemetryPermissions && requiredPermissions.length > 0) {
-      // PermissionsAndroid is not aware of automotive permissions
-      PermissionsAndroid.requestMultiple(requiredPermissions as Array<Permission>)
-        .then((value) => {
-          const isGranted = requiredPermissions.every(
-            (permission) => value[permission as Permission] === 'granted'
-          );
-          if (!isGranted) {
-            console.warn('*** Android Auto telemetry permissions not granted');
-            return;
-          }
-          setPermissionsGranted(true);
-        })
-        .catch((e) => console.error('*** Android Auto telemetry permissions error', e));
+    if (!requestTelemetryPermissions || requiredPermissions.length === 0) {
+      return;
     }
-    return;
-  }, [requestTelemetryPermissions, requiredPermissions]);
+
+    if (permissionsGranted !== false) {
+      // either wait for permission request to finish or do nothing in case permissions are granted already
+      return;
+    }
+
+    if (automotivePermissionRequest?.message != null) {
+      HybridAndroidAutoTelemetry?.requestAutomotivePermissions(
+        requiredPermissions,
+        automotivePermissionRequest.message,
+        automotivePermissionRequest.grantButtonText,
+        automotivePermissionRequest.cancelButtonText
+      ).then(({ granted, denied }) => {
+        const isGranted = granted.length === requiredPermissions.length;
+        setPermissionsGranted(isGranted);
+
+        if (!isGranted) {
+          setError(`Android Automotive permissions denied: [${denied.join(',')}]`);
+        }
+      });
+      return;
+    }
+
+    // PermissionsAndroid is not aware of Android Auto related permissions
+    PermissionsAndroid.requestMultiple(requiredPermissions as Array<Permission>)
+      .then((result) => {
+        const isGranted = requiredPermissions.every(
+          (permission) => result[permission as Permission] === 'granted'
+        );
+        if (!isGranted) {
+          console.warn('Android Auto telemetry permissions not granted');
+          return;
+        }
+        setPermissionsGranted(true);
+      })
+      .catch((e) => console.error('Android Auto telemetry permissions error', e));
+  }, [
+    requestTelemetryPermissions,
+    requiredPermissions,
+    permissionsGranted,
+    automotivePermissionRequest?.cancelButtonText,
+    automotivePermissionRequest?.grantButtonText,
+    automotivePermissionRequest?.message,
+  ]);
 
   return {
     /**
-     * True if the telemetry permissions are granted, false otherwise.
+     * null on pending permission check, True if the telemetry permissions are granted, false otherwise.
      */
     permissionsGranted,
     /**
-     * The telemetry data.
+     * The telemetry data, might be a partial update not containing all properties of the regular timed updates.
+     * For example gear changes are emitted immediately without all the other telemetry data.
      */
     telemetry,
     /**

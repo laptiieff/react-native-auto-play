@@ -15,11 +15,16 @@
 
 // Forward declaration of `Telemetry` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct Telemetry; }
+// Forward declaration of `PermissionRequestResult` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct PermissionRequestResult; }
 
 #include <functional>
 #include "Telemetry.hpp"
 #include <optional>
+#include "PermissionRequestResult.hpp"
+#include <NitroModules/Promise.hpp>
 #include <string>
+#include <vector>
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
@@ -52,7 +57,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
     public:
       // Methods
-      virtual std::function<void()> registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */, const std::optional<std::string>& /* error */)>& callback) = 0;
+      virtual std::function<void()> registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */)>& callback) = 0;
+      virtual std::shared_ptr<Promise<PermissionRequestResult>> requestAutomotivePermissions(const std::vector<std::string>& permissions, const std::string& message, const std::string& grantButtonText, const std::optional<std::string>& cancelButtonText) = 0;
 
     protected:
       // Hybrid Setup

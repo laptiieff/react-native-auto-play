@@ -220,6 +220,84 @@ You can customize certain behaviors of the library on Android Auto by setting pr
     ```
     The default values are `1000` for the delay and `500` for the duration.
 
+### Android Automotive
+
+This library also supports Android Automotive. To enable Android Automotive support, you need to configure a few properties in your Android project.
+
+-   **`minSdkVersion`**: The minimum API level for Android Automotive is 29. You must set `minSdkVersion` to at least `29`. For Android Auto, the minimum is `24`.
+
+-   **`isAutomotiveApp` flag**: You need to inform the library if this is an Automotive app by setting the `isAutomotiveApp` property to `true`. For Android Auto, it should be `false`.
+
+You can set these properties directly in your `android/gradle.properties` file:
+```properties
+# For Android Automotive
+minSdkVersion=29
+isAutomotiveApp=true
+```
+
+Alternatively, if you need to support different build variants (e.g., for both Android Auto and Android Automotive from the same codebase), using `react-native-config` is the recommended approach.
+
+1.  Install `react-native-config`:
+    ```bash
+    yarn add react-native-config
+    ```
+
+2.  Create different `.env` files for your variants. Create a default `.env` for Android Auto:
+    ```
+    # .env (for Android Auto)
+    isAutomotiveApp=false
+    minSdkVersion=24
+    ```
+    And an `.env.automotive` for Android Automotive:
+    ```
+    # .env.automotive
+    minSdkVersion=29
+    isAutomotiveApp=true
+    ```
+
+3.  In your `android/app/build.gradle`, apply the configuration from `react-native-config` based on your build flavors.
+    ```groovy
+    // android/app/build.gradle
+
+    project.ext.envConfigFiles = [
+        automotive: ".env.automotive",
+        // other flavors...
+    ]
+    apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
+    if (project.ext.has("env")) {
+        rootProject.ext.minSdkVersion = project.ext.env.minSdkVersion
+        rootProject.ext.isAutomotiveApp = project.ext.env.isAutomotiveApp
+    }
+    ```
+Adjust to the build variants your app provides. Check the example app for details.
+
+This approach allows you to dynamically set the required flags based on your build variant, which is demonstrated in the example app.
+
+#### App launch on Android Automotive
+
+Android Automotive requires you to remove your app activity since it invokes the libraries Android Auto service in a different way. Not doing so will bring up 2 app icons on the Android Automotive launcher.
+To get rid of your default activity, do an automotive specific build variant and add this AndroidManifest.xml for that variant.
+```xml
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <activity
+            android:name=".MainActivity"
+            tools:node="remove" /> <!-- remove main activity -->
+    </application>
+
+</manifest>
+```
+For details check the example app and its build variants.
+
+#### A Note on Android Studio
+
+When using build variants, Android Studio may not be aware of the selected variant during a Gradle sync. This can cause the IDE to show the incorrect implementation of native classes like `AndroidTelemetryObserver` (e.g., it might show the Android Auto version instead of the Automotive version).
+
+To work around this and allow for debugging or enhancing the Android Automotive-specific implementation, you can temporarily set the automotive flags in your `gradle.properties` file or your default `.env` file before running a Gradle sync.
+
 ## Icons
 The library is using [Material Symbols](https://fonts.google.com/icons) for iconography. The font is bundled with the library, so no extra setup is required. You can use these icons on both Android Auto and CarPlay.
 
@@ -683,20 +761,39 @@ new ListTemplate({
 -   `useVoiceInput()`: Access voice input functionality - Android Auto only.
 -   `useSafeAreaInsets()`: Get safe area insets for any root component.
 -   `useFocusedEffect()`: A useEffect alternative that executes when the specified component is visible to the user - use any of the `AutoPlayModules` enum or a cluster uuid to sepcify the component the effect should listen for.
--   `useAndroidAutoTelemetry()`: Access to car telemetry data on Android Auto.
+-   `useAndroidAutoTelemetry()`: Access to car telemetry data on Android Auto and Android Automotive.
     ```tsx
     import {
       useAndroidAutoTelemetry,
       AndroidAutoTelemetryPermissions,
+      AndroidAutomotiveTelemetryPermissions,
     } from '@iternio/react-native-auto-play';
+    import Config from 'react-native-config';
 
     const MyComponent = () => {
       const { telemetry, permissionsGranted, error } = useAndroidAutoTelemetry({
-        requiredPermissions: [
-          AndroidAutoTelemetryPermissions.Speed,
-          AndroidAutoTelemetryPermissions.Energy,
-          AndroidAutoTelemetryPermissions.Odometer,
-        ],
+        requiredPermissions:
+          Config.isAutomotiveApp === 'true'
+            ? [
+                AndroidAutomotiveTelemetryPermissions.Info,
+                AndroidAutomotiveTelemetryPermissions.Speed,
+                AndroidAutomotiveTelemetryPermissions.Energy,
+                AndroidAutomotiveTelemetryPermissions.ExteriorEnvironment,
+                AndroidAutomotiveTelemetryPermissions.EnergyPorts,
+              ]
+            : [
+                AndroidAutoTelemetryPermissions.Speed,
+                AndroidAutoTelemetryPermissions.Energy,
+                AndroidAutoTelemetryPermissions.Odometer,
+              ],
+        automotivePermissionRequest:
+          Config.isAutomotiveApp === 'true'
+            ? {
+                cancelButtonText: 'Cancel',
+                grantButtonText: 'Grant',
+                message: 'Grant permission for vehicle telemetry access.',
+              }
+            : undefined,
       });
 
       if (!permissionsGranted) {
@@ -714,6 +811,14 @@ new ListTemplate({
           <Text>Battery Level: {telemetry?.batteryLevel?.value}%</Text>
           <Text>Range: {telemetry?.range?.value} km</Text>
           <Text>Odometer: {telemetry?.odometer?.value} km</Text>
+          <Text>Selected Gear: {telemetry?.selectedGear?.value}</Text>
+          <Text>Outside Temperature: {telemetry?.envOutsideTemperature?.value}°C</Text>
+          <Text>EV Charge Port Connected: {String(telemetry?.evChargePortConnected?.value)}</Text>
+          <Text>EV Battery Charge Rate: {telemetry?.evBatteryInstantaneousChargeRate?.value} kW</Text>
+          <Text>Parking Brake On: {String(telemetry?.parkingBrakeOn?.value)}</Text>
+          <Text>Vehicle Name: {telemetry?.vehicle?.name?.value}</Text>
+          <Text>Vehicle Manufacturer: {telemetry?.vehicle?.manufacturer?.value}</Text>
+          <Text>Vehicle Year: {telemetry?.vehicle?.year?.value}</Text>
         </View>
       );
     }
@@ -725,6 +830,15 @@ new ListTemplate({
     - `range`: Range in km.
     - `odometer`: Odometer in km.
     - `vehicle`: Vehicle information (model name, model year, manufacturer).
+    - `selectedGear`: The currently selected gear, one of the `VehicleGear` enum:
+       - Neutral = 1
+       - Reverse = 2
+       - Park = 4
+       - Drive = 8
+    - `envOutsideTemperature`: The outside temperature in °C.
+    - `evChargePortConnected`: Whether the EV charge port is connected.
+    - `evBatteryInstantaneousChargeRate`: The instantaneous charge rate of the EV battery in kW.
+    - `parkingBrakeOn`: Whether the parking brake is on.
 
 
 ### Scenes
@@ -761,7 +875,7 @@ CarPlayDashboard.setButtons([
 
 ### iOS
 
--   **Broken exceptions with `react-native-skia`**: When using `react-native-skia` up to version `2.4.7`, exceptions on iOS are not reported correctly. This is fixed in newer versions of `react-native-skia`. For more details, see this [pull request](https://github.com/Shopify/react-native-skia/pull/3595).
+-   **Broken exceptions with `react-native-skia`**: When using `react-native-skia` up to version `2.4.14`, exceptions on iOS are not reported correctly. This is fixed in newer versions of `react-native-skia`. For more details, see this [pull request](https://github.com/Shopify/react-native-skia/pull/3595) and [issue](https://github.com/Shopify/react-native-skia/issues/3635).
 -   **AppState on iOS**: The `AppState` module from React Native does not work correctly on iOS because this library uses scenes, which are not supported by the stock `AppState` module. This library provides a custom state listener that works for both Android and iOS. Use `HybridAutoPlay.addListenerRenderState` instead of `AppState`.
 -   **Timers stop on screen lock**: iOS stops all timers when the device's main screen is turned off. To ensure timers continue to run (which is often necessary for background tasks related to autoplay), a patch for `react-native` is required. A patch is included in the root `patches/` directory and can be applied using `patch-package`.
 -   **expo-splash-screen stuck on iOS**: The `expo-splash-screen` module is broken on iOS because it does not support scenes, which are used by this library. This can cause the splash screen to be stuck on either the mobile device or on CarPlay. To fix this, a patch for `expo-splash-screen` is included in the root `patches/` directory and can be applied using `patch-package`. After applying the patch, you can hide the splash screen for a specific scene by passing the module name to the `hide` or `hideAsync` function. The module name can be one of the values from the `AutoPlayModules` enum or the UUID of a cluster screen.
@@ -775,6 +889,10 @@ CarPlayDashboard.setButtons([
     // Hide the splash screen for the CarPlay screen
     hideAsync(AutoPlayModules.AutoPlayRoot);
     ```
+### Android
+-   **Broken exceptions with `react-native`** up to version 0.79
+When using react-native before 0.80.0 exceptions are broken and are reported as `Unknown runtime_error` or similar.
+See [this issue](https://github.com/mrousavy/nitro/issues/382) for details.
 
 ## Contributing
 

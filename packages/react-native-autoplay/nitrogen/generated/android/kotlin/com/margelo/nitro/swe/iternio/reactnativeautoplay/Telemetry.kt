@@ -19,26 +19,41 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class Telemetry(
   @DoNotStrip
   @Keep
-  val speed: NumericTelemetryItem?,
+  val speed: NumericTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val fuelLevel: NumericTelemetryItem?,
+  val fuelLevel: NumericTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val batteryLevel: NumericTelemetryItem?,
+  val batteryLevel: NumericTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val range: NumericTelemetryItem?,
+  val range: NumericTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val odometer: NumericTelemetryItem?,
+  val odometer: NumericTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val vehicle: VehicleTelemetryItem?
+  val vehicle: VehicleTelemetryItem? = null,
+  @DoNotStrip
+  @Keep
+  val selectedGear: NumericTelemetryItem? = null,
+  @DoNotStrip
+  @Keep
+  val envOutsideTemperature: NumericTelemetryItem? = null,
+  @DoNotStrip
+  @Keep
+  val evChargePortConnected: BooleanTelemetryItem? = null,
+  @DoNotStrip
+  @Keep
+  val evBatteryInstantaneousChargeRate: NumericTelemetryItem? = null,
+  @DoNotStrip
+  @Keep
+  val parkingBrakeOn: BooleanTelemetryItem? = null
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */
@@ -46,8 +61,8 @@ data class Telemetry(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(speed: NumericTelemetryItem?, fuelLevel: NumericTelemetryItem?, batteryLevel: NumericTelemetryItem?, range: NumericTelemetryItem?, odometer: NumericTelemetryItem?, vehicle: VehicleTelemetryItem?): Telemetry {
-      return Telemetry(speed, fuelLevel, batteryLevel, range, odometer, vehicle)
+    private fun fromCpp(speed: NumericTelemetryItem?, fuelLevel: NumericTelemetryItem?, batteryLevel: NumericTelemetryItem?, range: NumericTelemetryItem?, odometer: NumericTelemetryItem?, vehicle: VehicleTelemetryItem?, selectedGear: NumericTelemetryItem?, envOutsideTemperature: NumericTelemetryItem?, evChargePortConnected: BooleanTelemetryItem?, evBatteryInstantaneousChargeRate: NumericTelemetryItem?, parkingBrakeOn: BooleanTelemetryItem?): Telemetry {
+      return Telemetry(speed, fuelLevel, batteryLevel, range, odometer, vehicle, selectedGear, envOutsideTemperature, evChargePortConnected, evBatteryInstantaneousChargeRate, parkingBrakeOn)
     }
   }
 }

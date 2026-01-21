@@ -19,31 +19,31 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class NitroBaseMapTemplateConfig(
   @DoNotStrip
   @Keep
-  val mapButtons: Array<NitroMapButton>?,
+  val mapButtons: Array<NitroMapButton>? = null,
   @DoNotStrip
   @Keep
-  val headerActions: Array<NitroAction>?,
+  val headerActions: Array<NitroAction>? = null,
   @DoNotStrip
   @Keep
-  val onDidChangePanningInterface: Func_void_bool?,
+  val onDidChangePanningInterface: Func_void_bool? = null,
   @DoNotStrip
   @Keep
-  val onWillAppear: Func_void_std__optional_bool_?,
+  val onWillAppear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onWillDisappear: Func_void_std__optional_bool_?,
+  val onWillDisappear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onDidAppear: Func_void_std__optional_bool_?,
+  val onDidAppear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onDidDisappear: Func_void_std__optional_bool_?,
+  val onDidDisappear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onPopped: Func_void?,
+  val onPopped: Func_void? = null,
   @DoNotStrip
   @Keep
-  val autoDismissMs: Double?
+  val autoDismissMs: Double? = null
 ) {
   /**
    * Create a new instance of NitroBaseMapTemplateConfig from Kotlin
@@ -51,7 +51,7 @@ data class NitroBaseMapTemplateConfig(
   constructor(mapButtons: Array<NitroMapButton>?, headerActions: Array<NitroAction>?, onDidChangePanningInterface: ((isPanningInterfaceVisible: Boolean) -> Unit)?, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?):
          this(mapButtons, headerActions, onDidChangePanningInterface?.let { Func_void_bool_java(it) }, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs)
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

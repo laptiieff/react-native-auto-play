@@ -7,6 +7,8 @@
 
 #include "JHybridAndroidAutoTelemetrySpec.hpp"
 
+// Forward declaration of `PermissionRequestResult` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct PermissionRequestResult; }
 // Forward declaration of `Telemetry` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct Telemetry; }
 // Forward declaration of `NumericTelemetryItem` to properly resolve imports.
@@ -15,14 +17,21 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct NumericTele
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct VehicleTelemetryItem; }
 // Forward declaration of `StringTelemetryItem` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct StringTelemetryItem; }
+// Forward declaration of `BooleanTelemetryItem` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct BooleanTelemetryItem; }
 
 #include <functional>
 #include "JFunc_void.hpp"
 #include <NitroModules/JNICallable.hpp>
+#include "PermissionRequestResult.hpp"
+#include <NitroModules/Promise.hpp>
+#include <NitroModules/JPromise.hpp>
+#include "JPermissionRequestResult.hpp"
+#include <string>
+#include <vector>
 #include "Telemetry.hpp"
 #include <optional>
-#include <string>
-#include "JFunc_void_std__optional_Telemetry__std__optional_std__string_.hpp"
+#include "JFunc_void_std__optional_Telemetry_.hpp"
 #include "JTelemetry.hpp"
 #include "NumericTelemetryItem.hpp"
 #include "JNumericTelemetryItem.hpp"
@@ -30,6 +39,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct StringTelem
 #include "JVehicleTelemetryItem.hpp"
 #include "StringTelemetryItem.hpp"
 #include "JStringTelemetryItem.hpp"
+#include "BooleanTelemetryItem.hpp"
+#include "JBooleanTelemetryItem.hpp"
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
 
@@ -63,9 +74,9 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
   
 
   // Methods
-  std::function<void()> JHybridAndroidAutoTelemetrySpec::registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */, const std::optional<std::string>& /* error */)>& callback) {
-    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_std__optional_Telemetry__std__optional_std__string_::javaobject> /* callback */)>("registerTelemetryListener_cxx");
-    auto __result = method(_javaPart, JFunc_void_std__optional_Telemetry__std__optional_std__string__cxx::fromCpp(callback));
+  std::function<void()> JHybridAndroidAutoTelemetrySpec::registerTelemetryListener(const std::function<void(const std::optional<Telemetry>& /* tlm */)>& callback) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JFunc_void::javaobject>(jni::alias_ref<JFunc_void_std__optional_Telemetry_::javaobject> /* callback */)>("registerTelemetryListener_cxx");
+    auto __result = method(_javaPart, JFunc_void_std__optional_Telemetry__cxx::fromCpp(callback));
     return [&]() -> std::function<void()> {
       if (__result->isInstanceOf(JFunc_void_cxx::javaClassStatic())) [[likely]] {
         auto downcast = jni::static_ref_cast<JFunc_void_cxx::javaobject>(__result);
@@ -74,6 +85,31 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         auto __resultRef = jni::make_global(__result);
         return JNICallable<JFunc_void, void()>(std::move(__resultRef));
       }
+    }();
+  }
+  std::shared_ptr<Promise<PermissionRequestResult>> JHybridAndroidAutoTelemetrySpec::requestAutomotivePermissions(const std::vector<std::string>& permissions, const std::string& message, const std::string& grantButtonText, const std::optional<std::string>& cancelButtonText) {
+    static const auto method = javaClassStatic()->getMethod<jni::local_ref<JPromise::javaobject>(jni::alias_ref<jni::JArrayClass<jni::JString>> /* permissions */, jni::alias_ref<jni::JString> /* message */, jni::alias_ref<jni::JString> /* grantButtonText */, jni::alias_ref<jni::JString> /* cancelButtonText */)>("requestAutomotivePermissions");
+    auto __result = method(_javaPart, [&]() {
+      size_t __size = permissions.size();
+      jni::local_ref<jni::JArrayClass<jni::JString>> __array = jni::JArrayClass<jni::JString>::newArray(__size);
+      for (size_t __i = 0; __i < __size; __i++) {
+        const auto& __element = permissions[__i];
+        auto __elementJni = jni::make_jstring(__element);
+        __array->setElement(__i, *__elementJni);
+      }
+      return __array;
+    }(), jni::make_jstring(message), jni::make_jstring(grantButtonText), cancelButtonText.has_value() ? jni::make_jstring(cancelButtonText.value()) : nullptr);
+    return [&]() {
+      auto __promise = Promise<PermissionRequestResult>::create();
+      __result->cthis()->addOnResolvedListener([=](const jni::alias_ref<jni::JObject>& __boxedResult) {
+        auto __result = jni::static_ref_cast<JPermissionRequestResult>(__boxedResult);
+        __promise->resolve(__result->toCpp());
+      });
+      __result->cthis()->addOnRejectedListener([=](const jni::alias_ref<jni::JThrowable>& __throwable) {
+        jni::JniException __jniError(__throwable);
+        __promise->reject(std::make_exception_ptr(__jniError));
+      });
+      return __promise;
     }();
   }
 

@@ -37,11 +37,26 @@ type StringTelemetryItem = {
   value: string;
 };
 
+type BooleanTelemetryItem = {
+  /**
+   * timestamp in seconds when the value was received on native side
+   */
+  timestamp: number;
+  value: boolean;
+};
+
 type VehicleTelemetryItem = {
   name?: StringTelemetryItem;
   year?: NumericTelemetryItem;
   manufacturer?: StringTelemetryItem;
 };
+
+export enum VehicleGear {
+  Neutral = 1,
+  Reverse = 2,
+  Park = 4,
+  Drive = 8,
+}
 
 export type Telemetry = {
   /**
@@ -68,4 +83,18 @@ export type Telemetry = {
    * Vehicle information
    */
   vehicle?: VehicleTelemetryItem;
+  /**
+   * one of VehicleGear enum
+   */
+  selectedGear?: NumericTelemetryItem;
+  /**
+   * Outside temperature in celsius.
+   */
+  envOutsideTemperature?: NumericTelemetryItem;
+  evChargePortConnected?: BooleanTelemetryItem;
+  /**
+   * EV instantaneous charge rate in kW.
+   */
+  evBatteryInstantaneousChargeRate?: NumericTelemetryItem;
+  parkingBrakeOn?: BooleanTelemetryItem;
 };

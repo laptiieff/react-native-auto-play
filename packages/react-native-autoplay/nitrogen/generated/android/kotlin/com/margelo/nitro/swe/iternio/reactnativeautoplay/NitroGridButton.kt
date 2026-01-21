@@ -33,7 +33,7 @@ data class NitroGridButton(
   constructor(title: AutoText, image: NitroImage, onPress: () -> Unit):
          this(title, image, Func_void_java(onPress))
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

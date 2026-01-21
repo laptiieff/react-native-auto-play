@@ -19,7 +19,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class AssetImage(
   @DoNotStrip
   @Keep
-  val color: NitroColor?,
+  val color: NitroColor? = null,
   @DoNotStrip
   @Keep
   val packager_asset: Boolean,
@@ -38,7 +38,7 @@ data class AssetImage(
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

@@ -13,7 +13,7 @@ import {
   actionStopNavigation,
 } from './state/navigationSlice';
 import { useAppDispatch, useAppSelector } from './state/store';
-import { TelemetryView } from './TelemetryView';
+import TelemetryView from './TelemetryView';
 
 function App() {
   const isDarkMode = useColorScheme() === 'dark';

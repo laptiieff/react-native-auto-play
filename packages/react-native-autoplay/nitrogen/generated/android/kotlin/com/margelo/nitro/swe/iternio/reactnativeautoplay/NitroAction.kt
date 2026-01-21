@@ -19,13 +19,13 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class NitroAction(
   @DoNotStrip
   @Keep
-  val title: String?,
+  val title: String? = null,
   @DoNotStrip
   @Keep
-  val image: Variant_GlyphImage_AssetImage?,
+  val image: Variant_GlyphImage_AssetImage? = null,
   @DoNotStrip
   @Keep
-  val enabled: Boolean?,
+  val enabled: Boolean? = null,
   @DoNotStrip
   @Keep
   val onPress: Func_void,
@@ -34,13 +34,13 @@ data class NitroAction(
   val type: NitroActionType,
   @DoNotStrip
   @Keep
-  val alignment: NitroAlignment?,
+  val alignment: NitroAlignment? = null,
   @DoNotStrip
   @Keep
-  val flags: Double?,
+  val flags: Double? = null,
   @DoNotStrip
   @Keep
-  val style: NitroButtonStyle?
+  val style: NitroButtonStyle? = null
 ) {
   /**
    * Create a new instance of NitroAction from Kotlin
@@ -48,7 +48,7 @@ data class NitroAction(
   constructor(title: String?, image: Variant_GlyphImage_AssetImage?, enabled: Boolean?, onPress: () -> Unit, type: NitroActionType, alignment: NitroAlignment?, flags: Double?, style: NitroButtonStyle?):
          this(title, image, enabled, Func_void_java(onPress), type, alignment, flags, style)
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

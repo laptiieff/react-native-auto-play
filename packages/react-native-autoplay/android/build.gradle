@@ -124,7 +124,19 @@ android {
           "${project.buildDir}/generated/source/codegen/java"
         ]
       }
+
+      if (getExtOrDefault("isAutomotiveApp") == "true") {
+        java.srcDirs += 'src/automotive/java'
+        manifest.srcFile 'src/automotive/AndroidManifest.xml'
+      } else {
+        java.srcDirs += 'src/auto/java'
+        manifest.srcFile 'src/main/AndroidManifest.xml'
+      }
     }
+  }
+
+  if (getExtOrDefault("isAutomotiveApp") == "true") {
+    useLibrary 'android.car'
   }
 }
 
@@ -132,7 +144,6 @@ repositories {
   mavenCentral()
   google()
 }
-
 
 dependencies {
   // For < 0.71, this will be from the local maven repo

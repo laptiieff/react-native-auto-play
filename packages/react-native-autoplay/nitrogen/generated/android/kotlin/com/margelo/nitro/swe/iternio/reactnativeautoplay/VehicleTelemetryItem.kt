@@ -19,17 +19,17 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class VehicleTelemetryItem(
   @DoNotStrip
   @Keep
-  val name: StringTelemetryItem?,
+  val name: StringTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val year: NumericTelemetryItem?,
+  val year: NumericTelemetryItem? = null,
   @DoNotStrip
   @Keep
-  val manufacturer: StringTelemetryItem?
+  val manufacturer: StringTelemetryItem? = null
 ) {
   /* primary constructor */
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

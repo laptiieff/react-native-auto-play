@@ -27,7 +27,7 @@ data class TripSelectorCallback(
   constructor(setSelectedTrip: (id: String) -> Unit):
          this(Func_void_std__string_java(setSelectedTrip))
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

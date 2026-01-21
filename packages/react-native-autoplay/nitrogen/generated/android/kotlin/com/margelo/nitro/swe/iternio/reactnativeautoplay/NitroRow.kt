@@ -22,25 +22,25 @@ data class NitroRow(
   val title: AutoText,
   @DoNotStrip
   @Keep
-  val detailedText: AutoText?,
+  val detailedText: AutoText? = null,
   @DoNotStrip
   @Keep
-  val browsable: Boolean?,
+  val browsable: Boolean? = null,
   @DoNotStrip
   @Keep
   val enabled: Boolean,
   @DoNotStrip
   @Keep
-  val image: Variant_GlyphImage_AssetImage?,
+  val image: Variant_GlyphImage_AssetImage? = null,
   @DoNotStrip
   @Keep
-  val checked: Boolean?,
+  val checked: Boolean? = null,
   @DoNotStrip
   @Keep
-  val onPress: Func_void_std__optional_bool_?,
+  val onPress: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val selected: Boolean?
+  val selected: Boolean? = null
 ) {
   /**
    * Create a new instance of NitroRow from Kotlin
@@ -48,7 +48,7 @@ data class NitroRow(
   constructor(title: AutoText, detailedText: AutoText?, browsable: Boolean?, enabled: Boolean, image: Variant_GlyphImage_AssetImage?, checked: Boolean?, onPress: ((checked: Boolean?) -> Unit)?, selected: Boolean?):
          this(title, detailedText, browsable, enabled, image, checked, onPress?.let { Func_void_std__optional_bool__java(it) }, selected)
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */

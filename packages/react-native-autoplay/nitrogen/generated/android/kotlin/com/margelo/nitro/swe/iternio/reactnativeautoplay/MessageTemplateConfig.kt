@@ -22,40 +22,40 @@ data class MessageTemplateConfig(
   val id: String,
   @DoNotStrip
   @Keep
-  val onWillAppear: Func_void_std__optional_bool_?,
+  val onWillAppear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onWillDisappear: Func_void_std__optional_bool_?,
+  val onWillDisappear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onDidAppear: Func_void_std__optional_bool_?,
+  val onDidAppear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onDidDisappear: Func_void_std__optional_bool_?,
+  val onDidDisappear: Func_void_std__optional_bool_? = null,
   @DoNotStrip
   @Keep
-  val onPopped: Func_void?,
+  val onPopped: Func_void? = null,
   @DoNotStrip
   @Keep
-  val autoDismissMs: Double?,
+  val autoDismissMs: Double? = null,
   @DoNotStrip
   @Keep
-  val headerActions: Array<NitroAction>?,
+  val headerActions: Array<NitroAction>? = null,
   @DoNotStrip
   @Keep
-  val title: AutoText?,
+  val title: AutoText? = null,
   @DoNotStrip
   @Keep
   val message: AutoText,
   @DoNotStrip
   @Keep
-  val actions: Array<NitroAction>?,
+  val actions: Array<NitroAction>? = null,
   @DoNotStrip
   @Keep
-  val image: Variant_GlyphImage_AssetImage?,
+  val image: Variant_GlyphImage_AssetImage? = null,
   @DoNotStrip
   @Keep
-  val mapConfig: NitroBaseMapTemplateConfig?
+  val mapConfig: NitroBaseMapTemplateConfig? = null
 ) {
   /**
    * Create a new instance of MessageTemplateConfig from Kotlin
@@ -63,7 +63,7 @@ data class MessageTemplateConfig(
   constructor(id: String, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?, headerActions: Array<NitroAction>?, title: AutoText?, message: AutoText, actions: Array<NitroAction>?, image: Variant_GlyphImage_AssetImage?, mapConfig: NitroBaseMapTemplateConfig?):
          this(id, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs, headerActions, title, message, actions, image, mapConfig)
 
-  private companion object {
+  companion object {
     /**
      * Constructor called from C++
      */
