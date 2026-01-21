@@ -28,11 +28,11 @@ data class GlyphImage(
   val backgroundColor: NitroColor,
   @DoNotStrip
   @Keep
-  val fontScale: Double? = null
+  val fontScale: Double?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

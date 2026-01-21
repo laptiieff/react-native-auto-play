@@ -22,7 +22,7 @@ data class NavigationAlertAction(
   val title: String,
   @DoNotStrip
   @Keep
-  val style: AlertActionStyle? = null,
+  val style: AlertActionStyle?,
   @DoNotStrip
   @Keep
   val onPress: Func_void
@@ -33,7 +33,7 @@ data class NavigationAlertAction(
   constructor(title: String, style: AlertActionStyle?, onPress: () -> Unit):
          this(title, style, Func_void_java(onPress))
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

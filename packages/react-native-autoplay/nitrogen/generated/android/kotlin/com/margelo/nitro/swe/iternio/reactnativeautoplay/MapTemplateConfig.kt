@@ -22,58 +22,58 @@ data class MapTemplateConfig(
   val id: String,
   @DoNotStrip
   @Keep
-  val onWillAppear: Func_void_std__optional_bool_? = null,
+  val onWillAppear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onWillDisappear: Func_void_std__optional_bool_? = null,
+  val onWillDisappear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onDidAppear: Func_void_std__optional_bool_? = null,
+  val onDidAppear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onDidDisappear: Func_void_std__optional_bool_? = null,
+  val onDidDisappear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onPopped: Func_void? = null,
+  val onPopped: Func_void?,
   @DoNotStrip
   @Keep
-  val autoDismissMs: Double? = null,
+  val autoDismissMs: Double?,
   @DoNotStrip
   @Keep
-  val visibleTravelEstimate: VisibleTravelEstimate? = null,
+  val visibleTravelEstimate: VisibleTravelEstimate?,
   @DoNotStrip
   @Keep
-  val onDidPan: Func_void_Point_std__optional_Point_? = null,
+  val onDidPan: Func_void_Point_std__optional_Point_?,
   @DoNotStrip
   @Keep
-  val onDidUpdateZoomGestureWithCenter: Func_void_Point_double? = null,
+  val onDidUpdateZoomGestureWithCenter: Func_void_Point_double?,
   @DoNotStrip
   @Keep
-  val onClick: Func_void_Point? = null,
+  val onClick: Func_void_Point?,
   @DoNotStrip
   @Keep
-  val onDoubleClick: Func_void_Point? = null,
+  val onDoubleClick: Func_void_Point?,
   @DoNotStrip
   @Keep
-  val onAppearanceDidChange: Func_void_ColorScheme? = null,
+  val onAppearanceDidChange: Func_void_ColorScheme?,
   @DoNotStrip
   @Keep
   val onStopNavigation: Func_void,
   @DoNotStrip
   @Keep
-  val onAutoDriveEnabled: Func_void? = null,
+  val onAutoDriveEnabled: Func_void?,
   @DoNotStrip
   @Keep
-  val mapButtons: Array<NitroMapButton>? = null,
+  val mapButtons: Array<NitroMapButton>?,
   @DoNotStrip
   @Keep
-  val headerActions: Array<NitroAction>? = null,
+  val headerActions: Array<NitroAction>?,
   @DoNotStrip
   @Keep
-  val panButtonScrollPercentage: Double? = null,
+  val panButtonScrollPercentage: Double?,
   @DoNotStrip
   @Keep
-  val onDidChangePanningInterface: Func_void_bool? = null
+  val onDidChangePanningInterface: Func_void_bool?
 ) {
   /**
    * Create a new instance of MapTemplateConfig from Kotlin
@@ -81,7 +81,7 @@ data class MapTemplateConfig(
   constructor(id: String, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?, visibleTravelEstimate: VisibleTravelEstimate?, onDidPan: ((translation: Point, velocity: Point?) -> Unit)?, onDidUpdateZoomGestureWithCenter: ((center: Point, scale: Double) -> Unit)?, onClick: ((center: Point) -> Unit)?, onDoubleClick: ((center: Point) -> Unit)?, onAppearanceDidChange: ((colorScheme: ColorScheme) -> Unit)?, onStopNavigation: () -> Unit, onAutoDriveEnabled: (() -> Unit)?, mapButtons: Array<NitroMapButton>?, headerActions: Array<NitroAction>?, panButtonScrollPercentage: Double?, onDidChangePanningInterface: ((isPanningInterfaceVisible: Boolean) -> Unit)?):
          this(id, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs, visibleTravelEstimate, onDidPan?.let { Func_void_Point_std__optional_Point__java(it) }, onDidUpdateZoomGestureWithCenter?.let { Func_void_Point_double_java(it) }, onClick?.let { Func_void_Point_java(it) }, onDoubleClick?.let { Func_void_Point_java(it) }, onAppearanceDidChange?.let { Func_void_ColorScheme_java(it) }, Func_void_java(onStopNavigation), onAutoDriveEnabled?.let { Func_void_java(it) }, mapButtons, headerActions, panButtonScrollPercentage, onDidChangePanningInterface?.let { Func_void_bool_java(it) })
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

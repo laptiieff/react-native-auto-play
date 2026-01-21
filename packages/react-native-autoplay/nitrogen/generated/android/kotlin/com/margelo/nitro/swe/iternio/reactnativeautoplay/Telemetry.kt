@@ -19,41 +19,41 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class Telemetry(
   @DoNotStrip
   @Keep
-  val speed: NumericTelemetryItem? = null,
+  val speed: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val fuelLevel: NumericTelemetryItem? = null,
+  val fuelLevel: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val batteryLevel: NumericTelemetryItem? = null,
+  val batteryLevel: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val range: NumericTelemetryItem? = null,
+  val range: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val odometer: NumericTelemetryItem? = null,
+  val odometer: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val vehicle: VehicleTelemetryItem? = null,
+  val vehicle: VehicleTelemetryItem?,
   @DoNotStrip
   @Keep
-  val selectedGear: NumericTelemetryItem? = null,
+  val selectedGear: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val envOutsideTemperature: NumericTelemetryItem? = null,
+  val envOutsideTemperature: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val evChargePortConnected: BooleanTelemetryItem? = null,
+  val evChargePortConnected: BooleanTelemetryItem?,
   @DoNotStrip
   @Keep
-  val evBatteryInstantaneousChargeRate: NumericTelemetryItem? = null,
+  val evBatteryInstantaneousChargeRate: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val parkingBrakeOn: BooleanTelemetryItem? = null
+  val parkingBrakeOn: BooleanTelemetryItem?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

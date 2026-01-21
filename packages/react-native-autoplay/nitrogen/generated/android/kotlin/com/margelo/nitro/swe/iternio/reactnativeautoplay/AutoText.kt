@@ -22,14 +22,14 @@ data class AutoText(
   val text: String,
   @DoNotStrip
   @Keep
-  val distance: Distance? = null,
+  val distance: Distance?,
   @DoNotStrip
   @Keep
-  val duration: Double? = null
+  val duration: Double?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

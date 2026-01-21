@@ -19,7 +19,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 data class NitroSection(
   @DoNotStrip
   @Keep
-  val title: String? = null,
+  val title: String?,
   @DoNotStrip
   @Keep
   val items: Array<NitroRow>,
@@ -29,7 +29,7 @@ data class NitroSection(
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

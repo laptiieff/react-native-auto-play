@@ -22,11 +22,11 @@ data class NitroAttributedString(
   val text: String,
   @DoNotStrip
   @Keep
-  val images: Array<NitroAttributedStringImage>? = null
+  val images: Array<NitroAttributedStringImage>?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */
