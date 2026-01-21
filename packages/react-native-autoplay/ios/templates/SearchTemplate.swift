@@ -7,15 +7,15 @@
 
 import CarPlay
 
-class SearchTemplate: NSObject, AutoPlayTemplate, CPSearchTemplateDelegate {
+class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
     var template: CPSearchTemplate
     var config: SearchTemplateConfig
 
-    var autoDismissMs: Double? {
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
 
-    func getTemplate() -> CPTemplate {
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -35,7 +35,7 @@ class SearchTemplate: NSObject, AutoPlayTemplate, CPSearchTemplateDelegate {
     }
 
     @MainActor
-    func invalidate() {
+    override func _invalidate() {
         // if we have pushed a list template update it
         if let listTemplate = pushedListTemplate {
             listTemplate.updateSections(sections: [config.results])
@@ -55,26 +55,26 @@ class SearchTemplate: NSObject, AutoPlayTemplate, CPSearchTemplateDelegate {
         self.completionHandler = nil
     }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         self.pushedListTemplate = nil
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
         template.delegate = self
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
         template.delegate = nil
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 
@@ -140,17 +140,18 @@ class SearchTemplate: NSObject, AutoPlayTemplate, CPSearchTemplateDelegate {
         // execute callback after creating the template to avoid race condition in updateSearchResults
         config.onSearchTextSubmitted(searchText)
 
-        TemplateStore.addTemplate(
-            template: listTemplate,
-            templateId: listConfig.id
-        )
-
         // Push the template
         Task { @MainActor in
             do {
-                try await RootModule.withInterfaceController {
+                try await RootModule.withSceneAndInterfaceController {
+                    scene,
                     interfaceController in
-                    
+
+                    scene.templateStore.addTemplate(
+                        template: listTemplate,
+                        templateId: listConfig.id
+                    )
+
                     listTemplate.invalidate()
 
                     let _ = try await interfaceController.pushTemplate(
@@ -158,7 +159,8 @@ class SearchTemplate: NSObject, AutoPlayTemplate, CPSearchTemplateDelegate {
                         animated: true
                     )
                 }
-            } catch {
+            }
+            catch {
                 print("Failed to push list template: \(error)")
             }
         }

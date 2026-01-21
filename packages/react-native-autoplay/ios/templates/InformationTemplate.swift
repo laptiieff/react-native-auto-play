@@ -10,7 +10,7 @@ import CarPlay
 class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
     let template: CPInformationTemplate
     var config: InformationTemplateConfig
-    
+
     var barButtons: [NitroAction]? {
         get {
             return config.headerActions
@@ -20,12 +20,12 @@ class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
             setBarButtons(template: template, barButtons: newValue)
         }
     }
-    
-    var autoDismissMs: Double? {
+
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
-    
-    func getTemplate() -> CPTemplate {
+
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -41,28 +41,29 @@ class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
         )
     }
 
-    func invalidate() {
+    @MainActor
+    override func _invalidate() {
         setBarButtons(template: template, barButtons: barButtons)
         template.items = Parser.parseInformationItems(section: config.section)
     }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 

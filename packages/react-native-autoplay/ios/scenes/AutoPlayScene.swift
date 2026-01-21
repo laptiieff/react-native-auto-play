@@ -57,6 +57,7 @@ class AutoPlayScene: UIResponder {
         self.window = nil
         isConnected = false
 
+        templateStore.disconnect()
         SceneStore.removeScene(moduleName: moduleName)
     }
 
@@ -97,7 +98,7 @@ class AutoPlayScene: UIResponder {
             return
         }
         self.traitCollection = traitCollection
-        TemplateStore.traitCollectionDidChange()
+        templateStore.traitCollectionDidChange()
     }
 
     open func safeAreaInsetsDidChange(safeAreaInsets: UIEdgeInsets) {

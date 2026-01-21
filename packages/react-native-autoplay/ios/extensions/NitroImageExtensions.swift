@@ -12,22 +12,22 @@ protocol ImageProtocol {
 
 extension NitroImage: ImageProtocol {
     var glyphImage: GlyphImage? {
-        if case let .first(glyph) = self { return glyph }
+        if case .first(let glyph) = self { return glyph }
         return nil
     }
     var assetImage: AssetImage? {
-        if case let .second(asset) = self { return asset }
+        if case .second(let asset) = self { return asset }
         return nil
     }
 }
 
 extension Variant_GlyphImage_AssetImage: ImageProtocol {
     var glyphImage: GlyphImage? {
-        if case let .first(glyph) = self { return glyph }
+        if case .first(let glyph) = self { return glyph }
         return nil
     }
     var assetImage: AssetImage? {
-        if case let .second(asset) = self { return asset }
+        if case .second(let asset) = self { return asset }
         return nil
     }
 }

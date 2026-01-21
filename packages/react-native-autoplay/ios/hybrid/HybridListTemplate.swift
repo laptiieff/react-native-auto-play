@@ -10,10 +10,13 @@ import NitroModules
 class HybridListTemplate: HybridListTemplateSpec {
     func createListTemplate(config: ListTemplateConfig) throws {
         let template = ListTemplate(config: config)
-        TemplateStore.addTemplate(
-            template: template,
-            templateId: config.id
-        )
+
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.addTemplate(
+                template: template,
+                templateId: config.id
+            )
+        }
     }
 
     func updateListTemplateSections(
@@ -21,16 +24,12 @@ class HybridListTemplate: HybridListTemplateSpec {
         sections: [NitroSection]?
     ) throws -> Promise<Void> {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(templateId: templateId)
-                    as? ListTemplate
-            else {
-                throw AutoPlayError.invalidTemplateType(
-                    "\(templateId) is not a ListTemplate"
-                )
+            try await MainActor.run {
+                try RootModule.withAutoPlayTemplate(templateId: templateId) {
+                    (template: ListTemplate) in
+                    template.updateSections(sections: sections)
+                }
             }
-
-            await template.updateSections(sections: sections)
         }
     }
 }

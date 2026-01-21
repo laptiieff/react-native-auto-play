@@ -129,10 +129,12 @@ extension CPLane {
                     highlightedAngle: highlightedAngle,
                     isPreferred: isPreferred
                 )
-            } else {
+            }
+            else {
                 self.init(angles: angles)
             }
-        } else {
+        }
+        else {
             self.init()
             if let highlightedAngle = highlightedAngle {
                 self.primaryAngle = highlightedAngle

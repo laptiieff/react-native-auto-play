@@ -42,7 +42,8 @@ class SymbolFont {
         CTFontManagerRegisterGraphicsFont(font, &error)
         if let error = error?.takeUnretainedValue() {
             print("Failed to register font: \(error)")
-        } else {
+        }
+        else {
             print("Font \(font.fullName as String? ?? "unknown") registered")
         }
 

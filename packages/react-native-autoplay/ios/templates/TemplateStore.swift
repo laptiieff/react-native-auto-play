@@ -7,27 +7,30 @@
 import CarPlay
 
 class TemplateStore {
-    private static var store: [String: AutoPlayTemplate] = [:]
+    private var store: [String: AutoPlayTemplate] = [:]
 
-    static func getCPTemplate(templateId key: String) -> CPTemplate? {
+    func getCPTemplate(templateId key: String) -> CPTemplate? {
         return store[key]?.getTemplate()
     }
 
-    static func getTemplate(templateId: String) -> AutoPlayTemplate? {
-        return store[templateId]
+    func getTemplate(templateId: String) throws -> AutoPlayTemplate {
+        if let template = store[templateId] {
+            return template
+        }
+        throw AutoPlayError.templateNotFound(templateId)
     }
 
-    static func addTemplate(template: AutoPlayTemplate, templateId: String) {
+    func addTemplate(template: AutoPlayTemplate, templateId: String) {
         store[templateId] = template
     }
 
-    static func removeTemplate(templateId: String) {
+    func removeTemplate(templateId: String) {
         store[templateId]?.onPopped()
 
         store.removeValue(forKey: templateId)
     }
 
-    static func removeTemplates(templateIds: [String]) {
+    func removeTemplates(templateIds: [String]) {
         templateIds.forEach { templateId in
             store[templateId]?.onPopped()
         }
@@ -35,11 +38,16 @@ class TemplateStore {
         store = store.filter { !templateIds.contains($0.key) }
     }
 
-    static func purge() {
+    func purge() {
         store = store.filter { !($0.value.getTemplate() is CPSearchTemplate) }
     }
 
-    static func traitCollectionDidChange() {
+    @MainActor
+    func traitCollectionDidChange() {
         store.values.forEach { template in template.traitCollectionDidChange() }
+    }
+
+    func disconnect() {
+        store = [:]
     }
 }

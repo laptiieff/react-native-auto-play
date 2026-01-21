@@ -7,23 +7,31 @@
 
 import CarPlay
 
-protocol AutoPlayTemplate {
-    var autoDismissMs: Double? { get }
+class AutoPlayTemplate: NSObject {
+    public private(set) var autoDismissMs: Double?
 
-    @MainActor func invalidate()
-    func onWillAppear(animated: Bool)
-    func onDidAppear(animated: Bool)
-    func onWillDisappear(animated: Bool)
-    func onDidDisappear(animated: Bool)
-    func onPopped()
-    func traitCollectionDidChange()
-    func getTemplate() -> CPTemplate
-}
-
-extension AutoPlayTemplate {
-    func traitCollectionDidChange() {
-        // this can be implemented optionally
+    func getTemplate() -> CPTemplate {
+        fatalError("getTemplate not implemented")
     }
+
+    @MainActor final func invalidate() {
+        if SceneStore.getRootScene() == nil {
+            return
+        }
+
+        _invalidate()
+    }
+
+    /// Override in subclasses to perform template invalidation.
+    /// Do not call this method directly. Call `invalidate()` instead.
+    @MainActor func _invalidate() {}
+    @MainActor func traitCollectionDidChange() {}
+
+    func onWillAppear(animated: Bool) {}
+    func onDidAppear(animated: Bool) {}
+    func onWillDisappear(animated: Bool) {}
+    func onDidDisappear(animated: Bool) {}
+    func onPopped() {}
 }
 
 protocol AutoPlayHeaderProviding {

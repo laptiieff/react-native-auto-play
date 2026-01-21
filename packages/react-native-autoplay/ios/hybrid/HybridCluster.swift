@@ -62,7 +62,8 @@ class HybridCluster: HybridClusterSpec {
                     )
                     try scene?.initRootView()
                 }
-            } else {
+            }
+            else {
                 throw AutoPlayError.unsupportedVersion(
                     "Cluster support only available on iOS >= 15.4"
                 )
@@ -83,7 +84,8 @@ class HybridCluster: HybridClusterSpec {
                 attributedInactiveDescriptionVariants:
                     attributedInactiveDescriptionVariants
             )
-        } else {
+        }
+        else {
             throw AutoPlayError.unsupportedVersion(
                 "Cluster support only available on iOS >= 15.4"
             )
