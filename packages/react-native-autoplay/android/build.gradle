@@ -162,5 +162,8 @@ dependencies {
     println("☎️ Enjoy your nitro powered Android Auto app!")
     implementation "androidx.car.app:app-projected:1.7.0"
   }
+
+  implementation 'com.google.android.gms:play-services-base:18.3.0'
+  implementation 'com.google.android.gms:play-services-auth:21.0.0'
 }
 

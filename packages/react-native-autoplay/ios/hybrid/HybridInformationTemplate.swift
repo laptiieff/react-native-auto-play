@@ -11,10 +11,13 @@ class HybridInformationTemplate: HybridInformationTemplateSpec {
 
     func createInformationTemplate(config: InformationTemplateConfig) throws {
         let template = InformationTemplate(config: config)
-        TemplateStore.addTemplate(
-            template: template,
-            templateId: config.id
-        )
+
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.addTemplate(
+                template: template,
+                templateId: config.id
+            )
+        }
     }
 
     func updateInformationTemplateSections(
@@ -22,16 +25,12 @@ class HybridInformationTemplate: HybridInformationTemplateSpec {
         section: NitroSection
     ) throws -> Promise<Void> {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(templateId: templateId)
-                    as? InformationTemplate
-            else {
-                throw AutoPlayError.invalidTemplateType(
-                    "\(templateId) is not an InformationTemplate"
-                )
+            try await MainActor.run {
+                try RootModule.withAutoPlayTemplate(templateId: templateId) {
+                    (template: InformationTemplate) in
+                    template.updateSection(section: section)
+                }
             }
-
-            await template.updateSection(section: section)
         }
     }
 }

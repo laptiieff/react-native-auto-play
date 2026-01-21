@@ -79,7 +79,8 @@ class Parser {
 
                 if let image = image {
                     button = CPBarButton(image: image) { _ in action.onPress() }
-                } else {
+                }
+                else {
                     button = CPBarButton(title: action.title ?? "") { _ in
                         action.onPress()
                     }

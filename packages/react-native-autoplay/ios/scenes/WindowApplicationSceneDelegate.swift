@@ -53,7 +53,7 @@ class WindowApplicationSceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let urlContext = URLContexts.first else { return }
         NitroLinkingManager.shared().openURL(urlContext)
     }
-    
+
     func scene(
         _ scene: UIScene,
         continue userActivity: NSUserActivity

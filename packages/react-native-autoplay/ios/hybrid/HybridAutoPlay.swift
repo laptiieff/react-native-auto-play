@@ -117,17 +117,14 @@ class HybridAutoPlay: HybridAutoPlaySpec {
     // MARK: set/push/pop templates
     func setRootTemplate(templateId: String) throws -> Promise<Void> {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(
-                    templateId: templateId
-                )
-            else {
-                throw AutoPlayError.templateNotFound(templateId)
-            }
-
             try await RootModule.withSceneAndInterfaceController {
                 scene,
                 interfaceController in
+
+                let template = try await scene.templateStore.getTemplate(
+                    templateId: templateId
+                )
+
                 let carPlayTemplate = template.getTemplate()
 
                 if carPlayTemplate is CPMapTemplate {
@@ -140,14 +137,8 @@ class HybridAutoPlay: HybridAutoPlaySpec {
                     carPlayTemplate,
                     animated: false
                 )
-            }
 
-            DispatchQueue.main.async {
-                if let template = TemplateStore.getTemplate(
-                    templateId: templateId
-                ) {
-                    template.invalidate()
-                }
+                await template.invalidate()
             }
         }
     }
@@ -156,41 +147,36 @@ class HybridAutoPlay: HybridAutoPlaySpec {
         -> NitroModules.Promise<Void>
     {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(
+            return try await RootModule.withSceneAndInterfaceController {
+                scene,
+                interfaceController in
+
+                let template = try await scene.templateStore.getTemplate(
                     templateId: templateId
                 )
-            else {
-                throw AutoPlayError.templateNotFound(templateId)
-            }
 
-            await template.invalidate()
-
-            return try await RootModule.withInterfaceController {
-                interfaceController in
+                await template.invalidate()
 
                 let carPlayTemplate = template.getTemplate()
 
                 if carPlayTemplate is CPAlertTemplate {
-                    let animated = try await
-                        !interfaceController.dismissTemplate(
-                            animated: false
-                        )
+                    let animated = try await !interfaceController.dismissTemplate(
+                        animated: false
+                    )
 
                     let _ = try await interfaceController.presentTemplate(
                         carPlayTemplate,
                         animated: animated
                     )
-                } else {
+                }
+                else {
                     let _ = try await interfaceController.pushTemplate(
                         carPlayTemplate,
                         animated: true
                     )
                 }
 
-                if let autoDismissMs = TemplateStore.getTemplate(
-                    templateId: templateId
-                )?.autoDismissMs {
+                if let autoDismissMs = template.autoDismissMs {
                     Task { @MainActor in
                         try await Task.sleep(
                             nanoseconds: UInt64(autoDismissMs) * 1_000_000
@@ -229,8 +215,7 @@ class HybridAutoPlay: HybridAutoPlaySpec {
         }
     }
 
-    func popToRootTemplate(animate: Bool?) throws -> NitroModules.Promise<Void>
-    {
+    func popToRootTemplate(animate: Bool?) throws -> NitroModules.Promise<Void> {
         return Promise.async {
             try await RootModule.withInterfaceController {
                 interfaceController in
@@ -279,17 +264,21 @@ class HybridAutoPlay: HybridAutoPlaySpec {
         headerActions: [NitroAction]?
     ) throws -> Promise<Void> {
         return Promise.async {
-            try await MainActor.run {
-                guard
-                    var template = TemplateStore.getTemplate(
+            try await RootModule.withScene { rootScene in
+                try await MainActor.run {
+                    let template = try rootScene.templateStore.getTemplate(
                         templateId: templateId
-                    ) as? AutoPlayHeaderProviding
-                else {
-                    throw AutoPlayError.invalidTemplateType(
-                        "\(templateId) does not support header actions"
                     )
+
+                    guard var template = template as? AutoPlayHeaderProviding
+                    else {
+                        throw AutoPlayError.invalidTemplateType(
+                            "\(templateId) does not support header actions"
+                        )
+                    }
+
+                    template.barButtons = headerActions
                 }
-                template.barButtons = headerActions
             }
         }
     }

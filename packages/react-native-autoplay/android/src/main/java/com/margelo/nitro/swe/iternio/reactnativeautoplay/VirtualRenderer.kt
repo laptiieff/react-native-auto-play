@@ -328,15 +328,17 @@ class VirtualRenderer(
 
             var splashScreenView: View? = null
 
+            // Wrap applicationContext with app theme to support AppCompat widgets like ReactTextView
+            val appTheme = context.applicationContext.applicationInfo.theme
+            val themedContext = ContextThemeWrapper(context.applicationContext, appTheme)
+
             if (!isReactRootViewInitialized()) {
                 splashScreenView =
-                    if (isCluster) getClusterSplashScreen(context, height, width) else null
+                    if (isCluster) getClusterSplashScreen(themedContext, height, width) else null
 
                 val instanceManager =
-                    (context.applicationContext as ReactApplication).reactNativeHost.reactInstanceManager
-                // Wrap applicationContext with app theme to support AppCompat widgets like ReactTextView
-                val appTheme = context.applicationContext.applicationInfo.theme
-                val themedContext = ContextThemeWrapper(context.applicationContext, appTheme)
+                    (themedContext.applicationContext as ReactApplication).reactNativeHost.reactInstanceManager
+
                 reactRootView = ReactRootView(themedContext).apply {
                     layoutParams = FrameLayout.LayoutParams(
                         (this@MapPresentation.width / reactNativeScale).toInt(),
@@ -359,7 +361,7 @@ class VirtualRenderer(
                 (reactRootView.parent as? ViewGroup)?.removeView(reactRootView)
             }
 
-            val rootContainer = FrameLayout(context).apply {
+            val rootContainer = FrameLayout(themedContext).apply {
                 layoutParams = FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
                 )
@@ -387,17 +389,20 @@ class VirtualRenderer(
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
 
+            val appTheme = context.applicationContext.applicationInfo.theme
+            val themedContext = ContextThemeWrapper(context.applicationContext, appTheme)
+
             if (!this@VirtualRenderer::reactSurfaceImpl.isInitialized) {
-                reactSurfaceImpl = ReactSurfaceImpl(context, moduleName, initialProperties)
+                reactSurfaceImpl = ReactSurfaceImpl(themedContext, moduleName, initialProperties)
             }
 
             var splashScreenView: View? = null
 
             if (!this@VirtualRenderer::reactSurfaceView.isInitialized) {
                 splashScreenView =
-                    if (isCluster) getClusterSplashScreen(context, height, width) else null
+                    if (isCluster) getClusterSplashScreen(themedContext, height, width) else null
 
-                reactSurfaceView = ReactSurfaceView(context, reactSurfaceImpl).apply {
+                reactSurfaceView = ReactSurfaceView(themedContext, reactSurfaceImpl).apply {
                     layoutParams = FrameLayout.LayoutParams(
                         (width / reactNativeScale).toInt(), (height / reactNativeScale).toInt()
                     )
@@ -432,7 +437,7 @@ class VirtualRenderer(
                 (reactSurfaceView.parent as ViewGroup).removeView(reactSurfaceView)
             }
 
-            val rootContainer = FrameLayout(context).apply {
+            val rootContainer = FrameLayout(themedContext).apply {
                 layoutParams = FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
                 )

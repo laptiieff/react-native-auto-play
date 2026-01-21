@@ -19,10 +19,10 @@ class ViewUtils {
                 return function(appDelegate, selector, moduleName as NSString, initialProps as NSDictionary)
             }
         }
-        
+
         return nil
     }
-    
+
     static func showLaunchScreen(window: UIWindow) {
         if let name = Bundle.main.object(
             forInfoDictionaryKey: "UILaunchStoryboardName"

@@ -5,8 +5,6 @@ import androidx.car.app.model.GridItem
 import androidx.car.app.model.GridTemplate
 import androidx.car.app.model.ItemList
 import androidx.car.app.model.Template
-import androidx.car.app.navigation.model.MapController
-import androidx.car.app.navigation.model.MapWithContentTemplate
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.GridTemplateConfig
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.NitroAction
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.NitroGridButton

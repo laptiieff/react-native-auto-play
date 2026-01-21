@@ -24,25 +24,31 @@ class RootModule {
         try action(scene)
     }
 
+    static func withTemplateStore(
+        perform action: @escaping (TemplateStore) throws -> Void
+    ) throws {
+        try withScene { rootScene in
+            try action(rootScene.templateStore)
+        }
+    }
+
     static func withAutoPlayTemplate<T>(
         templateId: String,
         perform action: @escaping (T) throws -> Void
     ) throws {
-        guard
-            let template = TemplateStore.getTemplate(
+        try withScene { rootScene in
+            let template = try rootScene.templateStore.getTemplate(
                 templateId: templateId
             )
-        else {
-            throw AutoPlayError.templateNotFound(templateId)
-        }
 
-        guard let template = template as? T else {
-            throw AutoPlayError.invalidTemplateType(
-                "\(template) is not a \(T.self) template"
-            )
-        }
+            guard let template = template as? T else {
+                throw AutoPlayError.invalidTemplateType(
+                    "\(template) is not a \(T.self) template"
+                )
+            }
 
-        try action(template)
+            try action(template)
+        }
     }
 
     static func withTemplate<T: CPTemplate>(
@@ -53,7 +59,8 @@ class RootModule {
             (autoPlayTemplate: AutoPlayTemplate) in
             if let template = autoPlayTemplate.getTemplate() as? T {
                 try! action(template)
-            } else {
+            }
+            else {
                 throw AutoPlayError.invalidTemplateType(
                     "\(autoPlayTemplate) is not a \(T.self) template"
                 )

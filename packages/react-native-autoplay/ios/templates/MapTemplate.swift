@@ -11,7 +11,7 @@ struct NavigationAlertWrapper {
     let config: NitroNavigationAlert
 }
 
-class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
+class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     CPMapTemplateDelegate
 {
     let template: CPMapTemplate
@@ -29,11 +29,11 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
         }
     }
 
-    var autoDismissMs: Double? {
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
 
-    func getTemplate() -> CPTemplate {
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -58,7 +58,8 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
                 width: width,
                 height: height
             )
-        } else {
+        }
+        else {
             screenDimensions = CGSize(width: 0, height: 0)
         }
 
@@ -70,7 +71,8 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
     func onPanButtonPress() {
         if template.isPanningInterfaceVisible {
             template.dismissPanningInterface(animated: true)
-        } else {
+        }
+        else {
             template.showPanningInterface(animated: true)
         }
     }
@@ -119,7 +121,7 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
     }
 
     @MainActor
-    func invalidate() {
+    override func _invalidate() {
         if tripSelectorVisible {
             // ignore invalidate calls to not break the trip selectors back button
             return
@@ -153,27 +155,28 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
         }
     }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 
-    func traitCollectionDidChange() {
+    @MainActor
+    override func traitCollectionDidChange() {
         let traitCollection = SceneStore.getRootTraitCollection()
         let isDark = traitCollection.userInterfaceStyle == .dark
 
@@ -347,9 +350,9 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
             return
         }
 
-        let title = Parser.parseText(text: alertConfig.title)!
-        let subtitle = alertConfig.subtitle.map { subtitle in
-            [Parser.parseText(text: subtitle)!]
+        guard let title = Parser.parseText(text: alertConfig.title) else { return }
+        let subtitle = alertConfig.subtitle.flatMap { subtitle in
+            [Parser.parseText(text: subtitle)].compactMap { $0 }
         }
 
         let image = Parser.parseNitroImage(
@@ -393,7 +396,8 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
             template.dismissNavigationAlert(animated: true) { _ in
                 setNavigationAlert()
             }
-        } else {
+        }
+        else {
             setNavigationAlert()
         }
     }
@@ -411,10 +415,10 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
             return
         }
 
-        let title = Parser.parseText(text: title)!
+        guard let title = Parser.parseText(text: title) else { return }
         let subtitle =
-            subtitle.map { subtitle in
-                [Parser.parseText(text: subtitle)!]
+            subtitle.flatMap { subtitle in
+                [Parser.parseText(text: subtitle)].compactMap { $0 }
             } ?? []
 
         alert.updateTitleVariants([title], subtitleVariants: subtitle)
@@ -495,7 +499,7 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
     }
 
     func hideTripSelector() {
-        currentTripId = nil;
+        currentTripId = nil
         template.hideTripPreviews()
 
         tripSelectorVisible = false
@@ -511,13 +515,13 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
         using routeChoice: CPRouteChoice
     ) {
         let tripId = trip.id
-        
-        if (currentTripId != nil && currentTripId == tripId) {
+
+        if currentTripId != nil && currentTripId == tripId {
             return
         }
-        
+
         currentTripId = trip.id
-        
+
         let routeId = routeChoice.id
         self.onTripSelected?(tripId, routeId)
 
@@ -541,14 +545,14 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
         )
 
         startNavigation(trip: trip)
-        
+
         if let onTripStarted = self.onTripStarted {
             let tripId = trip.id
             let routeId = routeChoice.id
 
             onTripStarted(tripId, routeId)
         }
-        
+
         hideTripSelector()
     }
 
@@ -598,7 +602,8 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
 
         if #available(iOS 15.4, *) {
             maneuver.cardBackgroundColor = cardBackgroundColor
-        } else {
+        }
+        else {
             template.guidanceBackgroundColor = cardBackgroundColor
         }
 
@@ -654,10 +659,11 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
                 )
 
                 if index != maneuverIndex {
-                    let maneuver = navigationSession.upcomingManeuvers.first(
+                    if let maneuver = navigationSession.upcomingManeuvers.first(
                         where: { $0.id == nitroManeuver.id }
-                    )!
-                    upcomingManeuvers.append(maneuver)
+                    ) {
+                        upcomingManeuvers.append(maneuver)
+                    }
                 }
                 continue
             }
@@ -687,7 +693,8 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
                         secondaryManeuver.cardBackgroundColor =
                             maneuver.cardBackgroundColor
                         return [maneuver, secondaryManeuver]
-                    } else {
+                    }
+                    else {
                         return [maneuver]
                     }
                 }
@@ -705,7 +712,8 @@ class MapTemplate: NSObject, AutoPlayTemplate, AutoPlayHeaderProviding,
                 }
                 if laneGuidances.isEmpty {
                     navigationSession.currentLaneGuidance = nil
-                } else {
+                }
+                else {
                     navigationSession.add(laneGuidances)
                     navigationSession.currentLaneGuidance = laneGuidances.first
                 }

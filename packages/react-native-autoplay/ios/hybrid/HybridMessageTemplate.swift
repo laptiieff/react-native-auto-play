@@ -8,9 +8,12 @@
 class HybridMessageTemplate: HybridMessageTemplateSpec {
     func createMessageTemplate(config: MessageTemplateConfig) throws {
         let template = MessageTemplate(config: config)
-        TemplateStore.addTemplate(
-            template: template,
-            templateId: config.id
-        )
+
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.addTemplate(
+                template: template,
+                templateId: config.id
+            )
+        }
     }
 }

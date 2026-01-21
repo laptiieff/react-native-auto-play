@@ -21,11 +21,11 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
         }
     }
 
-    var autoDismissMs: Double? {
+    override var autoDismissMs: Double? {
         return config.autoDismissMs
     }
-    
-    func getTemplate() -> CPTemplate {
+
+    override func getTemplate() -> CPTemplate {
         return template
     }
 
@@ -44,61 +44,68 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
         if #available(iOS 26.0, *) {
             gridButtonHeight = CPGridTemplate.maximumGridButtonImageSize.height
-        } else {
+        }
+        else {
             gridButtonHeight = 44
         }
 
-        return buttons.map { button in
+        let traitCollection = SceneStore.getRootTraitCollection()
+
+        return buttons.compactMap { button in
             var image: UIImage?
 
             if let glyphImage = button.image.glyphImage {
                 image = SymbolFont.imageFromNitroImage(
                     image: glyphImage,
                     size: gridButtonHeight,
-                    traitCollection: SceneStore.getRootTraitCollection()
-                )!
+                    traitCollection: traitCollection
+                )
             }
 
             if let assetImage = button.image.assetImage {
                 image = Parser.parseAssetImage(
                     assetImage: assetImage,
-                    traitCollection: SceneStore.getRootTraitCollection()
+                    traitCollection: traitCollection
                 )
             }
 
+            guard let image = image else { return nil }
+            guard let title = Parser.parseText(text: button.title) else { return nil }
+
             return CPGridButton(
-                titleVariants: [Parser.parseText(text: button.title)!],
-                image: image!
+                titleVariants: [title],
+                image: image
             ) { _ in
                 button.onPress()
             }
         }
     }
 
-    func invalidate() {
+    @MainActor
+    override func _invalidate() {
         setBarButtons(template: template, barButtons: config.headerActions)
 
         let buttons = GridTemplate.parseButtons(buttons: config.buttons)
         template.updateGridButtons(buttons)
     }
 
-    func onWillAppear(animated: Bool) {
+    override func onWillAppear(animated: Bool) {
         config.onWillAppear?(animated)
     }
 
-    func onDidAppear(animated: Bool) {
+    override func onDidAppear(animated: Bool) {
         config.onDidAppear?(animated)
     }
 
-    func onWillDisappear(animated: Bool) {
+    override func onWillDisappear(animated: Bool) {
         config.onWillDisappear?(animated)
     }
 
-    func onDidDisappear(animated: Bool) {
+    override func onDidDisappear(animated: Bool) {
         config.onDidDisappear?(animated)
     }
 
-    func onPopped() {
+    override func onPopped() {
         config.onPopped?()
     }
 

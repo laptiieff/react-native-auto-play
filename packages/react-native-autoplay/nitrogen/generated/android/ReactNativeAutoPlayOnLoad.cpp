@@ -41,6 +41,7 @@
 #include "JFunc_void_std__string_std__string.hpp"
 #include "JHybridMessageTemplateSpec.hpp"
 #include "JHybridSearchTemplateSpec.hpp"
+#include "JHybridSignInTemplateSpec.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
@@ -78,6 +79,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_std__string_std__string_cxx::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridMessageTemplateSpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridSearchTemplateSpec::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JHybridSignInTemplateSpec::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
@@ -92,6 +94,14 @@ int initialize(JavaVM* vm) {
       "AndroidAutoTelemetry",
       []() -> std::shared_ptr<HybridObject> {
         static DefaultConstructableObject<JHybridAndroidAutoTelemetrySpec::javaobject> object("com/margelo/nitro/swe/iternio/reactnativeautoplay/HybridAndroidAutoTelemetry");
+        auto instance = object.create();
+        return instance->cthis()->shared();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "SignInTemplate",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridSignInTemplateSpec::javaobject> object("com/margelo/nitro/swe/iternio/reactnativeautoplay/HybridSignInTemplate");
         auto instance = object.create();
         return instance->cthis()->shared();
       }

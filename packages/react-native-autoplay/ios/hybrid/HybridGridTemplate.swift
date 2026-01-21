@@ -11,10 +11,12 @@ class HybridGridTemplate: HybridGridTemplateSpec {
     func createGridTemplate(config: GridTemplateConfig) throws {
         let template = GridTemplate(config: config)
 
-        TemplateStore.addTemplate(
-            template: template,
-            templateId: config.id
-        )
+        try RootModule.withTemplateStore { templateStore in
+            templateStore.addTemplate(
+                template: template,
+                templateId: config.id
+            )
+        }
     }
 
     func updateGridTemplateButtons(
@@ -22,14 +24,12 @@ class HybridGridTemplate: HybridGridTemplateSpec {
         buttons: [NitroGridButton]
     ) throws -> Promise<Void> {
         return Promise.async {
-            guard
-                let template = TemplateStore.getTemplate(templateId: templateId)
-                    as? GridTemplate
-            else {
-                throw AutoPlayError.templateNotFound(templateId)
+            try await MainActor.run {
+                try RootModule.withAutoPlayTemplate(templateId: templateId) {
+                    (template: GridTemplate) in
+                    template.updateButtons(buttons: buttons)
+                }
             }
-
-            await template.updateButtons(buttons: buttons)
         }
     }
 }
