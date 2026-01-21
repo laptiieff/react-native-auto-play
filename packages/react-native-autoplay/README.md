@@ -431,13 +431,39 @@ Below is a concise overview of the most important props per template. Optional p
 | `headerActions` | `HeaderActionsAndroid<MessageTemplate>` | ❌ | Android-only header actions. |
 | `mapConfig` | `BaseMapTemplateConfig<MessageTemplate>` | ❌ | Android map-with-content layout. |
 
+#### SignInTemplateConfig (Android-only)
+
+| Prop | Type | Required | Notes |
+| --- | --- | --- | --- |
+| `signInMethod` | `SignInMethod` | ✅ | The sign-in method configuration. Can be QRSignIn, PinSignIn, InputSignIn. |
+| `title` | `string` | ❌ | Header title. |
+| `additionalText` | `string` | ❌ | Additional descriptive text. |
+| `instructions` | `string` | ❌ | Sign-in Instructions text. |
+| `actions` | `ActionButton<SignInTemplate>[]` | ❌ | Up to 2 buttons. |
+| `headerActions` | `SignInHeaderActions<SignInTemplate>` | ❌ | Header actions. See **Header Actions** below. |
+
+**SignInMethod**
+
+| Method | Type | Notes |
+| --- | --- | --- |
+| QR | `QrSignIn` | QR Code sign in |
+| PIN | `PinSignIn` | PIN Code sign in (1–12 characters) |
+| Input | `InputSignIn` | Text sign in, for example mail/username and password |
+
+For InputSignIn the keyboard and input fields can be configured with following properties:
+
+**KeyboardType enum:** `DEFAULT`, `EMAIL`, `PHONE`, `NUMBER`
+
+**TextInputType enum:** `PASSWORD`, `DEFAULT`
+
+
 ### Header Actions (Important)
 
 On Android, header actions may be omitted, although this is not recommended. If `headerActions` is `undefined`, the system automatically renders the app icon in the header. Because Android Auto enforces monochrome icons, this can result in a poor-looking button.
 
 **Use these rules to avoid crashes:**
 
-1. **For List/Grid/Information/Search/Message templates on Android**, always pass the structured object format (alignment is implicit via `startHeaderAction`/`endHeaderActions`):
+1. **For List/Grid/Information/Search/Message/SignIn templates on Android**, always pass the structured object format (alignment is implicit via `startHeaderAction`/`endHeaderActions`):
 
 ```ts
 const headerActions: HeaderActions<MyTemplate> = {

@@ -22,6 +22,7 @@ import {
 } from './state/navigationSlice';
 import { startAppListening } from './state/store';
 import { TelemetryView } from './TelemetryView';
+import { AutoSignInTemplate } from './templates/AutoSignInTemplate';
 import {
   AutoTemplate,
   onTripFinished,
@@ -35,7 +36,25 @@ const AutoPlayRoot = (props: RootComponentInitialProps) => {
 
   const [i, setI] = useState(0);
 
+  const [signedIn, setSignedIn] = useState(false);
+
   useEffect(() => {
+    if (Platform.OS === 'android' && mapTemplate && !signedIn) {
+      const signInFinishedListener = () => {
+        setTimeout(() => {
+          // delay this a bit, so we show the alert when the map template is visible again, otherwise it will not be shown
+          setSignedIn(true);
+        }, 1000);
+      };
+      AutoSignInTemplate.getTemplate(signInFinishedListener).push();
+    }
+  }, [mapTemplate, signedIn]);
+
+  useEffect(() => {
+    if (!signedIn) {
+      return;
+    }
+
     mapTemplate?.showAlert({
       durationMs: 10 * 1000,
       id: 1,
@@ -54,7 +73,7 @@ const AutoPlayRoot = (props: RootComponentInitialProps) => {
     const timer = setInterval(() => setI((p) => p + 1), 1000);
 
     return () => clearInterval(timer);
-  }, [mapTemplate?.showAlert]);
+  }, [mapTemplate?.showAlert, signedIn]);
 
   useEffect(() => {
     const listeners: Array<UnsubscribeListener> = [];

@@ -43,6 +43,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridMapTemplateSpec.cpp
   ../nitrogen/generated/shared/c++/HybridMessageTemplateSpec.cpp
   ../nitrogen/generated/shared/c++/HybridSearchTemplateSpec.cpp
+  ../nitrogen/generated/shared/c++/HybridSignInTemplateSpec.cpp
   # Android-specific Nitrogen C++ sources
   ../nitrogen/generated/android/c++/JHybridAndroidAutoTelemetrySpec.cpp
   ../nitrogen/generated/android/c++/JHybridAutoPlaySpec.cpp
@@ -57,6 +58,8 @@ target_sources(
   ../nitrogen/generated/android/c++/JVariant_PreferredImageLane_ImageLane.cpp
   ../nitrogen/generated/android/c++/JHybridMessageTemplateSpec.cpp
   ../nitrogen/generated/android/c++/JHybridSearchTemplateSpec.cpp
+  ../nitrogen/generated/android/c++/JHybridSignInTemplateSpec.cpp
+  ../nitrogen/generated/android/c++/JVariant_QrSignIn_PinSignIn_InputSignIn.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake
