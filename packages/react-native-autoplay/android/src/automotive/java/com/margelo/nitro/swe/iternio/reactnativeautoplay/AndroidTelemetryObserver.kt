@@ -24,12 +24,10 @@ private val REQUIRED_VEHICLE_PROPERTY_IDS = listOf(
 private val TAG = "AndroidTelemetryObserver"
 
 object AndroidTelemetryObserver : TelemetryObserver() {
-    private val carContext = AndroidAutoSession.getCarContext(AndroidAutoSession.ROOT_SESSION)
-    private var car = Car.createCar(carContext)
+    private var mCar: Car? = null
+    private var batteryCapacity: Float? = null
 
-    private val batteryCapacity: Float
-
-    init {
+    private fun fetchStaticData(car: Car) {
         val carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
 
         val carManufacturer = carPropertyManager.getProperty<String>(
@@ -102,12 +100,13 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                         )
 
                         VehiclePropertyIds.EV_BATTERY_LEVEL -> {
-                            if (batteryCapacity <= 0f) {
-                                throw Exception("got invalid battery capacity $batteryCapacity")
+                            val capacity = batteryCapacity ?: return
+                            if (capacity <= 0f) {
+                                throw Exception("got invalid battery capacity $capacity")
                             }
-                            val soc = getValue<Float>(p0) / batteryCapacity * 100
+                            val soc = getValue<Float>(p0) / capacity * 100
                             if (!soc.isFinite() || floor(soc) < 0 || floor(soc) > 100) {
-                                throw Exception("got invalid soc $soc, expecting value from 0 to 100 EV_BATTERY_LEVEL: ${p0.value}, evBatteryCapacity: $batteryCapacity")
+                                throw Exception("got invalid soc $soc, expecting value from 0 to 100 EV_BATTERY_LEVEL: ${p0.value}, evBatteryCapacity: $capacity")
                             }
                             telemetryHolder.updateBatteryLevel(soc)
                         }
@@ -141,9 +140,17 @@ object AndroidTelemetryObserver : TelemetryObserver() {
             return false
         }
 
+        val carContext = AndroidAutoSession.getRootContext() ?: throw IllegalArgumentException(
+            "Car context not available, failed to start telemetry"
+        )
+
         // create new instance so we can access all props after permissions were granted
-        car.disconnect()
-        car = Car.createCar(carContext)
+        mCar?.disconnect()
+
+        val car = Car.createCar(carContext)
+        mCar = car
+
+        fetchStaticData(car)
         val carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
 
         for (prop in REQUIRED_VEHICLE_PROPERTY_IDS) {
@@ -169,7 +176,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
     }
 
     override fun stopTelemetryObserver() {
-        val carPropertyManager = car.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
+        val carPropertyManager = mCar?.getCarManager(Car.PROPERTY_SERVICE) as CarPropertyManager
         carPropertyManager.unregisterCallback(vehiclePropertyReceiver)
 
         isObserverRunning = false

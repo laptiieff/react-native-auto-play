@@ -71,11 +71,9 @@ object AndroidTelemetryObserver : TelemetryObserver() {
     }
 
     override fun startTelemetryObserver(): Boolean {
-        val carContext =
-            AndroidAutoSession.getCarContext(AndroidAutoSession.Companion.ROOT_SESSION)
-                ?: throw IllegalArgumentException(
-                    "Car context not available, failed to start telemetry"
-                )
+        val carContext = AndroidAutoSession.getRootContext() ?: throw IllegalArgumentException(
+            "Car context not available, failed to start telemetry"
+        )
 
 
         AndroidTelemetryObserver.carContext = carContext
