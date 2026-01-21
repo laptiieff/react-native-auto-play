@@ -1,47 +1,7 @@
 const { Octokit } = require('@octokit/rest');
 const core = require('@actions/core');
 const github = require('@actions/github');
-
-const IGNORED_FILES = ['ios/Podfile.lock', 'package.json', 'package-lock.json', 'yarn.lock'];
-const ignoredRegex = new RegExp(
-  `^(${IGNORED_FILES.join(
-    '|'
-  )})$|^node_modules/|^.*png$|.*res/drawable.*|^.*svg$|^.*gpx$|^.*txt$|^.*jp.?g$|^.*.test.json$|.*/nitrogen/generated/.*`
-);
-
-/**
- * Removes entire diff sections for files matching the ignore patterns.
- * Keeps any text before the first diff header intact.
- * GitHub uses unified diff format: "diff --git a/path b/path"
- * Paths may be quoted when they contain special characters: "diff --git "a/path" "b/path""
- */
-const filterDiffByIgnoredFiles = (diff) => {
-  if (!diff) return diff;
-  // Handle both quoted and unquoted paths in git diff headers
-  const headerRegex = /^diff --git "?a\/(.+?)"? "?b\/(.+?)"?$/gm;
-  const matches = [];
-  let m;
-  while ((m = headerRegex.exec(diff)) !== null) {
-    // Strip any remaining quotes from the path
-    const path = m[2].replace(/^"|"$/g, '');
-    matches.push({ index: m.index, path });
-  }
-  if (matches.length === 0) return diff;
-
-  let result = '';
-  if (matches[0].index > 0) {
-    result += diff.slice(0, matches[0].index);
-  }
-  for (let i = 0; i < matches.length; i++) {
-    const start = matches[i].index;
-    const end = i + 1 < matches.length ? matches[i + 1].index : diff.length;
-    const path = matches[i].path;
-    if (!ignoredRegex.test(path)) {
-      result += diff.slice(start, end);
-    }
-  }
-  return result;
-};
+const { ignoredRegex, filterDiffByIgnoredFiles, getLineNumber } = require('./utils');
 
 // Token limit for OpenAI API (approximation)
 const MAX_TOKEN_LIMIT = 200000; // Adjust based on your model's context window
@@ -124,11 +84,18 @@ Respond with ONLY a JSON object in this exact structure:
   "issues": [
     {
       "filePath": "full/path/to/file.ts",
-      "lineContent": "    exact line content with leading whitespace preserved",
+      "lineContent": "exact line content copied from the diff",
       "comment": "Brief explanation of the issue"
     }
   ]
 }
+
+## lineContent Rules (IMPORTANT for line matching)
+The lineContent field is used to find the exact line number in the file. Follow these rules:
+1. Copy the line EXACTLY as it appears in the diff (including leading whitespace/indentation)
+2. Prefer a SINGLE line when possible - this gives the most precise match
+3. For multi-line issues, include just enough lines to uniquely identify the location
+4. Do NOT paraphrase, summarize, or modify the line content
 
 ## GitHub Suggestions
 When you can propose a concrete code fix (typos, simple bugs, improvements), use GitHub's suggestion syntax in the comment field:
@@ -356,45 +323,6 @@ const deleteCommentsByUser = async (username) => {
   }
 };
 
-const convertToRegexPattern = (input) => {
-  return input
-    .replace(/([.*+?^=!:${}()|[\]/\\])/g, '\\$1') // Escape special characters
-    .replace(/\s+/g, '[\\s\\n]+'); // Replace spaces and newlines with [\s\n]+
-};
-
-function getLineNumber(text, searchStringArray) {
-  const lines = text.split('\n');
-  for (let i = 0; i < lines.length; i++) {
-    const firstLine = searchStringArray[0];
-    if (lines[i].includes(firstLine)) {
-      let containsAllLines = true;
-      for (let j = 1; j < searchStringArray.length; j++) {
-        if (i + j >= lines.length || !lines[i + j].includes(searchStringArray[j])) {
-          containsAllLines = false;
-          break;
-        }
-      }
-
-      if (containsAllLines) {
-        return i + searchStringArray.length;
-      }
-    }
-  }
-  return -1; // Return -1 if the string is not found
-}
-
-function getLineNumberMultiLine(text, searchString) {
-  const regexPattern = convertToRegexPattern(searchString);
-  const regex = new RegExp(regexPattern);
-  const match = regex.exec(text);
-  if (match?.length) {
-    const matchedText = match[0];
-    const matchedTextLines = matchedText.split('\n');
-    return getLineNumber(text, matchedTextLines);
-  }
-  return -1;
-}
-
 const getReviewAndSendToGitHub = async () => {
   return requestReview()
     .then(async ({ review, fileContents }) => {
@@ -413,7 +341,7 @@ const getReviewAndSendToGitHub = async () => {
         const fileContent = fileContents.find((file) => file.path === filePath);
         if (fileContent) {
           try {
-            const lineNumber = getLineNumberMultiLine(fileContent.content, element.lineContent);
+            const lineNumber = getLineNumber(fileContent.content, element.lineContent);
             if (lineNumber === -1) {
               // Line not found in file - attach the code to the comment
               element.comment = `${element.comment}\n${filePath}:\n\`\`\`\n${element.lineContent}\n\`\`\``;
