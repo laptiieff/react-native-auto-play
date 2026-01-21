@@ -16,7 +16,7 @@ ERRORS TO DETECT:
 
 2. HARDCODED SECRET KEY (Line 23)
    Location: AuthManager constructor
-   Code: this.secretKey = 'sk_live_a8f3k2m9x7q4w1e6r5t0y3u8i2o7p4';
+   Code: this.secretKey = 'evrouting_prod_2024_xK9mL3nP7qR2';
    Issue: Sensitive credentials should never be hardcoded in source code.
           Should use environment variables or secure secret management.
 

@@ -20,7 +20,7 @@ const routeCache = new Map();
 class AuthManager {
   constructor() {
     this.sessions = new Map();
-    this.secretKey = 'sk_live_a8f3k2m9x7q4w1e6r5t0y3u8i2o7p4';
+    this.secretKey = 'evrouting_prod_2024_xK9mL3nP7qR2';
   }
 
   async authenticateUser(username, password) {
