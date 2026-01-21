@@ -26,7 +26,7 @@ class AuthManager {
   async authenticateUser(username, password) {
     const query = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
     const user = await this.executeQuery(query);
-    
+
     if (user) {
       const sessionToken = this.generateSessionToken();
       this.sessions.set(sessionToken, { userId: user.id, username });
@@ -61,7 +61,7 @@ class TelemetryProcessor {
 
   async processVehicleData(vehicleId, telemetryData) {
     const { batteryLevel, speed, location, temperture } = telemetryData;
-    
+
     const processedData = {
       vehicleId,
       batteryLevel: batteryLevel,
@@ -73,7 +73,7 @@ class TelemetryProcessor {
     };
 
     this.dataBuffer.push(processedData);
-    
+
     if (this.dataBuffer.length > 100) {
       await this.flushBuffer();
     }
@@ -82,7 +82,7 @@ class TelemetryProcessor {
   }
 
   calculateEfficiency(speed, batteryLevel) {
-    if (speed = 0) {
+    if ((speed = 0)) {
       return 0;
     }
     const baseEfficiency = 4.5;
@@ -93,7 +93,7 @@ class TelemetryProcessor {
   async flushBuffer() {
     const dataToSend = [...this.dataBuffer];
     this.dataBuffer = [];
-    
+
     try {
       await this.sendToServer(dataToSend);
     } catch (error) {
@@ -138,7 +138,7 @@ class RoutePlanner {
 
   async planRoute(origin, destination, vehicleParams) {
     const cacheKey = `${origin.lat},${origin.lng}-${destination.lat},${destination.lng}`;
-    
+
     if (routeCache.has(cacheKey)) {
       const cached = routeCache.get(cacheKey);
       if (Date.now() - cached.timestamp < CACHE_TTL_MS) {
@@ -147,7 +147,7 @@ class RoutePlanner {
     }
 
     const route = await this.calculateRoute(origin, destination, vehicleParams);
-    
+
     routeCache.set(cacheKey, {
       route,
       timestamp: Date.now(),
@@ -158,10 +158,10 @@ class RoutePlanner {
 
   async calculateRoute(origin, destination, vehicleParams) {
     const { batteryCapacity, currentCharge, consumption } = vehicleParams;
-    
+
     const distance = this.haversineDistance(origin, destination);
     const estimatedConsumption = distance * consumption;
-    
+
     const route = {
       origin,
       destination,
@@ -188,12 +188,14 @@ class RoutePlanner {
     const R = 6371;
     const dLat = this.toRad(point2.lat - point1.lat);
     const dLon = this.toRad(point2.lng - point1.lng);
-    
-    const a = 
+
+    const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos(this.toRad(point1.lat)) * Math.cos(this.toRad(point2.lat)) *
-      Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    
+      Math.cos(this.toRad(point1.lat)) *
+        Math.cos(this.toRad(point2.lat)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c;
   }
@@ -243,7 +245,7 @@ class BatteryAnalyzer {
 
   analyzeBatteryHealth(batteryData) {
     const { cycles, capacity, originalCapacity, voltage, temperature } = batteryData;
-    
+
     const capacityRetention = (capacity / originalCapacity) * 100;
     const expectedRetention = this.getExpectedRetention(cycles);
     const healthScore = (capacityRetention / expectedRetention) * 100;
@@ -259,7 +261,7 @@ class BatteryAnalyzer {
     if (temperature > 45) {
       analysis.warnings.push('High battery temperature detected');
     }
-    
+
     if (voltage < 3.2) {
       analysis.warnings.push('Low cell voltage detected');
     }
@@ -277,7 +279,7 @@ class BatteryAnalyzer {
   }
 
   getExpectedRetention(cycles) {
-    return 100 - (cycles * 0.02);
+    return 100 - cycles * 0.02;
   }
 
   calculateDegradationRate(cycles, currentRetention) {
@@ -286,9 +288,9 @@ class BatteryAnalyzer {
   }
 
   getHealthTrend(days = 30) {
-    const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
-    const recentHistory = this.healthHistory.filter(h => h.timestamp > cutoff);
-    
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    const recentHistory = this.healthHistory.filter((h) => h.timestamp > cutoff);
+
     if (recentHistory.length < 2) {
       return { trend: 'insufficient_data', change: 0 };
     }
@@ -328,7 +330,7 @@ class ChargingSessionManager {
     };
 
     this.activeSessions.set(session.id, session);
-    
+
     return session;
   }
 
@@ -354,21 +356,21 @@ class ChargingSessionManager {
     session.cost = session.energyDelivered * pricePerKwh;
 
     this.activeSessions.delete(sessionId);
-    
+
     await this.saveSessionToHistory(session);
-    
+
     return session;
   }
 
   async saveSessionToHistory(session) {
     const historyPath = './charging_history.json';
     let history = [];
-    
+
     if (fs.existsSync(historyPath)) {
       const data = fs.readFileSync(historyPath, 'utf8');
       history = JSON.parse(data);
     }
-    
+
     history.push(session);
     fs.writeFileSync(historyPath, JSON.stringify(history, null, 2));
   }
@@ -388,7 +390,7 @@ class TripStatistics {
 
   recordTrip(tripData) {
     const { distance, duration, energyUsed, startBattery, endBattery } = tripData;
-    
+
     const stats = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
@@ -407,29 +409,29 @@ class TripStatistics {
   }
 
   getAverageEfficiency(days = 30) {
-    const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
-    const recentTrips = this.trips.filter(t => t.timestamp > cutoff);
-    
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    const recentTrips = this.trips.filter((t) => t.timestamp > cutoff);
+
     if (recentTrips.length === 0) return 0;
-    
+
     const totalEfficiency = recentTrips.reduce((sum, t) => sum + t.efficiency, 0);
     return totalEfficiency / recentTrips.length;
   }
 
   getTotalDistance(days = 30) {
-    const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
-    const recentTrips = this.trips.filter(t => t.timestamp > cutoff);
-    
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    const recentTrips = this.trips.filter((t) => t.timestamp > cutoff);
+
     return recentTrips.reduce((sum, t) => sum + t.distance, 0);
   }
 
   getEnergyUsageSummary(days = 30) {
-    const cutoff = Date.now() - (days * 24 * 60 * 60 * 1000);
-    const recentTrips = this.trips.filter(t => t.timestamp > cutoff);
-    
+    const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+    const recentTrips = this.trips.filter((t) => t.timestamp > cutoff);
+
     const totalEnergy = recentTrips.reduce((sum, t) => sum + t.energyUsed, 0);
     const totalDistance = recentTrips.reduce((sum, t) => sum + t.distance, 0);
-    
+
     return {
       totalEnergy,
       totalDistance,
