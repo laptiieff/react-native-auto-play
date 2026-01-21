@@ -4,3 +4,4 @@ apps/example/ios/Config/Development.xcconfig
 !.vscode/settings.json
 .DS_Store
 tsconfig.tsbuildinfo
+coverage/
