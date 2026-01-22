@@ -22,25 +22,25 @@ data class GridTemplateConfig(
   val id: String,
   @DoNotStrip
   @Keep
-  val onWillAppear: Func_void_std__optional_bool_? = null,
+  val onWillAppear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onWillDisappear: Func_void_std__optional_bool_? = null,
+  val onWillDisappear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onDidAppear: Func_void_std__optional_bool_? = null,
+  val onDidAppear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onDidDisappear: Func_void_std__optional_bool_? = null,
+  val onDidDisappear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onPopped: Func_void? = null,
+  val onPopped: Func_void?,
   @DoNotStrip
   @Keep
-  val autoDismissMs: Double? = null,
+  val autoDismissMs: Double?,
   @DoNotStrip
   @Keep
-  val headerActions: Array<NitroAction>? = null,
+  val headerActions: Array<NitroAction>?,
   @DoNotStrip
   @Keep
   val title: AutoText,
@@ -49,7 +49,7 @@ data class GridTemplateConfig(
   val buttons: Array<NitroGridButton>,
   @DoNotStrip
   @Keep
-  val mapConfig: NitroBaseMapTemplateConfig? = null
+  val mapConfig: NitroBaseMapTemplateConfig?
 ) {
   /**
    * Create a new instance of GridTemplateConfig from Kotlin
@@ -57,7 +57,7 @@ data class GridTemplateConfig(
   constructor(id: String, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?, headerActions: Array<NitroAction>?, title: AutoText, buttons: Array<NitroGridButton>, mapConfig: NitroBaseMapTemplateConfig?):
          this(id, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs, headerActions, title, buttons, mapConfig)
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

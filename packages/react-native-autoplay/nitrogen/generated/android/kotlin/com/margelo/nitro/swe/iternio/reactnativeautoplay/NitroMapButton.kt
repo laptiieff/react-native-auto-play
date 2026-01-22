@@ -25,7 +25,7 @@ data class NitroMapButton(
   val image: NitroImage,
   @DoNotStrip
   @Keep
-  val onPress: Func_void? = null
+  val onPress: Func_void?
 ) {
   /**
    * Create a new instance of NitroMapButton from Kotlin
@@ -33,7 +33,7 @@ data class NitroMapButton(
   constructor(type: NitroMapButtonType, image: NitroImage, onPress: (() -> Unit)?):
          this(type, image, onPress?.let { Func_void_java(it) })
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

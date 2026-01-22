@@ -32,7 +32,7 @@ data class TripPreviewTextConfiguration(
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

@@ -61,7 +61,17 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                                     selectedGear = NumericTelemetryItem(
                                         timestamp = floor(System.currentTimeMillis() / 1000.0),
                                         value = selectedGear.toDouble()
-                                    )
+                                    ),
+                                    vehicle = null,
+                                    batteryLevel = null,
+                                    range = null,
+                                    speed = null,
+                                    odometer = null,
+                                    fuelLevel = null,
+                                    parkingBrakeOn = null,
+                                    evChargePortConnected = null,
+                                    envOutsideTemperature = null,
+                                    evBatteryInstantaneousChargeRate = null
                                 )
                             )
                         }
@@ -82,7 +92,17 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                                     selectedGear = NumericTelemetryItem(
                                         timestamp = floor(System.currentTimeMillis() / 1000.0),
                                         value = selectedGear.toDouble()
-                                    )
+                                    ),
+                                    vehicle = null,
+                                    batteryLevel = null,
+                                    range = null,
+                                    speed = null,
+                                    odometer = null,
+                                    fuelLevel = null,
+                                    parkingBrakeOn = null,
+                                    evChargePortConnected = null,
+                                    envOutsideTemperature = null,
+                                    evBatteryInstantaneousChargeRate = null
                                 )
                             )
                         }

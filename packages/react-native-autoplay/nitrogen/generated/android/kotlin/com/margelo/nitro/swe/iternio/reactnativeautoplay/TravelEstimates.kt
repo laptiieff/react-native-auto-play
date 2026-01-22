@@ -25,11 +25,11 @@ data class TravelEstimates(
   val timeRemaining: DurationWithTimeZone,
   @DoNotStrip
   @Keep
-  val tripText: AutoText? = null
+  val tripText: AutoText?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

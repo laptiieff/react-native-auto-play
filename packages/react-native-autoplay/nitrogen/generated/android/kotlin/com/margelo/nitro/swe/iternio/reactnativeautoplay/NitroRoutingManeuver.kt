@@ -25,34 +25,34 @@ data class NitroRoutingManeuver(
   val symbolImage: NitroImage,
   @DoNotStrip
   @Keep
-  val junctionImage: Variant_GlyphImage_AssetImage? = null,
+  val junctionImage: Variant_GlyphImage_AssetImage?,
   @DoNotStrip
   @Keep
-  val turnType: TurnType? = null,
+  val turnType: TurnType?,
   @DoNotStrip
   @Keep
-  val angle: Double? = null,
+  val angle: Double?,
   @DoNotStrip
   @Keep
-  val elementAngles: DoubleArray? = null,
+  val elementAngles: DoubleArray?,
   @DoNotStrip
   @Keep
-  val exitNumber: Double? = null,
+  val exitNumber: Double?,
   @DoNotStrip
   @Keep
-  val offRampType: OffRampType? = null,
+  val offRampType: OffRampType?,
   @DoNotStrip
   @Keep
-  val onRampType: OnRampType? = null,
+  val onRampType: OnRampType?,
   @DoNotStrip
   @Keep
-  val forkType: ForkType? = null,
+  val forkType: ForkType?,
   @DoNotStrip
   @Keep
-  val keepType: KeepType? = null,
+  val keepType: KeepType?,
   @DoNotStrip
   @Keep
-  val linkedLaneGuidance: LaneGuidance? = null,
+  val linkedLaneGuidance: LaneGuidance?,
   @DoNotStrip
   @Keep
   val cardBackgroundColor: NitroColor,
@@ -70,14 +70,14 @@ data class NitroRoutingManeuver(
   val maneuverType: ManeuverType,
   @DoNotStrip
   @Keep
-  val roadName: Array<String>? = null,
+  val roadName: Array<String>?,
   @DoNotStrip
   @Keep
-  val highwayExitLabel: String? = null
+  val highwayExitLabel: String?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

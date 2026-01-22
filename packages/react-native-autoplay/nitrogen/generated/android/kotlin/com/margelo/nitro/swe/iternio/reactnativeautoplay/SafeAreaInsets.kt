@@ -31,11 +31,11 @@ data class SafeAreaInsets(
   val right: Double,
   @DoNotStrip
   @Keep
-  val isLegacyLayout: Boolean? = null
+  val isLegacyLayout: Boolean?
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

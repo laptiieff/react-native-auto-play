@@ -26,7 +26,7 @@ data class TripsConfig(
 ) {
   /* primary constructor */
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */

@@ -22,25 +22,25 @@ data class SearchTemplateConfig(
   val id: String,
   @DoNotStrip
   @Keep
-  val onWillAppear: Func_void_std__optional_bool_? = null,
+  val onWillAppear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onWillDisappear: Func_void_std__optional_bool_? = null,
+  val onWillDisappear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onDidAppear: Func_void_std__optional_bool_? = null,
+  val onDidAppear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onDidDisappear: Func_void_std__optional_bool_? = null,
+  val onDidDisappear: Func_void_std__optional_bool_?,
   @DoNotStrip
   @Keep
-  val onPopped: Func_void? = null,
+  val onPopped: Func_void?,
   @DoNotStrip
   @Keep
-  val autoDismissMs: Double? = null,
+  val autoDismissMs: Double?,
   @DoNotStrip
   @Keep
-  val headerActions: Array<NitroAction>? = null,
+  val headerActions: Array<NitroAction>?,
   @DoNotStrip
   @Keep
   val title: AutoText,
@@ -49,10 +49,10 @@ data class SearchTemplateConfig(
   val results: NitroSection,
   @DoNotStrip
   @Keep
-  val initialSearchText: String? = null,
+  val initialSearchText: String?,
   @DoNotStrip
   @Keep
-  val searchHint: String? = null,
+  val searchHint: String?,
   @DoNotStrip
   @Keep
   val onSearchTextChanged: Func_void_std__string,
@@ -66,7 +66,7 @@ data class SearchTemplateConfig(
   constructor(id: String, onWillAppear: ((animated: Boolean?) -> Unit)?, onWillDisappear: ((animated: Boolean?) -> Unit)?, onDidAppear: ((animated: Boolean?) -> Unit)?, onDidDisappear: ((animated: Boolean?) -> Unit)?, onPopped: (() -> Unit)?, autoDismissMs: Double?, headerActions: Array<NitroAction>?, title: AutoText, results: NitroSection, initialSearchText: String?, searchHint: String?, onSearchTextChanged: (searchText: String) -> Unit, onSearchTextSubmitted: (searchText: String) -> Unit):
          this(id, onWillAppear?.let { Func_void_std__optional_bool__java(it) }, onWillDisappear?.let { Func_void_std__optional_bool__java(it) }, onDidAppear?.let { Func_void_std__optional_bool__java(it) }, onDidDisappear?.let { Func_void_std__optional_bool__java(it) }, onPopped?.let { Func_void_java(it) }, autoDismissMs, headerActions, title, results, initialSearchText, searchHint, Func_void_std__string_java(onSearchTextChanged), Func_void_std__string_java(onSearchTextSubmitted))
 
-  companion object {
+  private companion object {
     /**
      * Constructor called from C++
      */
