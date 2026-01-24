@@ -68,6 +68,10 @@ export type TravelEstimates = {
   //  * @namespace Android
   //  */
   // tripIcon?: number;
+  /**
+   * This makes TravelEstimates.hpp not comparable and solves an "map" not available on vector build issue.
+   */
+  _doNotUse?: () => void;
 };
 
 /**

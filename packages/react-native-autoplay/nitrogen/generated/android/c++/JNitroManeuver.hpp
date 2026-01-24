@@ -57,6 +57,9 @@
 #include "JDurationWithTimeZone.hpp"
 #include "AutoText.hpp"
 #include "JAutoText.hpp"
+#include <functional>
+#include "JFunc_void.hpp"
+#include <NitroModules/JNICallable.hpp>
 #include "TrafficSide.hpp"
 #include "JTrafficSide.hpp"
 #include "ManeuverType.hpp"

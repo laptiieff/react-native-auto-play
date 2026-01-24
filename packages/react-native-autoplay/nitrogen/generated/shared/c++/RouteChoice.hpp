@@ -53,7 +53,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     explicit RouteChoice(std::string id, std::vector<std::string> summaryVariants, std::vector<std::string> additionalInformationVariants, std::vector<std::string> selectionSummaryVariants, std::vector<TripPoint> steps): id(id), summaryVariants(summaryVariants), additionalInformationVariants(additionalInformationVariants), selectionSummaryVariants(selectionSummaryVariants), steps(steps) {}
 
   public:
-    friend bool operator==(const RouteChoice& lhs, const RouteChoice& rhs) = default;
+    // RouteChoice is not equatable because these properties are not equatable: steps
   };
 
 } // namespace margelo::nitro::swe::iternio::reactnativeautoplay

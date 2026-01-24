@@ -49,7 +49,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     explicit TripConfig(std::string id, RouteChoice routeChoice): id(id), routeChoice(routeChoice) {}
 
   public:
-    friend bool operator==(const TripConfig& lhs, const TripConfig& rhs) = default;
+    // TripConfig is not equatable because these properties are not equatable: routeChoice
   };
 
 } // namespace margelo::nitro::swe::iternio::reactnativeautoplay

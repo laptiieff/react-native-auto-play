@@ -18,10 +18,13 @@
 #include "JDistance.hpp"
 #include "JDistanceUnits.hpp"
 #include "JDurationWithTimeZone.hpp"
+#include "JFunc_void.hpp"
 #include "JTravelEstimates.hpp"
 #include "JTripPoint.hpp"
 #include "TravelEstimates.hpp"
 #include "TripPoint.hpp"
+#include <NitroModules/JNICallable.hpp>
+#include <functional>
 #include <optional>
 #include <string>
 #include <vector>
