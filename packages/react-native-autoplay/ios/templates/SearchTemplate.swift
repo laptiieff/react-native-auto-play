@@ -10,6 +10,7 @@ import CarPlay
 class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
     var template: CPSearchTemplate
     var config: SearchTemplateConfig
+    var results: NitroSection
 
     override var autoDismissMs: Double? {
         return config.autoDismissMs
@@ -26,11 +27,13 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
 
     init(config: SearchTemplateConfig) {
         self.config = config
+        results = config.results
+        
         template = CPSearchTemplate(id: config.id)
     }
 
     func updateSearchResults(results: NitroSection) {
-        config.results = results
+        self.results = results
         invalidate()
     }
 
@@ -38,7 +41,7 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
     override func _invalidate() {
         // if we have pushed a list template update it
         if let listTemplate = pushedListTemplate {
-            listTemplate.updateSections(sections: [config.results])
+            listTemplate.updateSections(sections: [results])
         }
 
         // otherwise update the search results on the search template
@@ -47,7 +50,7 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
         }
 
         let listItems = Parser.parseSearchResults(
-            section: config.results,
+            section: results,
             traitCollection: SceneStore.getRootTraitCollection()
         )
         completionHandler(listItems)
@@ -130,7 +133,7 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
             autoDismissMs: nil,
             headerActions: config.headerActions,
             title: config.title,
-            sections: [config.results],
+            sections: [results],
             mapConfig: nil
         )
 

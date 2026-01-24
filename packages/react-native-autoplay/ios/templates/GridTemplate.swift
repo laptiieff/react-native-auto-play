@@ -7,19 +7,11 @@
 
 import CarPlay
 
-class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
+class GridTemplate: AutoPlayHeaderProviding {
     let template: CPGridTemplate
     var config: GridTemplateConfig
 
-    var barButtons: [NitroAction]? {
-        get {
-            return config.headerActions
-        }
-        set {
-            config.headerActions = newValue
-            setBarButtons(template: template, barButtons: newValue)
-        }
-    }
+    var buttons: [NitroGridButton]
 
     override var autoDismissMs: Double? {
         return config.autoDismissMs
@@ -31,12 +23,18 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     init(config: GridTemplateConfig) {
         self.config = config
-
+        buttons = config.buttons
+        
         template = CPGridTemplate(
             title: Parser.parseText(text: config.title),
-            gridButtons: GridTemplate.parseButtons(buttons: config.buttons),
+            gridButtons: GridTemplate.parseButtons(buttons: buttons),
             id: config.id
         )
+                
+        super.init()
+        
+        barButtons = config.headerActions
+        
     }
 
     static func parseButtons(buttons: [NitroGridButton]) -> [CPGridButton] {
@@ -83,9 +81,9 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     @MainActor
     override func _invalidate() {
-        setBarButtons(template: template, barButtons: config.headerActions)
+        setBarButtons(template: template, barButtons: barButtons)
 
-        let buttons = GridTemplate.parseButtons(buttons: config.buttons)
+        let buttons = GridTemplate.parseButtons(buttons: buttons)
         template.updateGridButtons(buttons)
     }
 
@@ -111,7 +109,7 @@ class GridTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     @MainActor
     func updateButtons(buttons: [NitroGridButton]) {
-        config.buttons = buttons
+        self.buttons = buttons
         invalidate()
     }
 }

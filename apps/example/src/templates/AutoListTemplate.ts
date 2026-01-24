@@ -45,32 +45,37 @@ const getRadioTemplate = (): ListTemplate => {
   });
 };
 
-const getMainSection = (showRadios: boolean): Section<ListTemplate> => {
+const checked: [boolean, boolean] = [true, false];
+
+const getMainSection = (): Section<ListTemplate> => {
   const items: Array<DefaultRow<ListTemplate> | ToggleRow<ListTemplate> | TextRow> = [
     {
       type: 'toggle',
       title: { text: 'row #1' },
-      checked: showRadios,
+      checked: checked[0],
       image: {
         name: 'alarm',
         color: { lightColor: 'red', darkColor: 'orange' },
         type: 'glyph',
       },
-      onPress: (template, checked) => {
-        template.updateSections(getMainSection(checked));
+      onPress: (template, isChecked) => {
+        checked[0] = isChecked;
+        template.updateSections(getMainSection());
+        console.log('*** toggle 0', isChecked);
       },
     },
     {
       type: 'toggle',
       title: { text: 'row #2' },
-      checked: false,
+      checked: checked[1],
       image: {
         name: 'bomb',
         type: 'glyph',
         color: DefaultTemplateImageColor,
       },
-      onPress: (_template, checked) => {
-        console.log('*** toggle', checked);
+      onPress: (_template, isChecked) => {
+        checked[1] = isChecked;
+        console.log('*** toggle 1', isChecked);
       },
     },
     {
@@ -81,7 +86,7 @@ const getMainSection = (showRadios: boolean): Section<ListTemplate> => {
     },
   ];
 
-  if (showRadios) {
+  if (checked[0]) {
     items.push({
       type: 'default',
       title: { text: 'row #3' },
@@ -117,7 +122,7 @@ const getTemplate = (props?: { mapConfig?: ListTemplateConfig['mapConfig'] }): L
     },
     mapConfig: props?.mapConfig,
     headerActions: AutoTemplate.headerActions,
-    sections: getMainSection(true),
+    sections: getMainSection(),
     onPopped: () => console.log('ListTemplate onPopped'),
   });
 };

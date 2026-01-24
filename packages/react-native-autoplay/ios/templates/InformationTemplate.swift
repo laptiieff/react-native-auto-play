@@ -7,19 +7,11 @@
 
 import CarPlay
 
-class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
+class InformationTemplate: AutoPlayHeaderProviding {
     let template: CPInformationTemplate
     var config: InformationTemplateConfig
 
-    var barButtons: [NitroAction]? {
-        get {
-            return config.headerActions
-        }
-        set {
-            config.headerActions = newValue
-            setBarButtons(template: template, barButtons: newValue)
-        }
-    }
+    var section: NitroSection
 
     override var autoDismissMs: Double? {
         return config.autoDismissMs
@@ -31,20 +23,26 @@ class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     init(config: InformationTemplateConfig) {
         self.config = config
+        
+        section = config.section
 
         template = CPInformationTemplate(
             title: Parser.parseText(text: config.title)!,
             layout: .leading,
-            items: Parser.parseInformationItems(section: config.section),
+            items: Parser.parseInformationItems(section: section),
             actions: Parser.parseInformationActions(actions: config.actions),
             id: config.id
         )
+        
+        super.init();
+        
+        barButtons = config.headerActions
     }
 
     @MainActor
     override func _invalidate() {
         setBarButtons(template: template, barButtons: barButtons)
-        template.items = Parser.parseInformationItems(section: config.section)
+        template.items = Parser.parseInformationItems(section: section)
     }
 
     override func onWillAppear(animated: Bool) {
@@ -69,7 +67,7 @@ class InformationTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     @MainActor
     func updateSection(section: NitroSection) {
-        config.section = section
+        self.section = section
         invalidate()
     }
 }
