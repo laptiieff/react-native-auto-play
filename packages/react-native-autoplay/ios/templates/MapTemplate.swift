@@ -44,6 +44,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     var currentTripId: String?
 
     var tripSelectorVisible = false
+    private var isPanningInterfaceVisibleCached = false
 
     init(config: MapTemplateConfig) {
         self.config = config
@@ -69,7 +70,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     }
 
     func onPanButtonPress() {
-        if template.isPanningInterfaceVisible {
+        if isPanningInterfaceVisibleCached {
             template.dismissPanningInterface(animated: true)
         }
         else {
@@ -127,7 +128,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
             return
         }
 
-        if template.isPanningInterfaceVisible {
+        if isPanningInterfaceVisibleCached {
             // while panning interface is shown we only provide a back button on the header
             // and all map buttons except the pan button
             // reason is that you can have a max of 2 map buttons while panning interface is shown
@@ -210,7 +211,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
         scale: CGFloat,
         velocity: CGFloat
     ) {
-        if template.isPanningInterfaceVisible {
+        if isPanningInterfaceVisibleCached {
             return
         }
 
@@ -226,14 +227,21 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     }
 
     func mapTemplateDidShowPanningInterface(_ mapTemplate: CPMapTemplate) {
+        isPanningInterfaceVisibleCached = true
         config.onDidChangePanningInterface?(true)
-        invalidate()
+        Task { @MainActor in
+            self.invalidate()
+        }
+    }
+    
+    func mapTemplateDidDismissPanningInterface(_ mapTemplate: CPMapTemplate) {
+        isPanningInterfaceVisibleCached = false
+        config.onDidChangePanningInterface?(false)
+        Task { @MainActor in
+            self.invalidate()
+        }
     }
 
-    func mapTemplateDidDismissPanningInterface(_ mapTemplate: CPMapTemplate) {
-        config.onDidChangePanningInterface?(false)
-        invalidate()
-    }
 
     func mapTemplate(
         _ mapTemplate: CPMapTemplate,
