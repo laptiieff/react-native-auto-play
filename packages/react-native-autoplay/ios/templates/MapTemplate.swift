@@ -130,7 +130,7 @@ class MapTemplate: AutoPlayHeaderProviding,
             return
         }
 
-        if isPanningInterfaceVisibleCached {
+        if isPanningInterfaceVisible {
             // while panning interface is shown we only provide a back button on the header
             // and all map buttons except the pan button
             // reason is that you can have a max of 2 map buttons while panning interface is shown
