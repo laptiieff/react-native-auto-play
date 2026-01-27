@@ -58,10 +58,11 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     std::optional<BooleanTelemetryItem> evChargePortConnected     SWIFT_PRIVATE;
     std::optional<NumericTelemetryItem> evBatteryInstantaneousChargeRate     SWIFT_PRIVATE;
     std::optional<BooleanTelemetryItem> parkingBrakeOn     SWIFT_PRIVATE;
+    std::optional<NumericTelemetryItem> soe     SWIFT_PRIVATE;
 
   public:
     Telemetry() = default;
-    explicit Telemetry(std::optional<NumericTelemetryItem> speed, std::optional<NumericTelemetryItem> fuelLevel, std::optional<NumericTelemetryItem> batteryLevel, std::optional<NumericTelemetryItem> range, std::optional<NumericTelemetryItem> odometer, std::optional<VehicleTelemetryItem> vehicle, std::optional<NumericTelemetryItem> selectedGear, std::optional<NumericTelemetryItem> envOutsideTemperature, std::optional<BooleanTelemetryItem> evChargePortConnected, std::optional<NumericTelemetryItem> evBatteryInstantaneousChargeRate, std::optional<BooleanTelemetryItem> parkingBrakeOn): speed(speed), fuelLevel(fuelLevel), batteryLevel(batteryLevel), range(range), odometer(odometer), vehicle(vehicle), selectedGear(selectedGear), envOutsideTemperature(envOutsideTemperature), evChargePortConnected(evChargePortConnected), evBatteryInstantaneousChargeRate(evBatteryInstantaneousChargeRate), parkingBrakeOn(parkingBrakeOn) {}
+    explicit Telemetry(std::optional<NumericTelemetryItem> speed, std::optional<NumericTelemetryItem> fuelLevel, std::optional<NumericTelemetryItem> batteryLevel, std::optional<NumericTelemetryItem> range, std::optional<NumericTelemetryItem> odometer, std::optional<VehicleTelemetryItem> vehicle, std::optional<NumericTelemetryItem> selectedGear, std::optional<NumericTelemetryItem> envOutsideTemperature, std::optional<BooleanTelemetryItem> evChargePortConnected, std::optional<NumericTelemetryItem> evBatteryInstantaneousChargeRate, std::optional<BooleanTelemetryItem> parkingBrakeOn, std::optional<NumericTelemetryItem> soe): speed(speed), fuelLevel(fuelLevel), batteryLevel(batteryLevel), range(range), odometer(odometer), vehicle(vehicle), selectedGear(selectedGear), envOutsideTemperature(envOutsideTemperature), evChargePortConnected(evChargePortConnected), evBatteryInstantaneousChargeRate(evBatteryInstantaneousChargeRate), parkingBrakeOn(parkingBrakeOn), soe(soe) {}
 
   public:
     friend bool operator==(const Telemetry& lhs, const Telemetry& rhs) = default;
@@ -87,7 +88,8 @@ namespace margelo::nitro {
         JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "envOutsideTemperature"))),
         JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "evChargePortConnected"))),
         JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "evBatteryInstantaneousChargeRate"))),
-        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "parkingBrakeOn")))
+        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "parkingBrakeOn"))),
+        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "soe")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::swe::iternio::reactnativeautoplay::Telemetry& arg) {
@@ -103,6 +105,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "evChargePortConnected"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::toJSI(runtime, arg.evChargePortConnected));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "evBatteryInstantaneousChargeRate"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::toJSI(runtime, arg.evBatteryInstantaneousChargeRate));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "parkingBrakeOn"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::toJSI(runtime, arg.parkingBrakeOn));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "soe"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::toJSI(runtime, arg.soe));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -124,6 +127,7 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "evChargePortConnected")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "evBatteryInstantaneousChargeRate")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::BooleanTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "parkingBrakeOn")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "soe")))) return false;
       return true;
     }
   };

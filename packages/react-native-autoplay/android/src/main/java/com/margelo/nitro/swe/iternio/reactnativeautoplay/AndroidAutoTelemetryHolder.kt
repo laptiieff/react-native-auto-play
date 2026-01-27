@@ -1,5 +1,7 @@
 package com.margelo.nitro.swe.iternio.reactnativeautoplay
 
+import kotlin.math.floor
+
 class AndroidAutoTelemetryHolder {
     private var isDirty = false
     private val lock = Any()
@@ -33,6 +35,9 @@ class AndroidAutoTelemetryHolder {
 
     private var parkingBrakeOn: Boolean? = null
     private var parkingBrakeOnTimestamp: Int? = null
+
+    private var soe: Float? = null
+    private var soeTimestamp: Int? = null
 
     private var name: String? = null
     private var manufacturer: String? = null
@@ -146,6 +151,30 @@ class AndroidAutoTelemetryHolder {
         isDirty = true
     }
 
+    fun updateBatteryLevel(levelWh: Float, capacityWh: Float) = synchronized(lock) {
+        if (soe == levelWh) {
+            return
+        }
+
+        if (capacityWh <= 0f) {
+            throw Exception("got invalid battery capacity $capacityWh")
+        }
+
+        val soc = levelWh / capacityWh * 100
+        if (!soc.isFinite() || floor(soc) < 0 || floor(soc) > 100) {
+            throw Exception("got invalid soc $soc, expecting value from 0 to 100 EV_BATTERY_LEVEL: ${levelWh}, evBatteryCapacity: $capacityWh")
+        }
+
+        soe = levelWh
+        batteryLevel = soc
+
+        val timestamp = (System.currentTimeMillis() / 1000L).toInt()
+        soeTimestamp = timestamp
+        batteryLevelTimestamp = timestamp
+
+        isDirty = true
+    }
+
     fun toTelemetry(): Telemetry? {
         synchronized(lock) {
             if (!isDirty) {
@@ -172,6 +201,9 @@ class AndroidAutoTelemetryHolder {
                 ),
                 evBatteryInstantaneousChargeRate = createNumericTelemetryItem(
                     evBatteryInstantaneousChargeRate, evBatteryInstantaneousChargeRateTimeStamp
+                ),
+                soe = createNumericTelemetryItem(
+                    soe, soeTimestamp
                 ),
                 vehicle = VehicleTelemetryItem(
                     name = createStringTelemetryItem(name),

@@ -71,7 +71,8 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                                     parkingBrakeOn = null,
                                     evChargePortConnected = null,
                                     envOutsideTemperature = null,
-                                    evBatteryInstantaneousChargeRate = null
+                                    evBatteryInstantaneousChargeRate = null,
+                                    soe = null
                                 )
                             )
                         }
@@ -102,7 +103,8 @@ object AndroidTelemetryObserver : TelemetryObserver() {
                                     parkingBrakeOn = null,
                                     evChargePortConnected = null,
                                     envOutsideTemperature = null,
-                                    evBatteryInstantaneousChargeRate = null
+                                    evBatteryInstantaneousChargeRate = null,
+                                    soe = null
                                 )
                             )
                         }
@@ -121,14 +123,8 @@ object AndroidTelemetryObserver : TelemetryObserver() {
 
                         VehiclePropertyIds.EV_BATTERY_LEVEL -> {
                             val capacity = batteryCapacity ?: return
-                            if (capacity <= 0f) {
-                                throw Exception("got invalid battery capacity $capacity")
-                            }
-                            val soc = getValue<Float>(p0) / capacity * 100
-                            if (!soc.isFinite() || floor(soc) < 0 || floor(soc) > 100) {
-                                throw Exception("got invalid soc $soc, expecting value from 0 to 100 EV_BATTERY_LEVEL: ${p0.value}, evBatteryCapacity: $capacity")
-                            }
-                            telemetryHolder.updateBatteryLevel(soc)
+                            val level: Float = getValue(p0)
+                            telemetryHolder.updateBatteryLevel(level, capacity)
                         }
 
                         VehiclePropertyIds.PERF_VEHICLE_SPEED -> telemetryHolder.updateSpeed(
