@@ -239,9 +239,7 @@ class MapTemplate: AutoPlayHeaderProviding,
     func mapTemplateDidDismissPanningInterface(_ mapTemplate: CPMapTemplate) {
         isPanningInterfaceVisible = false
         config.onDidChangePanningInterface?(false)
-        Task { @MainActor in
-            self.invalidate()
-        }
+       invalidate()
     }
 
 
