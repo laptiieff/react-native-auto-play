@@ -7,6 +7,7 @@ import android.car.CarAppFocusManager.OnAppFocusOwnershipCallback
 import android.car.drivingstate.CarUxRestrictionsManager
 import com.margelo.nitro.NitroModules
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.atomic.AtomicReference
 
 class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
     private lateinit var car: Car
@@ -20,26 +21,27 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
 
     private val onAppFocusOwnershipCallback = object : OnAppFocusOwnershipCallback {
         override fun onAppFocusOwnershipGranted(appType: Int) {
-            isFocusOwned = true
+            isFocusOwned.set(true)
             notifyAppFocusListeners()
         }
 
         override fun onAppFocusOwnershipLost(appType: Int) {
-            isFocusOwned = false
+            isFocusOwned.set(false)
             notifyAppFocusListeners()
         }
     }
 
     private val onAppFocusChangedListener = OnAppFocusChangedListener { appType, active ->
-        isFocusActive = active
+        isFocusActive.set(active)
 
         val carAppFocusManager =
             getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
         // docs say we should not get an event when we receive our own app focus
         // but we still do get it. so we do a check here again if we own it or not
-        isFocusOwned = carAppFocusManager.isOwningFocus(
+        val isOwned = carAppFocusManager.isOwningFocus(
             onAppFocusOwnershipCallback, appType
         )
+        isFocusOwned.set(isOwned)
 
         notifyAppFocusListeners()
     }
@@ -103,11 +105,13 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
 
     override fun getAppFocusState(): AppFocusState {
         val carAppFocusManager = getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
-        isFocusOwned = carAppFocusManager.isOwningFocus(
+        val isOwned = carAppFocusManager.isOwningFocus(
             onAppFocusOwnershipCallback, CarAppFocusManager.APP_FOCUS_TYPE_NAVIGATION
         )
 
-        return AppFocusState(isFocusOwned, isFocusActive)
+        isFocusOwned.set(isOwned)
+
+        return AppFocusState(isOwned, isFocusActive.get())
     }
 
     override fun requestAppFocus(): () -> Unit {
@@ -124,15 +128,15 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
     }
 
     companion object {
-        private var isFocusOwned: Boolean? = null
-        private var isFocusActive: Boolean? = null
+        private var isFocusOwned = AtomicReference<Boolean?>(null)
+        private var isFocusActive = AtomicReference<Boolean?>(null)
 
         private val uxRestrictionListeners =
             CopyOnWriteArrayList<(ActiveCarUxRestrictions) -> Unit>()
         private val appFocusListeners = CopyOnWriteArrayList<(AppFocusState) -> Unit>()
 
         private fun notifyAppFocusListeners() {
-            val state = AppFocusState(isFocusOwned, isFocusActive)
+            val state = AppFocusState(isFocusOwned.get(), isFocusActive.get())
 
             appFocusListeners.forEach {
                 it(state)
