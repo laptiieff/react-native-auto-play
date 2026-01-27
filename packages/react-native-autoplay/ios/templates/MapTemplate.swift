@@ -239,7 +239,6 @@ class MapTemplate: AutoPlayHeaderProviding,
         invalidate()
     }
 
-
     func mapTemplate(
         _ mapTemplate: CPMapTemplate,
         panWith direction: CPMapTemplate.PanDirection
