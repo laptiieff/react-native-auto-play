@@ -1,6 +1,7 @@
 import { Platform } from 'react-native';
 import { NitroModules } from 'react-native-nitro-modules';
 import AutoPlayHeadlessJsTask from './AutoPlayHeadlessJsTask';
+import type { AndroidAutomotive } from './specs/AndroidAutomotive.nitro';
 import type { AndroidAutoTelemetry as NitroAndroidAutoTelemetry } from './specs/AndroidAutoTelemetry.nitro';
 import type { AutoPlay as NitroAutoPlay } from './specs/AutoPlay.nitro';
 
@@ -11,6 +12,11 @@ export const HybridAutoPlay = NitroModules.createHybridObject<NitroAutoPlay>('Au
 export const HybridAndroidAutoTelemetry =
   Platform.OS === 'android'
     ? NitroModules.createHybridObject<NitroAndroidAutoTelemetry>('AndroidAutoTelemetry')
+    : null;
+
+export const HybridAndroidAutomotive =
+  Platform.OS === 'android'
+    ? NitroModules.createHybridObject<AndroidAutomotive>('AndroidAutomotive')
     : null;
 
 /**
@@ -31,6 +37,11 @@ export * from './hooks/useSafeAreaInsets';
 export * from './hooks/useVoiceInput';
 export * from './scenes/AutoPlayCluster';
 export * from './scenes/CarPlayDashboardScene';
+export type {
+  ActiveCarUxRestrictions,
+  AppFocusState,
+  CarUxRestrictions,
+} from './specs/AndroidAutomotive.nitro';
 export * from './templates/GridTemplate';
 export * from './templates/InformationTemplate';
 export * from './templates/ListTemplate';

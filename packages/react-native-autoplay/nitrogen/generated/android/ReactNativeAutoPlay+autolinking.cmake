@@ -33,6 +33,7 @@ target_sources(
   # Autolinking Setup
   ../nitrogen/generated/android/ReactNativeAutoPlayOnLoad.cpp
   # Shared Nitrogen C++ sources
+  ../nitrogen/generated/shared/c++/HybridAndroidAutomotiveSpec.cpp
   ../nitrogen/generated/shared/c++/HybridAndroidAutoTelemetrySpec.cpp
   ../nitrogen/generated/shared/c++/HybridAutoPlaySpec.cpp
   ../nitrogen/generated/shared/c++/HybridCarPlayDashboardSpec.cpp
@@ -45,6 +46,7 @@ target_sources(
   ../nitrogen/generated/shared/c++/HybridSearchTemplateSpec.cpp
   ../nitrogen/generated/shared/c++/HybridSignInTemplateSpec.cpp
   # Android-specific Nitrogen C++ sources
+  ../nitrogen/generated/android/c++/JHybridAndroidAutomotiveSpec.cpp
   ../nitrogen/generated/android/c++/JHybridAndroidAutoTelemetrySpec.cpp
   ../nitrogen/generated/android/c++/JHybridAutoPlaySpec.cpp
   ../nitrogen/generated/android/c++/JVariant_GlyphImage_AssetImage.cpp

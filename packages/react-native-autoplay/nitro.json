@@ -16,6 +16,9 @@
     "AndroidAutoTelemetry": {
       "kotlin": "HybridAndroidAutoTelemetry"
     },
+    "AndroidAutomotive": {
+      "kotlin": "HybridAndroidAutomotive"
+    },
     "SignInTemplate": {
       "kotlin": "HybridSignInTemplate"
     },
