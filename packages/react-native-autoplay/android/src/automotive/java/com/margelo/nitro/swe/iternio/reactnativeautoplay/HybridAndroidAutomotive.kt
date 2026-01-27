@@ -10,14 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicReference
 
 class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
-    private lateinit var car: Car
-
-    private fun getCar(): Car {
-        if (!this::car.isInitialized) {
-            car = Car.createCar(NitroModules.applicationContext)
-        }
-        return car
-    }
+    private val car = Car.createCar(NitroModules.applicationContext)
 
     private val onAppFocusOwnershipCallback = object : OnAppFocusOwnershipCallback {
         override fun onAppFocusOwnershipGranted(appType: Int) {
@@ -34,8 +27,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
     private val onAppFocusChangedListener = OnAppFocusChangedListener { appType, active ->
         isFocusActive.set(active)
 
-        val carAppFocusManager =
-            getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
+        val carAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
         // docs say we should not get an event when we receive our own app focus
         // but we still do get it. so we do a check here again if we own it or not
         val isOwned = carAppFocusManager.isOwningFocus(
@@ -49,7 +41,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
     override fun registerCarUxRestrictionsListener(callback: (restrictions: ActiveCarUxRestrictions) -> Unit): () -> Unit {
         if (uxRestrictionListeners.isEmpty()) {
             val uxRestrictionManager =
-                getCar().getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
+                car.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
 
             uxRestrictionManager.registerListener {
                 notifyUxRestrictionListeners(it.toActiveCarUxRestrictions())
@@ -63,7 +55,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
 
             if (uxRestrictionListeners.isEmpty()) {
                 val uxRestrictionManager =
-                    getCar().getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
+                    car.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
 
                 uxRestrictionManager.unregisterListener()
             }
@@ -72,15 +64,14 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
 
     override fun getCarUxRestrictions(): ActiveCarUxRestrictions {
         val uxRestrictionManager =
-            getCar().getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
+            car.getCarManager(Car.CAR_UX_RESTRICTION_SERVICE) as CarUxRestrictionsManager
 
         return uxRestrictionManager.currentCarUxRestrictions.toActiveCarUxRestrictions()
     }
 
     override fun registerAppFocusListener(callback: (state: AppFocusState) -> Unit): () -> Unit {
         if (appFocusListeners.isEmpty()) {
-            val carAppFocusManager =
-                getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
+            val carAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
 
             carAppFocusManager.addFocusListener(
                 onAppFocusChangedListener, CarAppFocusManager.APP_FOCUS_TYPE_NAVIGATION
@@ -94,7 +85,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
 
             if (appFocusListeners.isEmpty()) {
                 val carAppFocusManager =
-                    getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
+                    car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
 
                 carAppFocusManager.removeFocusListener(
                     onAppFocusChangedListener, CarAppFocusManager.APP_FOCUS_TYPE_NAVIGATION
@@ -104,7 +95,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
     }
 
     override fun getAppFocusState(): AppFocusState {
-        val carAppFocusManager = getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
+        val carAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
         val isOwned = carAppFocusManager.isOwningFocus(
             onAppFocusOwnershipCallback, CarAppFocusManager.APP_FOCUS_TYPE_NAVIGATION
         )
@@ -115,7 +106,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
     }
 
     override fun requestAppFocus(): () -> Unit {
-        val carAppFocusManager = getCar().getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
+        val carAppFocusManager = car.getCarManager(Car.APP_FOCUS_SERVICE) as CarAppFocusManager
         carAppFocusManager.requestAppFocus(
             CarAppFocusManager.APP_FOCUS_TYPE_NAVIGATION, onAppFocusOwnershipCallback
         )
