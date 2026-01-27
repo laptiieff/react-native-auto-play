@@ -7,19 +7,11 @@
 
 import CarPlay
 
-class ListTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
+class ListTemplate: AutoPlayHeaderProviding {
     let template: CPListTemplate
     var config: ListTemplateConfig
 
-    var barButtons: [NitroAction]? {
-        get {
-            return config.headerActions
-        }
-        set {
-            config.headerActions = newValue
-            setBarButtons(template: template, barButtons: newValue)
-        }
-    }
+    var sections: [NitroSection]?
 
     override var autoDismissMs: Double? {
         return config.autoDismissMs
@@ -31,6 +23,8 @@ class ListTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     init(config: ListTemplateConfig) {
         self.config = config
+        
+        sections = config.sections
 
         template = CPListTemplate(
             title: Parser.parseText(text: config.title),
@@ -38,6 +32,10 @@ class ListTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
             assistantCellConfiguration: nil,
             id: config.id
         )
+        
+        super.init()
+        
+        barButtons = config.headerActions
     }
 
     @MainActor
@@ -46,7 +44,7 @@ class ListTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
         template.updateSections(
             Parser.parseSections(
-                sections: config.sections,
+                sections: sections,
                 updateSection: self.updateSection(section:sectionIndex:),
                 traitCollection: SceneStore.getRootTraitCollection()
             )
@@ -75,13 +73,13 @@ class ListTemplate: AutoPlayTemplate, AutoPlayHeaderProviding {
 
     @MainActor
     private func updateSection(section: NitroSection, sectionIndex: Int) {
-        config.sections?[sectionIndex] = section
+        self.sections?[sectionIndex] = section
         invalidate()
     }
 
     @MainActor
     func updateSections(sections: [NitroSection]?) {
-        config.sections = sections
+        self.sections = sections
         invalidate()
     }
 }

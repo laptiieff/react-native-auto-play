@@ -11,7 +11,7 @@ struct NavigationAlertWrapper {
     let config: NitroNavigationAlert
 }
 
-class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
+class MapTemplate: AutoPlayHeaderProviding,
     CPMapTemplateDelegate
 {
     let template: CPMapTemplate
@@ -19,15 +19,8 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
 
     let screenDimensions: CGSize
 
-    var barButtons: [NitroAction]? {
-        get {
-            return config.headerActions
-        }
-        set {
-            config.headerActions = newValue
-            invalidate()
-        }
-    }
+    var mapButtons: [NitroMapButton]?
+    var visibleTravelEstimate: VisibleTravelEstimate?
 
     override var autoDismissMs: Double? {
         return config.autoDismissMs
@@ -48,6 +41,10 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
 
     init(config: MapTemplateConfig) {
         self.config = config
+        
+        mapButtons = config.mapButtons
+        visibleTravelEstimate = config.visibleTravelEstimate
+        
         template = CPMapTemplate(id: config.id)
 
         if let initialProperties = SceneStore.getRootScene()?.initialProperties,
@@ -66,6 +63,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
 
         super.init()
 
+        barButtons = config.headerActions
         template.mapDelegate = self
     }
 
@@ -140,7 +138,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
             }
 
             let mapButtons =
-                config.mapButtons?.filter { button in
+                mapButtons?.filter { button in
                     button.type != .pan
                 } ?? []
 
@@ -149,9 +147,9 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
             return
         }
 
-        setBarButtons(template: template, barButtons: config.headerActions)
+        setBarButtons(template: template, barButtons: barButtons)
 
-        if let mapButtons = config.mapButtons {
+        if let mapButtons = mapButtons {
             template.mapButtons = parseMapButtons(mapButtons: mapButtons)
         }
     }
@@ -568,14 +566,14 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
         visibleTravelEstimate: VisibleTravelEstimate?
     ) {
         if let visibleTravelEstimate = visibleTravelEstimate {
-            config.visibleTravelEstimate = visibleTravelEstimate
+            self.visibleTravelEstimate = visibleTravelEstimate
         }
 
         guard let trip = navigationSession?.trip else { return }
 
         let travelEstaimtes = trip.routeChoices.first?
             .travelEstimates
-        if let estimates = config.visibleTravelEstimate == .first
+        if let estimates = self.visibleTravelEstimate == .first
             ? travelEstaimtes?.first : travelEstaimtes?.last
         {
             template.updateEstimates(estimates, for: trip)
@@ -741,7 +739,7 @@ class MapTemplate: AutoPlayTemplate, AutoPlayHeaderProviding,
     func startNavigation(trip: CPTrip) {
         let routeChoice = trip.routeChoices.first
 
-        if let travelEstimates = config.visibleTravelEstimate == .first
+        if let travelEstimates = visibleTravelEstimate == .first
             ? routeChoice?.travelEstimates.first
             : routeChoice?.travelEstimates.last
         {

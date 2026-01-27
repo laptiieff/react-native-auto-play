@@ -34,8 +34,8 @@ class AutoPlayTemplate: NSObject {
     func onPopped() {}
 }
 
-protocol AutoPlayHeaderProviding {
-    @MainActor var barButtons: [NitroAction]? { get set }
+class AutoPlayHeaderProviding: AutoPlayTemplate {
+    var barButtons: [NitroAction]?
 }
 
 @MainActor

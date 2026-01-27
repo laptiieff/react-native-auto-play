@@ -27,7 +27,7 @@ class HybridMapTemplate: HybridMapTemplateSpec {
             try await MainActor.run {
                 try RootModule.withAutoPlayTemplate(templateId: templateId) {
                     (template: MapTemplate) in
-                    template.config.mapButtons = buttons
+                    template.mapButtons = buttons
                     template.invalidate()
                 }
             }
