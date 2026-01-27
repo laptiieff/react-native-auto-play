@@ -37,7 +37,11 @@ class MapTemplate: AutoPlayHeaderProviding,
     var currentTripId: String?
 
     var tripSelectorVisible = false
-    private var isPanningInterfaceVisibleCached = false
+    /**
+     this avoids a race condition when invalidating the template that causes an App Hang (main‑thread stall)
+     when using CPMapTemplate.isPanningInterfaceVisible
+     */
+    private var isPanningInterfaceVisible = false
 
     init(config: MapTemplateConfig) {
         self.config = config
