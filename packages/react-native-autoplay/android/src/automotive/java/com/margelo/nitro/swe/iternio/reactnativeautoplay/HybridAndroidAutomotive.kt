@@ -5,6 +5,7 @@ import android.car.CarAppFocusManager
 import android.car.CarAppFocusManager.OnAppFocusChangedListener
 import android.car.CarAppFocusManager.OnAppFocusOwnershipCallback
 import android.car.drivingstate.CarUxRestrictionsManager
+import com.margelo.nitro.NitroModules
 import java.util.concurrent.CopyOnWriteArrayList
 
 class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
@@ -12,8 +13,7 @@ class HybridAndroidAutomotive : HybridAndroidAutomotiveSpec() {
 
     private fun getCar(): Car {
         if (!this::car.isInitialized) {
-            val carContext = AndroidAutoSession.getRootContext()
-            car = Car.createCar(carContext)
+            car = Car.createCar(NitroModules.applicationContext)
         }
         return car
     }
