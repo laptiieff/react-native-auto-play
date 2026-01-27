@@ -97,4 +97,8 @@ export type Telemetry = {
    */
   evBatteryInstantaneousChargeRate?: NumericTelemetryItem;
   parkingBrakeOn?: BooleanTelemetryItem;
+  /**
+   * Returns the current battery level in Wh
+   */
+  soe?: NumericTelemetryItem;
 };

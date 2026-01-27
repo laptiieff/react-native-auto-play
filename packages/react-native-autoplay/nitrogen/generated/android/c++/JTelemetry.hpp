@@ -62,6 +62,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
       jni::local_ref<JNumericTelemetryItem> evBatteryInstantaneousChargeRate = this->getFieldValue(fieldEvBatteryInstantaneousChargeRate);
       static const auto fieldParkingBrakeOn = clazz->getField<JBooleanTelemetryItem>("parkingBrakeOn");
       jni::local_ref<JBooleanTelemetryItem> parkingBrakeOn = this->getFieldValue(fieldParkingBrakeOn);
+      static const auto fieldSoe = clazz->getField<JNumericTelemetryItem>("soe");
+      jni::local_ref<JNumericTelemetryItem> soe = this->getFieldValue(fieldSoe);
       return Telemetry(
         speed != nullptr ? std::make_optional(speed->toCpp()) : std::nullopt,
         fuelLevel != nullptr ? std::make_optional(fuelLevel->toCpp()) : std::nullopt,
@@ -73,7 +75,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         envOutsideTemperature != nullptr ? std::make_optional(envOutsideTemperature->toCpp()) : std::nullopt,
         evChargePortConnected != nullptr ? std::make_optional(evChargePortConnected->toCpp()) : std::nullopt,
         evBatteryInstantaneousChargeRate != nullptr ? std::make_optional(evBatteryInstantaneousChargeRate->toCpp()) : std::nullopt,
-        parkingBrakeOn != nullptr ? std::make_optional(parkingBrakeOn->toCpp()) : std::nullopt
+        parkingBrakeOn != nullptr ? std::make_optional(parkingBrakeOn->toCpp()) : std::nullopt,
+        soe != nullptr ? std::make_optional(soe->toCpp()) : std::nullopt
       );
     }
 
@@ -83,7 +86,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
      */
     [[maybe_unused]]
     static jni::local_ref<JTelemetry::javaobject> fromCpp(const Telemetry& value) {
-      using JSignature = JTelemetry(jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JVehicleTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JBooleanTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JBooleanTelemetryItem>);
+      using JSignature = JTelemetry(jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JVehicleTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JBooleanTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JBooleanTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -98,7 +101,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         value.envOutsideTemperature.has_value() ? JNumericTelemetryItem::fromCpp(value.envOutsideTemperature.value()) : nullptr,
         value.evChargePortConnected.has_value() ? JBooleanTelemetryItem::fromCpp(value.evChargePortConnected.value()) : nullptr,
         value.evBatteryInstantaneousChargeRate.has_value() ? JNumericTelemetryItem::fromCpp(value.evBatteryInstantaneousChargeRate.value()) : nullptr,
-        value.parkingBrakeOn.has_value() ? JBooleanTelemetryItem::fromCpp(value.parkingBrakeOn.value()) : nullptr
+        value.parkingBrakeOn.has_value() ? JBooleanTelemetryItem::fromCpp(value.parkingBrakeOn.value()) : nullptr,
+        value.soe.has_value() ? JNumericTelemetryItem::fromCpp(value.soe.value()) : nullptr
       );
     }
   };
