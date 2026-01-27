@@ -37,6 +37,11 @@ class MapTemplate: AutoPlayHeaderProviding,
     var currentTripId: String?
 
     var tripSelectorVisible = false
+    /**
+     this avoids a race condition when invalidating the template that causes an App Hang (main‑thread stall)
+     when using CPMapTemplate.isPanningInterfaceVisible
+     */
+    private var isPanningInterfaceVisible = false
 
     init(config: MapTemplateConfig) {
         self.config = config
@@ -67,7 +72,7 @@ class MapTemplate: AutoPlayHeaderProviding,
     }
 
     func onPanButtonPress() {
-        if template.isPanningInterfaceVisible {
+        if isPanningInterfaceVisible {
             template.dismissPanningInterface(animated: true)
         }
         else {
@@ -125,7 +130,7 @@ class MapTemplate: AutoPlayHeaderProviding,
             return
         }
 
-        if template.isPanningInterfaceVisible {
+        if isPanningInterfaceVisible {
             // while panning interface is shown we only provide a back button on the header
             // and all map buttons except the pan button
             // reason is that you can have a max of 2 map buttons while panning interface is shown
@@ -208,7 +213,7 @@ class MapTemplate: AutoPlayHeaderProviding,
         scale: CGFloat,
         velocity: CGFloat
     ) {
-        if template.isPanningInterfaceVisible {
+        if isPanningInterfaceVisible {
             return
         }
 
@@ -224,11 +229,12 @@ class MapTemplate: AutoPlayHeaderProviding,
     }
 
     func mapTemplateDidShowPanningInterface(_ mapTemplate: CPMapTemplate) {
+        isPanningInterfaceVisible = true
         config.onDidChangePanningInterface?(true)
         invalidate()
     }
-
     func mapTemplateDidDismissPanningInterface(_ mapTemplate: CPMapTemplate) {
+        isPanningInterfaceVisible = false
         config.onDidChangePanningInterface?(false)
         invalidate()
     }
