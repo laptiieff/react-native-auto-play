@@ -305,19 +305,34 @@ class Parser {
 
                 listItem.handler = { _item, completion in
 
-                    var updatedSection = sections[sectionIndex]
-                    if let checked = updatedSection.items[itemIndex].checked {
-                        updatedSection.items[itemIndex].checked = !checked
+                    let updatedItems = section.items.enumerated().map { (rowIndex, row) in
+                        let checked: Bool? =
+                            if rowIndex == itemIndex, let checked = row.checked {
+                                !checked
+                            }
+                            else { row.checked }
+
+                        let selected: Bool? =
+                            if section.type == .radio {
+                                rowIndex == itemIndex
+                            }
+                            else {
+                                nil
+                            }
+
+                        return NitroRow(
+                            title: row.title,
+                            detailedText: row.detailedText,
+                            browsable: row.browsable,
+                            enabled: row.enabled,
+                            image: row.image,
+                            checked: checked,
+                            onPress: row.onPress,
+                            selected: selected
+                        )
                     }
 
-                    if updatedSection.type == .radio {
-                        updatedSection.items = updatedSection.items.enumerated()
-                            .map { (index, item) in
-                                var updatedItem = item
-                                updatedItem.selected = index == itemIndex
-                                return updatedItem
-                            }
-                    }
+                    let updatedSection = NitroSection(title: section.title, items: updatedItems, type: section.type)
 
                     updateSection(updatedSection, sectionIndex)
 

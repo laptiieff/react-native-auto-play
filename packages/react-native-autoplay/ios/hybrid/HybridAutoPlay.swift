@@ -278,6 +278,7 @@ class HybridAutoPlay: HybridAutoPlaySpec {
                     }
 
                     template.barButtons = headerActions
+                    setBarButtons(template: template.getTemplate(), barButtons: headerActions)
                 }
             }
         }
