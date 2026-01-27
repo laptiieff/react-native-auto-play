@@ -40,8 +40,8 @@ export * from './scenes/CarPlayDashboardScene';
 export type {
   ActiveCarUxRestrictions,
   AppFocusState,
-  CarUxRestrictions,
 } from './specs/AndroidAutomotive.nitro';
+export { CarUxRestrictions } from './specs/AndroidAutomotive.nitro';
 export * from './templates/GridTemplate';
 export * from './templates/InformationTemplate';
 export * from './templates/ListTemplate';
