@@ -213,7 +213,7 @@ class MapTemplate: AutoPlayHeaderProviding,
         scale: CGFloat,
         velocity: CGFloat
     ) {
-        if isPanningInterfaceVisibleCached {
+        if isPanningInterfaceVisible {
             return
         }
 
