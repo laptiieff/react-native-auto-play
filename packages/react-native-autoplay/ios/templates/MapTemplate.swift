@@ -72,7 +72,7 @@ class MapTemplate: AutoPlayHeaderProviding,
     }
 
     func onPanButtonPress() {
-        if isPanningInterfaceVisibleCached {
+        if isPanningInterfaceVisible {
             template.dismissPanningInterface(animated: true)
         }
         else {
