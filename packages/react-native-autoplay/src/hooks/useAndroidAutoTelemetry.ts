@@ -33,11 +33,16 @@ type Props =
          */
         cancelButtonText?: string;
       };
+      /**
+       * set to true in case your build variant targets Android Automotive
+       */
+      isAndroidAutomotive?: boolean;
     }
   | {
       requestTelemetryPermissions: false | undefined;
       requiredPermissions?: never;
       automotivePermissionRequest?: never;
+      isAndroidAutomotive?: boolean;
     };
 
 /**
@@ -51,13 +56,18 @@ export const useAndroidAutoTelemetry = ({
   requestTelemetryPermissions = true,
   requiredPermissions = [],
   automotivePermissionRequest,
+  isAndroidAutomotive = false,
 }: Props) => {
   const [permissionsGranted, setPermissionsGranted] = useState<boolean | null>(null);
   const [telemetry, setTelemetry] = useState<Telemetry | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(isAndroidAutomotive);
 
   useEffect(() => {
+    if (isAndroidAutomotive) {
+      return;
+    }
+
     const removeDidConnect = HybridAutoPlay.addListener('didConnect', () => setIsConnected(true));
     const removeDidDisconnect = HybridAutoPlay.addListener('didDisconnect', () =>
       setIsConnected(false)
@@ -69,7 +79,7 @@ export const useAndroidAutoTelemetry = ({
       removeDidConnect();
       removeDidDisconnect();
     };
-  }, []);
+  }, [isAndroidAutomotive]);
 
   useEffect(() => {
     const checkPermissions = async () => {
