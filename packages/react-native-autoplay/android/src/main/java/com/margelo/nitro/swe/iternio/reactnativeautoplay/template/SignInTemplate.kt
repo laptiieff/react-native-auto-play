@@ -1,20 +1,29 @@
 package com.margelo.nitro.swe.iternio.reactnativeautoplay.template
 
+import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
+import androidx.annotation.Nullable
 import androidx.car.app.CarContext
+import androidx.car.app.CarToast
+import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.InputCallback
+import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Template
 import androidx.car.app.model.signin.InputSignInMethod
 import androidx.car.app.model.signin.InputSignInMethod.INPUT_TYPE_DEFAULT
 import androidx.car.app.model.signin.InputSignInMethod.INPUT_TYPE_PASSWORD
 import androidx.car.app.model.signin.PinSignInMethod
+import androidx.car.app.model.signin.ProviderSignInMethod
 import androidx.car.app.model.signin.QRCodeSignInMethod
 import androidx.car.app.model.signin.SignInTemplate
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.KeyboardType
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.NitroAction
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.NitroActionType
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.SignInTemplateConfig
+import com.margelo.nitro.swe.iternio.reactnativeautoplay.SignInWithGoogleActivity
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.TextInputType
 import java.security.InvalidParameterException
 
@@ -55,6 +64,7 @@ class SignInTemplate(
         val qrSignIn = config.signInMethod?.asFirstOrNull()
         val pinSignIn = config.signInMethod?.asSecondOrNull()
         val inputSignIn = config.signInMethod?.asThirdOrNull()
+        val googleSignIn = config.signInMethod?.asFourthOrNull()
 
         val templateBuilder = when {
             qrSignIn != null -> {
@@ -92,6 +102,48 @@ class SignInTemplate(
                     inputSignIn.defaultValue?.let { setDefaultValue(it) }
                     inputSignIn.showKeyboardByDefault?.let { setShowKeyboardByDefault(it) }
                 }.build())
+            }
+
+            googleSignIn != null -> {
+                val signInAction = Action.Builder().apply {
+                    setOnClickListener(ParkedOnlyOnClickListener.create {
+                        val extras = Bundle(1)
+                        extras.putBinder(
+                            SignInWithGoogleActivity.BINDER_KEY,
+                            object : SignInWithGoogleActivity.OnSignInComplete() {
+                                override fun onSignInComplete(@Nullable account: GoogleSignInAccount?) {
+                                    if (account == null) {
+                                        CarToast.makeText(
+                                            context,
+                                            "Error signing in",
+                                            CarToast.LENGTH_LONG
+                                        ).show()
+                                        googleSignIn.callback("Error signing in", null)
+                                    } else {
+                                        googleSignIn.callback(
+                                            null,
+                                            com.margelo.nitro.swe.iternio.reactnativeautoplay.GoogleSignInAccount(
+                                                serverAuthCode = account.serverAuthCode,
+                                                email = account.email,
+                                                id = account.id,
+                                                displayName = account.displayName,
+                                                photoUrl = account.photoUrl.toString(),
+                                                idToken = account.idToken,
+                                                givenName = account.givenName,
+                                                familyName = account.familyName
+                                            )
+                                        )
+                                    }
+                                }
+                            })
+                        extras.putString("serverClientId", googleSignIn.serverClientId)
+                        context.startActivity(
+                            Intent().setClass(context, SignInWithGoogleActivity::class.java)
+                                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtras(extras)
+                        )
+                    })
+                }.build()
+                SignInTemplate.Builder(ProviderSignInMethod(signInAction))
             }
 
             else -> throw InvalidParameterException("missing SignInTemplate builder")

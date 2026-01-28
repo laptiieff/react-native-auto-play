@@ -1,9 +1,26 @@
 export enum SignInMethods {
   QR = 0,
-  PROVIDER = 1,
+  GOOGLE = 1,
   PIN = 2,
   INPUT = 3,
 }
+
+export type GoogleSignInAccount = {
+  serverAuthCode?: string;
+  email?: string;
+  id?: string;
+  displayName?: string;
+  photoUrl?: string;
+  idToken?: string;
+  givenName?: string;
+  familyName?: string;
+};
+
+export type GoogleSignIn = {
+  method: SignInMethods.GOOGLE;
+  serverClientId: string;
+  callback: (error?: string, signInAccount?: GoogleSignInAccount) => void;
+};
 
 export type PinSignIn = {
   method: SignInMethods.PIN;
@@ -38,4 +55,4 @@ export type QrSignIn = {
   url: string;
 };
 
-export type SignInMethod = QrSignIn | PinSignIn | InputSignIn;
+export type SignInMethod = QrSignIn | PinSignIn | InputSignIn | GoogleSignIn;
