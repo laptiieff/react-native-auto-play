@@ -4,35 +4,46 @@ import { HybridAndroidAutoTelemetry, HybridAutoPlay } from '..';
 
 import type { AndroidAutoPermissions, Telemetry } from '../types/Telemetry';
 
-interface Props {
-  /**
-   * Can be used to delay asking for permissions if set to false. True by default.
-   * Can be used to request other permissions first, so the permission request dialogs do not overlap.
-   * @default true
-   */
-  requestTelemetryPermissions?: boolean;
-  /**
-   * The permissions to check.
-   */
-  requiredPermissions: Array<AndroidAutoPermissions>;
-  /**
-   * Android Automotive specific permission request properties
-   */
-  automotivePermissionRequest?: {
-    /**
-     * message to be shown on the permission request screen
-     */
-    message: string;
-    /**
-     * primary action button text
-     */
-    grantButtonText: string;
-    /**
-     * secondary action button text, if not specified button will not be shown
-     */
-    cancelButtonText?: string;
-  };
-}
+type Props =
+  | {
+      /**
+       * Can be used to delay asking for permissions if set to false. True by default.
+       * Can be used to request other permissions first, so the permission request dialogs do not overlap.
+       * @default true
+       */
+      requestTelemetryPermissions: true;
+      /**
+       * The permissions to check.
+       */
+      requiredPermissions: Array<AndroidAutoPermissions>;
+      /**
+       * Android Automotive specific permission request properties
+       */
+      automotivePermissionRequest?: {
+        /**
+         * message to be shown on the permission request screen
+         */
+        message: string;
+        /**
+         * primary action button text
+         */
+        grantButtonText: string;
+        /**
+         * secondary action button text, if not specified button will not be shown
+         */
+        cancelButtonText?: string;
+      };
+      /**
+       * set to true in case your build variant targets Android Automotive
+       */
+      isAndroidAutomotive?: boolean;
+    }
+  | {
+      requestTelemetryPermissions: false | undefined;
+      requiredPermissions?: never;
+      automotivePermissionRequest?: never;
+      isAndroidAutomotive?: boolean;
+    };
 
 /**
  * Hook to check if the telemetry permissions are granted. If the permissions are not granted, it will request them from the user.
@@ -43,15 +54,20 @@ interface Props {
  */
 export const useAndroidAutoTelemetry = ({
   requestTelemetryPermissions = true,
-  requiredPermissions,
+  requiredPermissions = [],
   automotivePermissionRequest,
+  isAndroidAutomotive = false,
 }: Props) => {
   const [permissionsGranted, setPermissionsGranted] = useState<boolean | null>(null);
   const [telemetry, setTelemetry] = useState<Telemetry | undefined>(undefined);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [isConnected, setIsConnected] = useState(false);
+  const [isConnected, setIsConnected] = useState(isAndroidAutomotive);
 
   useEffect(() => {
+    if (isAndroidAutomotive) {
+      return;
+    }
+
     const removeDidConnect = HybridAutoPlay.addListener('didConnect', () => setIsConnected(true));
     const removeDidDisconnect = HybridAutoPlay.addListener('didDisconnect', () =>
       setIsConnected(false)
@@ -63,7 +79,7 @@ export const useAndroidAutoTelemetry = ({
       removeDidConnect();
       removeDidDisconnect();
     };
-  }, []);
+  }, [isAndroidAutomotive]);
 
   useEffect(() => {
     const checkPermissions = async () => {

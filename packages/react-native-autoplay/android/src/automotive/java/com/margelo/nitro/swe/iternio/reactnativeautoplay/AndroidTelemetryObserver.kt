@@ -7,6 +7,7 @@ import android.car.VehiclePropertyIds
 import android.car.hardware.CarPropertyValue
 import android.car.hardware.property.CarPropertyManager
 import android.util.Log
+import com.margelo.nitro.NitroModules
 import kotlin.math.floor
 
 private val REQUIRED_VEHICLE_PROPERTY_IDS = listOf(
@@ -156,14 +157,10 @@ object AndroidTelemetryObserver : TelemetryObserver() {
             return false
         }
 
-        val carContext = AndroidAutoSession.getRootContext() ?: throw IllegalArgumentException(
-            "Car context not available, failed to start telemetry"
-        )
-
         // create new instance so we can access all props after permissions were granted
         mCar?.disconnect()
 
-        val car = Car.createCar(carContext)
+        val car = Car.createCar(NitroModules.applicationContext)
         mCar = car
 
         fetchStaticData(car)
