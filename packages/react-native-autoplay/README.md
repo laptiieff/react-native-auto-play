@@ -896,7 +896,7 @@ See [this issue](https://github.com/mrousavy/nitro/issues/382) for details.
 
 ## Contributing
 
-Contributions are welcome! Please submit a pull request.
+Contributions are welcome! Feel free to open up a [discussion](https://github.com/Iternio-Planning-AB/react-native-auto-play/discussions) or submit a pull request.
 
 ## License
 
