@@ -15,8 +15,11 @@
 #include <fbjni/fbjni.h>
 #include <NitroModules/HybridObjectRegistry.hpp>
 
-#include "JHybridAndroidAutoTelemetrySpec.hpp"
+#include "JHybridAndroidAutomotiveSpec.hpp"
 #include "JFunc_void.hpp"
+#include "JFunc_void_ActiveCarUxRestrictions.hpp"
+#include "JFunc_void_AppFocusState.hpp"
+#include "JHybridAndroidAutoTelemetrySpec.hpp"
 #include "JFunc_void_std__optional_Telemetry_.hpp"
 #include "JHybridAutoPlaySpec.hpp"
 #include "JFunc_void_VisibilityState.hpp"
@@ -53,8 +56,11 @@ int initialize(JavaVM* vm) {
 
   return facebook::jni::initialize(vm, [] {
     // Register native JNI methods
-    margelo::nitro::swe::iternio::reactnativeautoplay::JHybridAndroidAutoTelemetrySpec::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JHybridAndroidAutomotiveSpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_cxx::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_ActiveCarUxRestrictions_cxx::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_AppFocusState_cxx::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JHybridAndroidAutoTelemetrySpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_std__optional_Telemetry__cxx::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridAutoPlaySpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_VisibilityState_cxx::registerNatives();
@@ -94,6 +100,14 @@ int initialize(JavaVM* vm) {
       "AndroidAutoTelemetry",
       []() -> std::shared_ptr<HybridObject> {
         static DefaultConstructableObject<JHybridAndroidAutoTelemetrySpec::javaobject> object("com/margelo/nitro/swe/iternio/reactnativeautoplay/HybridAndroidAutoTelemetry");
+        auto instance = object.create();
+        return instance->cthis()->shared();
+      }
+    );
+    HybridObjectRegistry::registerHybridObjectConstructor(
+      "AndroidAutomotive",
+      []() -> std::shared_ptr<HybridObject> {
+        static DefaultConstructableObject<JHybridAndroidAutomotiveSpec::javaobject> object("com/margelo/nitro/swe/iternio/reactnativeautoplay/HybridAndroidAutomotive");
         auto instance = object.create();
         return instance->cthis()->shared();
       }

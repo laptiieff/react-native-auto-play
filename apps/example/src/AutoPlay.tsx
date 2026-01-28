@@ -10,6 +10,7 @@ import {
 import type { UnsubscribeListener } from '@reduxjs/toolkit';
 import { useEffect, useState } from 'react';
 import { Platform, Text, View } from 'react-native';
+import AutomotiveView from './AutomotiveView';
 import { Cluster } from './AutoPlayCluster';
 import { AutoPlayDashboard } from './AutoPlayDashboard';
 import { AutoManeuverUtil } from './config/AutoManeuver';
@@ -170,6 +171,7 @@ const AutoPlayRoot = (props: RootComponentInitialProps) => {
         <Text>Running as {props.id}</Text>
         {Platform.OS === 'android' ? <TelemetryView /> : null}
         <VoiceInputView />
+        <AutomotiveView />
       </View>
     </SafeAreaView>
   );
