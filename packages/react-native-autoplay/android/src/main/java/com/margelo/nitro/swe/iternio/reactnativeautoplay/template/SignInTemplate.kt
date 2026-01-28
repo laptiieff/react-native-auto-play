@@ -127,7 +127,7 @@ class SignInTemplate(
                                                 email = account.email,
                                                 id = account.id,
                                                 displayName = account.displayName,
-                                                photoUrl = account.photoUrl.toString(),
+                                                photoUrl = account.photoUrl?.toString(),
                                                 idToken = account.idToken,
                                                 givenName = account.givenName,
                                                 familyName = account.familyName
