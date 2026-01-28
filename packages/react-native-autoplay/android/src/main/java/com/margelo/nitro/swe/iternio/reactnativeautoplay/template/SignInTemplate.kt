@@ -3,9 +3,7 @@ package com.margelo.nitro.swe.iternio.reactnativeautoplay.template
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.annotation.Nullable
 import androidx.car.app.CarContext
-import androidx.car.app.CarToast
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
 import androidx.car.app.model.CarIcon
@@ -29,6 +27,7 @@ import com.margelo.nitro.swe.iternio.reactnativeautoplay.SignInTemplateConfig
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.SignInWithGoogleActivity
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.TextInputType
 import java.security.InvalidParameterException
+import androidx.core.net.toUri
 
 class SignInTemplate(
     context: CarContext, config: SignInTemplateConfig
@@ -72,13 +71,11 @@ class SignInTemplate(
         val templateBuilder = when {
             qrSignIn != null -> {
                 val url = qrSignIn.url
-                    ?: throw InvalidParameterException("missing url parameter")
-                SignInTemplate.Builder(QRCodeSignInMethod(Uri.parse(url)))
+                SignInTemplate.Builder(QRCodeSignInMethod(url.toUri()))
             }
 
             pinSignIn != null -> {
                 val pin = pinSignIn.pin
-                    ?: throw InvalidParameterException("missing pin parameter")
                 SignInTemplate.Builder(PinSignInMethod(pin))
             }
 
@@ -110,13 +107,19 @@ class SignInTemplate(
             googleSignIn != null -> {
                 val signInAction = Action.Builder().apply {
                     setTitle(googleSignIn.signInButtonText)
-                    setIcon(CarIcon.Builder(IconCompat.createWithResource(context, R.drawable.google)).build())
+                    setIcon(
+                        CarIcon.Builder(
+                            IconCompat.createWithResource(
+                                context, R.drawable.google
+                            )
+                        ).build()
+                    )
                     setOnClickListener(ParkedOnlyOnClickListener.create {
                         val extras = Bundle(1)
                         extras.putBinder(
                             SignInWithGoogleActivity.BINDER_KEY,
                             object : SignInWithGoogleActivity.OnSignInComplete() {
-                                override fun onSignInComplete(@Nullable account: GoogleSignInAccount?) {
+                                override fun onSignInComplete(account: GoogleSignInAccount?) {
                                     if (account == null) {
                                         googleSignIn.callback("Error signing in", null)
                                     } else {
