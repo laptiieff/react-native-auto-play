@@ -59,7 +59,7 @@ target_sources(
   ../nitrogen/generated/android/c++/JHybridMessageTemplateSpec.cpp
   ../nitrogen/generated/android/c++/JHybridSearchTemplateSpec.cpp
   ../nitrogen/generated/android/c++/JHybridSignInTemplateSpec.cpp
-  ../nitrogen/generated/android/c++/JVariant_QrSignIn_PinSignIn_InputSignIn.cpp
+  ../nitrogen/generated/android/c++/JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn.cpp
 )
 
 # From node_modules/react-native/ReactAndroid/cmake-utils/folly-flags.cmake

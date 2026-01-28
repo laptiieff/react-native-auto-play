@@ -12,12 +12,17 @@
 
 #include "AssetImage.hpp"
 #include "GlyphImage.hpp"
+#include "GoogleSignIn.hpp"
+#include "GoogleSignInAccount.hpp"
 #include "InputSignIn.hpp"
 #include "JAssetImage.hpp"
 #include "JFunc_void.hpp"
 #include "JFunc_void_std__optional_bool_.hpp"
+#include "JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_.hpp"
 #include "JFunc_void_std__string.hpp"
 #include "JGlyphImage.hpp"
+#include "JGoogleSignIn.hpp"
+#include "JGoogleSignInAccount.hpp"
 #include "JInputSignIn.hpp"
 #include "JKeyboardType.hpp"
 #include "JNitroAction.hpp"
@@ -30,7 +35,7 @@
 #include "JSignInMethods.hpp"
 #include "JTextInputType.hpp"
 #include "JVariant_GlyphImage_AssetImage.hpp"
-#include "JVariant_QrSignIn_PinSignIn_InputSignIn.hpp"
+#include "JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn.hpp"
 #include "KeyboardType.hpp"
 #include "NitroAction.hpp"
 #include "NitroActionType.hpp"
@@ -85,8 +90,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
       jni::local_ref<jni::JString> title = this->getFieldValue(fieldTitle);
       static const auto fieldAdditionalText = clazz->getField<jni::JString>("additionalText");
       jni::local_ref<jni::JString> additionalText = this->getFieldValue(fieldAdditionalText);
-      static const auto fieldSignInMethod = clazz->getField<JVariant_QrSignIn_PinSignIn_InputSignIn>("signInMethod");
-      jni::local_ref<JVariant_QrSignIn_PinSignIn_InputSignIn> signInMethod = this->getFieldValue(fieldSignInMethod);
+      static const auto fieldSignInMethod = clazz->getField<JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn>("signInMethod");
+      jni::local_ref<JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn> signInMethod = this->getFieldValue(fieldSignInMethod);
       static const auto fieldHeaderActions = clazz->getField<jni::JArrayClass<JNitroAction>>("headerActions");
       jni::local_ref<jni::JArrayClass<JNitroAction>> headerActions = this->getFieldValue(fieldHeaderActions);
       static const auto fieldActions = clazz->getField<jni::JArrayClass<JNitroAction>>("actions");
@@ -174,7 +179,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
      */
     [[maybe_unused]]
     static jni::local_ref<JSignInTemplateConfig::javaobject> fromCpp(const SignInTemplateConfig& value) {
-      using JSignature = JSignInTemplateConfig(jni::alias_ref<jni::JString>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void::javaobject>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JVariant_QrSignIn_PinSignIn_InputSignIn>, jni::alias_ref<jni::JArrayClass<JNitroAction>>, jni::alias_ref<jni::JArrayClass<JNitroAction>>, jni::alias_ref<jni::JString>);
+      using JSignature = JSignInTemplateConfig(jni::alias_ref<jni::JString>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void_std__optional_bool_::javaobject>, jni::alias_ref<JFunc_void::javaobject>, jni::alias_ref<jni::JDouble>, jni::alias_ref<jni::JString>, jni::alias_ref<jni::JString>, jni::alias_ref<JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn>, jni::alias_ref<jni::JArrayClass<JNitroAction>>, jni::alias_ref<jni::JArrayClass<JNitroAction>>, jni::alias_ref<jni::JString>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
@@ -188,7 +193,7 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         value.autoDismissMs.has_value() ? jni::JDouble::valueOf(value.autoDismissMs.value()) : nullptr,
         value.title.has_value() ? jni::make_jstring(value.title.value()) : nullptr,
         value.additionalText.has_value() ? jni::make_jstring(value.additionalText.value()) : nullptr,
-        value.signInMethod.has_value() ? JVariant_QrSignIn_PinSignIn_InputSignIn::fromCpp(value.signInMethod.value()) : nullptr,
+        value.signInMethod.has_value() ? JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn::fromCpp(value.signInMethod.value()) : nullptr,
         value.headerActions.has_value() ? [&]() {
           size_t __size = value.headerActions.value().size();
           jni::local_ref<jni::JArrayClass<JNitroAction>> __array = jni::JArrayClass<JNitroAction>::newArray(__size);

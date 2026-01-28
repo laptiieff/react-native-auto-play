@@ -45,9 +45,9 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
         case SignInMethods::QR:
           static const auto fieldQR = clazz->getStaticField<JSignInMethods>("QR");
           return clazz->getStaticFieldValue(fieldQR);
-        case SignInMethods::PROVIDER:
-          static const auto fieldPROVIDER = clazz->getStaticField<JSignInMethods>("PROVIDER");
-          return clazz->getStaticFieldValue(fieldPROVIDER);
+        case SignInMethods::GOOGLE:
+          static const auto fieldGOOGLE = clazz->getStaticField<JSignInMethods>("GOOGLE");
+          return clazz->getStaticFieldValue(fieldGOOGLE);
         case SignInMethods::PIN:
           static const auto fieldPIN = clazz->getStaticField<JSignInMethods>("PIN");
           return clazz->getStaticFieldValue(fieldPIN);

@@ -17,7 +17,7 @@ import com.facebook.proguard.annotations.DoNotStrip
 @Keep
 enum class SignInMethods(@DoNotStrip @Keep val value: Int) {
   QR(0),
-  PROVIDER(1),
+  GOOGLE(1),
   PIN(2),
   INPUT(3);
 

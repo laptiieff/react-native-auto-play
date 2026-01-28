@@ -42,6 +42,7 @@
 #include "JHybridMessageTemplateSpec.hpp"
 #include "JHybridSearchTemplateSpec.hpp"
 #include "JHybridSignInTemplateSpec.hpp"
+#include "JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_.hpp"
 #include <NitroModules/DefaultConstructableObject.hpp>
 
 namespace margelo::nitro::swe::iternio::reactnativeautoplay {
@@ -80,6 +81,7 @@ int initialize(JavaVM* vm) {
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridMessageTemplateSpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridSearchTemplateSpec::registerNatives();
     margelo::nitro::swe::iternio::reactnativeautoplay::JHybridSignInTemplateSpec::registerNatives();
+    margelo::nitro::swe::iternio::reactnativeautoplay::JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount__cxx::registerNatives();
 
     // Register Nitro Hybrid Objects
     HybridObjectRegistry::registerHybridObjectConstructor(
