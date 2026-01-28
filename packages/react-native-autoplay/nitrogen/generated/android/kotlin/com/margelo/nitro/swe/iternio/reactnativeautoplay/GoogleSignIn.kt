@@ -25,13 +25,16 @@ data class GoogleSignIn(
   val serverClientId: String,
   @DoNotStrip
   @Keep
-  val callback: Func_void_std__optional_std__string__std__optional_GoogleSignInAccount_
+  val callback: Func_void_std__optional_std__string__std__optional_GoogleSignInAccount_,
+  @DoNotStrip
+  @Keep
+  val signInButtonText: String
 ) {
   /**
    * Create a new instance of GoogleSignIn from Kotlin
    */
-  constructor(method: SignInMethods, serverClientId: String, callback: (error: String?, signInAccount: GoogleSignInAccount?) -> Unit):
-         this(method, serverClientId, Func_void_std__optional_std__string__std__optional_GoogleSignInAccount__java(callback))
+  constructor(method: SignInMethods, serverClientId: String, callback: (error: String?, signInAccount: GoogleSignInAccount?) -> Unit, signInButtonText: String):
+         this(method, serverClientId, Func_void_std__optional_std__string__std__optional_GoogleSignInAccount__java(callback), signInButtonText)
 
   companion object {
     /**
@@ -41,8 +44,8 @@ data class GoogleSignIn(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(method: SignInMethods, serverClientId: String, callback: Func_void_std__optional_std__string__std__optional_GoogleSignInAccount_): GoogleSignIn {
-      return GoogleSignIn(method, serverClientId, callback)
+    private fun fromCpp(method: SignInMethods, serverClientId: String, callback: Func_void_std__optional_std__string__std__optional_GoogleSignInAccount_, signInButtonText: String): GoogleSignIn {
+      return GoogleSignIn(method, serverClientId, callback, signInButtonText)
     }
   }
 }

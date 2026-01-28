@@ -8,6 +8,7 @@ import androidx.car.app.CarContext
 import androidx.car.app.CarToast
 import androidx.car.app.model.Action
 import androidx.car.app.model.ActionStrip
+import androidx.car.app.model.CarIcon
 import androidx.car.app.model.InputCallback
 import androidx.car.app.model.ParkedOnlyOnClickListener
 import androidx.car.app.model.Template
@@ -18,10 +19,12 @@ import androidx.car.app.model.signin.PinSignInMethod
 import androidx.car.app.model.signin.ProviderSignInMethod
 import androidx.car.app.model.signin.QRCodeSignInMethod
 import androidx.car.app.model.signin.SignInTemplate
+import androidx.core.graphics.drawable.IconCompat
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.KeyboardType
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.NitroAction
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.NitroActionType
+import com.margelo.nitro.swe.iternio.reactnativeautoplay.R
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.SignInTemplateConfig
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.SignInWithGoogleActivity
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.TextInputType
@@ -106,6 +109,8 @@ class SignInTemplate(
 
             googleSignIn != null -> {
                 val signInAction = Action.Builder().apply {
+                    setTitle(googleSignIn.signInButtonText)
+                    setIcon(CarIcon.Builder(IconCompat.createWithResource(context, R.drawable.google)).build())
                     setOnClickListener(ParkedOnlyOnClickListener.create {
                         val extras = Bundle(1)
                         extras.putBinder(
@@ -113,11 +118,6 @@ class SignInTemplate(
                             object : SignInWithGoogleActivity.OnSignInComplete() {
                                 override fun onSignInComplete(@Nullable account: GoogleSignInAccount?) {
                                     if (account == null) {
-                                        CarToast.makeText(
-                                            context,
-                                            "Error signing in",
-                                            CarToast.LENGTH_LONG
-                                        ).show()
                                         googleSignIn.callback("Error signing in", null)
                                     } else {
                                         googleSignIn.callback(

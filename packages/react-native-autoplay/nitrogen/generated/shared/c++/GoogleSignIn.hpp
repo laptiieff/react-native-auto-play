@@ -49,10 +49,11 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     SignInMethods method     SWIFT_PRIVATE;
     std::string serverClientId     SWIFT_PRIVATE;
     std::function<void(const std::optional<std::string>& /* error */, const std::optional<GoogleSignInAccount>& /* signInAccount */)> callback     SWIFT_PRIVATE;
+    std::string signInButtonText     SWIFT_PRIVATE;
 
   public:
     GoogleSignIn() = default;
-    explicit GoogleSignIn(SignInMethods method, std::string serverClientId, std::function<void(const std::optional<std::string>& /* error */, const std::optional<GoogleSignInAccount>& /* signInAccount */)> callback): method(method), serverClientId(serverClientId), callback(callback) {}
+    explicit GoogleSignIn(SignInMethods method, std::string serverClientId, std::function<void(const std::optional<std::string>& /* error */, const std::optional<GoogleSignInAccount>& /* signInAccount */)> callback, std::string signInButtonText): method(method), serverClientId(serverClientId), callback(callback), signInButtonText(signInButtonText) {}
 
   public:
     // GoogleSignIn is not equatable because these properties are not equatable: callback
@@ -70,7 +71,8 @@ namespace margelo::nitro {
       return margelo::nitro::swe::iternio::reactnativeautoplay::GoogleSignIn(
         JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethods>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "method"))),
         JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "serverClientId"))),
-        JSIConverter<std::function<void(const std::optional<std::string>&, const std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::GoogleSignInAccount>&)>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "callback")))
+        JSIConverter<std::function<void(const std::optional<std::string>&, const std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::GoogleSignInAccount>&)>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "callback"))),
+        JSIConverter<std::string>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "signInButtonText")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::swe::iternio::reactnativeautoplay::GoogleSignIn& arg) {
@@ -78,6 +80,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "method"), JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethods>::toJSI(runtime, arg.method));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "serverClientId"), JSIConverter<std::string>::toJSI(runtime, arg.serverClientId));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "callback"), JSIConverter<std::function<void(const std::optional<std::string>&, const std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::GoogleSignInAccount>&)>>::toJSI(runtime, arg.callback));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "signInButtonText"), JSIConverter<std::string>::toJSI(runtime, arg.signInButtonText));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -91,6 +94,7 @@ namespace margelo::nitro {
       if (!JSIConverter<margelo::nitro::swe::iternio::reactnativeautoplay::SignInMethods>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "method")))) return false;
       if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "serverClientId")))) return false;
       if (!JSIConverter<std::function<void(const std::optional<std::string>&, const std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::GoogleSignInAccount>&)>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "callback")))) return false;
+      if (!JSIConverter<std::string>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "signInButtonText")))) return false;
       return true;
     }
   };

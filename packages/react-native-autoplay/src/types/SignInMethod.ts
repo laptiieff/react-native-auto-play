@@ -20,6 +20,7 @@ export type GoogleSignIn = {
   method: SignInMethods.GOOGLE;
   serverClientId: string;
   callback: (error?: string, signInAccount?: GoogleSignInAccount) => void;
+  signInButtonText: string;
 };
 
 export type PinSignIn = {

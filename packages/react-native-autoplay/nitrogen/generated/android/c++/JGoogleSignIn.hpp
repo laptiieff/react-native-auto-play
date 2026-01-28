@@ -45,6 +45,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
       jni::local_ref<jni::JString> serverClientId = this->getFieldValue(fieldServerClientId);
       static const auto fieldCallback = clazz->getField<JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_::javaobject>("callback");
       jni::local_ref<JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_::javaobject> callback = this->getFieldValue(fieldCallback);
+      static const auto fieldSignInButtonText = clazz->getField<jni::JString>("signInButtonText");
+      jni::local_ref<jni::JString> signInButtonText = this->getFieldValue(fieldSignInButtonText);
       return GoogleSignIn(
         method->toCpp(),
         serverClientId->toStdString(),
@@ -56,7 +58,8 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
             auto callbackRef = jni::make_global(callback);
             return JNICallable<JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_, void(std::optional<std::string>, std::optional<GoogleSignInAccount>)>(std::move(callbackRef));
           }
-        }()
+        }(),
+        signInButtonText->toStdString()
       );
     }
 
@@ -66,14 +69,15 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
      */
     [[maybe_unused]]
     static jni::local_ref<JGoogleSignIn::javaobject> fromCpp(const GoogleSignIn& value) {
-      using JSignature = JGoogleSignIn(jni::alias_ref<JSignInMethods>, jni::alias_ref<jni::JString>, jni::alias_ref<JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_::javaobject>);
+      using JSignature = JGoogleSignIn(jni::alias_ref<JSignInMethods>, jni::alias_ref<jni::JString>, jni::alias_ref<JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_::javaobject>, jni::alias_ref<jni::JString>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         JSignInMethods::fromCpp(value.method),
         jni::make_jstring(value.serverClientId),
-        JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount__cxx::fromCpp(value.callback)
+        JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount__cxx::fromCpp(value.callback),
+        jni::make_jstring(value.signInButtonText)
       );
     }
   };
