@@ -15,12 +15,16 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct QrSignIn; }
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct PinSignIn; }
 // Forward declaration of `InputSignIn` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct InputSignIn; }
+// Forward declaration of `GoogleSignIn` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct GoogleSignIn; }
 // Forward declaration of `SignInMethods` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class SignInMethods; }
 // Forward declaration of `KeyboardType` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class KeyboardType; }
 // Forward declaration of `TextInputType` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class TextInputType; }
+// Forward declaration of `GoogleSignInAccount` to properly resolve imports.
+namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct GoogleSignInAccount; }
 // Forward declaration of `NitroAction` to properly resolve imports.
 namespace margelo::nitro::swe::iternio::reactnativeautoplay { struct NitroAction; }
 // Forward declaration of `GlyphImage` to properly resolve imports.
@@ -50,8 +54,9 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroBu
 #include "QrSignIn.hpp"
 #include "PinSignIn.hpp"
 #include "InputSignIn.hpp"
+#include "GoogleSignIn.hpp"
 #include <variant>
-#include "JVariant_QrSignIn_PinSignIn_InputSignIn.hpp"
+#include "JVariant_QrSignIn_PinSignIn_InputSignIn_GoogleSignIn.hpp"
 #include "JQrSignIn.hpp"
 #include "SignInMethods.hpp"
 #include "JSignInMethods.hpp"
@@ -62,6 +67,10 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay { enum class NitroBu
 #include "JFunc_void_std__string.hpp"
 #include "TextInputType.hpp"
 #include "JTextInputType.hpp"
+#include "JGoogleSignIn.hpp"
+#include "GoogleSignInAccount.hpp"
+#include "JFunc_void_std__optional_std__string__std__optional_GoogleSignInAccount_.hpp"
+#include "JGoogleSignInAccount.hpp"
 #include "NitroAction.hpp"
 #include <vector>
 #include "JNitroAction.hpp"
