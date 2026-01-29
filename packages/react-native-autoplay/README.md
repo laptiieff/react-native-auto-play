@@ -452,7 +452,7 @@ Below is a concise overview of the most important props per template. Optional p
 | `component` | `React.ComponentType<RootComponentInitialProps>` | ✅ | React component to render on the map surface. |
 | `onStopNavigation` | `(template: MapTemplate) => void` | ✅ | Called when navigation is stopped by the system. |
 | `headerActions` | `MapHeaderActions<MapTemplate>` | ❌ | Top action strip. See **Header Actions** below. |
-| `mapButtons` | `MapButtons<MapTemplate>` | ❌ | 1–4 map buttons shown on the map. |
+| `mapButtons` | `MapButtons<MapTemplate>` | ❌ | 1–4 map buttons shown on the map. To get working gestures on the MapTemplate running on Android Auto you have to add a `MapPanButton` |
 | `visibleTravelEstimate` | `'first'` `'last'` | ❌ | Which travel estimate to display. |
 | `onDidPan` / `onDidUpdateZoomGestureWithCenter` | callbacks | ❌ | Map gesture events. |
 | `onAppearanceDidChange` | `(colorScheme) => void` | ❌ | Listen for light/dark mode changes. |
@@ -893,6 +893,8 @@ CarPlayDashboard.setButtons([
 -   **Broken exceptions with `react-native`** up to version 0.79
 When using react-native before 0.80.0 exceptions are broken and are reported as `Unknown runtime_error` or similar.
 See [this issue](https://github.com/mrousavy/nitro/issues/382) for details.
+- **@rnmapbox/maps** The map view/camera might take the primary screens scale factor into account when interacting with the map.
+This might lead to broken gestures, in case you face this issue try to apply either the `Dimensions.get('window').scale` or `RootComponentInitialProps.window.scale` to your coordinates.
 
 ## Contributing
 
