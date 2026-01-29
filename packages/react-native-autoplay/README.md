@@ -292,6 +292,11 @@ To get rid of your default activity, do an automotive specific build variant and
 ```
 For details check the example app and its build variants.
 
+#### Non-template Automotive app ####
+
+The library can also be used for Android Automotive apps that do not make use of templates. In case you do a navigation app HybridAndroidAutomotive provides methods to monitor and request the app focus to let the system know your app is taking over the navigation focus.
+Do not use app focus related functions on template applications as it fights with the navigation manager used on the map template.
+
 #### A Note on Android Studio
 
 When using build variants, Android Studio may not be aware of the selected variant during a Gradle sync. This can cause the IDE to show the incorrect implementation of native classes like `AndroidTelemetryObserver` (e.g., it might show the Android Auto version instead of the Automotive version).
