@@ -41,7 +41,7 @@ class AutomotivePermissionRequestTemplate(
 
                 if (granted) {
                     setResult(PermissionRequestResult(permissions, arrayOf()))
-                    screenManager.pop()
+                    finish()
                     return
                 }
 
@@ -85,7 +85,7 @@ class AutomotivePermissionRequestTemplate(
                                     granted.toTypedArray(), denied.toTypedArray()
                                 )
                             )
-                            screenManager.pop()
+                            finish()
                         })
                 })
                 cancelButtonText?.let {
@@ -93,7 +93,7 @@ class AutomotivePermissionRequestTemplate(
                         setTitle(it)
                         setOnClickListener(ParkedOnlyOnClickListener.create {
                             setResult(PermissionRequestResult(arrayOf(), permissions))
-                            screenManager.pop()
+                            finish()
                         })
                     }.build())
                 }
