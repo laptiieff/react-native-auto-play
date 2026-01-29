@@ -103,7 +103,10 @@ export class Template<TemplateConfigType, ActionsType> {
   }
 
   public setHeaderActions<T>(headerActions?: ActionsType) {
-    const nitroActions = NitroActionUtil.convert(headerActions as HeaderActions<T>);
+    const nitroActions = NitroActionUtil.convert(
+      this as unknown as T,
+      headerActions as HeaderActions<T>
+    );
     return HybridAutoPlay.setTemplateHeaderActions(this.id, nitroActions);
   }
 }
