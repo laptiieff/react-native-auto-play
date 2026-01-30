@@ -110,6 +110,8 @@ jobs:
       - name: Publish to npm
         working-directory: ./packages/react-native-autoplay
         run: |
-          yarn publish \
+          npm publish \
+            --access public \
+            --provenance \
             --tag ${{ github.event.release.prerelease && 'alpha' || 'latest' }} \
             --non-interactive
