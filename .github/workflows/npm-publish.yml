@@ -46,9 +46,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org/
-          cache: yarn
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install Yarn
         run: npm install -g yarn
@@ -112,6 +111,5 @@ jobs:
         run: |
           npm publish \
             --access public \
-            --provenance \
             --tag ${{ github.event.release.prerelease && 'alpha' || 'latest' }} \
             --non-interactive
