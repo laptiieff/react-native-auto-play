@@ -11,18 +11,43 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Determine branch for release tag
+        id: release-branch
+        run: |
+          echo "Resolving branch for tag: $GITHUB_REF_NAME"
+
+          TAG_COMMIT=$(git rev-list -n 1 "$GITHUB_REF_NAME")
+
+          BRANCH=$(git branch -r --contains "$TAG_COMMIT" \
+            | sed 's|origin/||' \
+            | grep -v 'HEAD' \
+            | head -n 1)
+
+          if [ -z "$BRANCH" ]; then
+            echo "::error::Could not determine branch for tag $GITHUB_REF_NAME"
+            exit 1
+          fi
+
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
+          echo "✅ Release branch: $BRANCH"
+
+      - name: Checkout release branch
+        run: |
+          git checkout ${{ steps.release-branch.outputs.branch }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: https://registry.npmjs.org/
-          cache: 'yarn'
+          cache: yarn
 
       - name: Install Yarn
         run: npm install -g yarn
@@ -35,6 +60,7 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           VERSION="${TAG#v}"
+
           node -e "
           const fs = require('fs');
           const pkg = require('./package.json');
@@ -43,7 +69,7 @@ jobs:
           console.log('Updated to: ${VERSION}');
           "
 
-      - name: Generate GitHub App token (Rulesets bypass)
+      - name: Generate GitHub App token
         id: app-token
         uses: actions/create-github-app-token@v2
         with:
@@ -52,17 +78,19 @@ jobs:
 
       - name: Commit version bump
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}  # Bypasses Rulesets!
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           git config user.name "react-native-autoplay-bot"
           git config user.email "react-native-autoplay-bot@users.noreply.github.com"
+
           git add packages/react-native-autoplay/package.json
+
           if git diff --cached --quiet; then
             echo "No version changes"
           else
             git commit -m "chore(react-native-autoplay): bump version to ${GITHUB_REF_NAME#v} [skip ci]"
-            git push
-            echo "✅ Committed: ${GITHUB_REF_NAME#v}"
+            git push origin ${{ steps.release-branch.outputs.branch }}
+            echo "✅ Committed to ${{ steps.release-branch.outputs.branch }}"
           fi
 
       - name: Yarn package install & git clean check
