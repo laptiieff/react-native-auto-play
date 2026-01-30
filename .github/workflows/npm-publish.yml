@@ -1,0 +1,76 @@
+name: Publish React Native Autoplay
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+          cache: 'yarn'
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install monorepo dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Update package.json version from release tag
+        working-directory: ./packages/react-native-autoplay
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          VERSION="${TAG#v}"
+          node -e "
+          const fs = require('fs');
+          const pkg = require('./package.json');
+          pkg.version = '${VERSION}';
+          fs.writeFileSync('./package.json', JSON.stringify(pkg, null, 2) + '\n');
+          console.log('Updated to: ${VERSION}');
+          "
+
+      - name: Commit version bump
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add packages/react-native-autoplay/package.json
+          if git diff --cached --quiet; then
+            echo "No version changes"
+          else
+            git commit -m "chore(react-native-autoplay): bump version to ${GITHUB_REF_NAME#v} [skip ci]"
+            git push
+            echo "✅ Committed: ${GITHUB_REF_NAME#v}"
+          fi
+
+      - name: Yarn package install & git clean check
+        working-directory: ./packages/react-native-autoplay
+        run: |
+          yarn install --frozen-lockfile
+          if ! git diff --exit-code; then
+            echo "::error::❌ Git dirty after yarn!"
+            git diff
+            exit 1
+          fi
+          echo "✅ Git clean"
+
+      - name: Publish to npm
+        working-directory: ./packages/react-native-autoplay
+        run: |
+          yarn publish \
+            --tag ${{ github.event.release.prerelease && 'alpha' || 'latest' }} \
+            --non-interactive
+        env:
+          NPM_AUTH_TOKEN: ${{ secrets.npm_token }}
