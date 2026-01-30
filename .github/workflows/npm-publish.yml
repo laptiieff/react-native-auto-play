@@ -72,5 +72,3 @@ jobs:
           yarn publish \
             --tag ${{ github.event.release.prerelease && 'alpha' || 'latest' }} \
             --non-interactive
-        env:
-          NPM_AUTH_TOKEN: ${{ secrets.npm_token }}
