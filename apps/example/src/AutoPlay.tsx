@@ -37,7 +37,7 @@ const AutoPlayRoot = (props: RootComponentInitialProps) => {
 
   const [i, setI] = useState(0);
 
-  const [signedIn, setSignedIn] = useState(false);
+  const [signedIn, setSignedIn] = useState(Platform.OS !== 'android');
 
   useEffect(() => {
     if (Platform.OS === 'android' && mapTemplate && !signedIn) {
