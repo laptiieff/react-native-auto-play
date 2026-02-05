@@ -9,7 +9,7 @@ import { Platform, Text, View } from 'react-native';
 import Config from 'react-native-config';
 
 export default function AutomotiveView() {
-  if (Platform.OS !== 'android' || !Config.isAutomotiveApp) {
+  if (Platform.OS !== 'android' || Config.isAutomotiveApp === 'false') {
     return null;
   }
 
