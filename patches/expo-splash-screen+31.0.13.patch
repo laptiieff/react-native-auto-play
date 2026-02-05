@@ -1,0 +1,345 @@
+diff --git a/node_modules/expo-splash-screen/build/index.d.ts b/node_modules/expo-splash-screen/build/index.d.ts
+index 2bbd5cd..08f7a97 100644
+--- a/node_modules/expo-splash-screen/build/index.d.ts
++++ b/node_modules/expo-splash-screen/build/index.d.ts
+@@ -29,11 +29,11 @@ export declare function setOptions(options: SplashScreenOptions): void;
+  * to display when you hide the splash screen, or you may see a blank screen briefly. See the
+  * ["Usage"](#usage) section for an example.
+  */
+-export declare function hide(): void;
++export declare function hide(moduleName?: string): void;
+ /**
+  * Hides the native splash screen immediately. This method is provided for backwards compatability. See the
+  * ["Usage"](#usage) section for an example.
+  */
+-export declare function hideAsync(): Promise<void>;
++export declare function hideAsync(moduleName?: string): Promise<void>;
+ export { SplashScreenOptions };
+ //# sourceMappingURL=index.d.ts.map
+\ No newline at end of file
+diff --git a/node_modules/expo-splash-screen/build/index.js b/node_modules/expo-splash-screen/build/index.js
+index 91b253a..f57aaa8 100644
+--- a/node_modules/expo-splash-screen/build/index.js
++++ b/node_modules/expo-splash-screen/build/index.js
+@@ -32,10 +32,10 @@ export function setOptions(options) { }
+  * to display when you hide the splash screen, or you may see a blank screen briefly. See the
+  * ["Usage"](#usage) section for an example.
+  */
+-export function hide() { }
++export function hide(moduleName) { }
+ /**
+  * Hides the native splash screen immediately. This method is provided for backwards compatability. See the
+  * ["Usage"](#usage) section for an example.
+  */
+-export async function hideAsync() { }
++export async function hideAsync(moduleName) { }
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/node_modules/expo-splash-screen/build/index.native.d.ts b/node_modules/expo-splash-screen/build/index.native.d.ts
+index e823128..7a72e6f 100644
+--- a/node_modules/expo-splash-screen/build/index.native.d.ts
++++ b/node_modules/expo-splash-screen/build/index.native.d.ts
+@@ -1,6 +1,6 @@
+ import { SplashScreenOptions } from './SplashScreen.types';
+ export declare function setOptions(options: SplashScreenOptions): void;
+ export declare function hide(): void;
+-export declare function hideAsync(): Promise<void>;
+-export declare function preventAutoHideAsync(): Promise<boolean | undefined>;
++export declare function hideAsync(moduleName?: string): Promise<void>;
++export declare function preventAutoHideAsync(moduleName?: string): Promise<boolean | undefined>;
+ //# sourceMappingURL=index.native.d.ts.map
+\ No newline at end of file
+diff --git a/node_modules/expo-splash-screen/build/index.native.js b/node_modules/expo-splash-screen/build/index.native.js
+index d0b0815..c844b86 100644
+--- a/node_modules/expo-splash-screen/build/index.native.js
++++ b/node_modules/expo-splash-screen/build/index.native.js
+@@ -1,5 +1,6 @@
+ import { isRunningInExpoGo } from 'expo';
+ import { requireOptionalNativeModule } from 'expo-modules-core';
++import { Platform } from 'react-native';
+ const SplashModule = requireOptionalNativeModule('ExpoSplashScreen');
+ export function setOptions(options) {
+     if (!SplashModule) {
+@@ -11,14 +12,18 @@ export function setOptions(options) {
+     }
+     SplashModule.setOptions(options);
+ }
+-export function hide() {
++export function hide(moduleName) {
+     if (!SplashModule) {
+         return;
+     }
++    if (Platform.OS === 'ios') {
++        SplashModule.hide(moduleName);
++        return;
++    }
+     SplashModule.hide();
+ }
+-export async function hideAsync() {
+-    hide();
++export async function hideAsync(moduleName) {
++    hide(moduleName);
+ }
+ export async function preventAutoHideAsync() {
+     if (!SplashModule) {
+diff --git a/node_modules/expo-splash-screen/ios/.DS_Store b/node_modules/expo-splash-screen/ios/.DS_Store
+new file mode 100644
+index 0000000..5008ddf
+Binary files /dev/null and b/node_modules/expo-splash-screen/ios/.DS_Store differ
+diff --git a/node_modules/expo-splash-screen/ios/SplashScreenManager.swift b/node_modules/expo-splash-screen/ios/SplashScreenManager.swift
+index fe4ad94..8b81c8b 100644
+--- a/node_modules/expo-splash-screen/ios/SplashScreenManager.swift
++++ b/node_modules/expo-splash-screen/ios/SplashScreenManager.swift
+@@ -3,51 +3,83 @@ import UIKit
+ import ExpoModulesCore
+ 
+ public class SplashScreenManager: NSObject, RCTReloadListener {
++  let splashScreenIdentifier = "Expo.SplashScreen.LoadingView"
++
+   @objc public static let shared = SplashScreenManager()
+-  private var loadingView: UIView?
+-  private var rootView: UIView?
++  @MainActor private var rootView: [String: UIView] = [:]
+   private var options = SplashScreenOptions()
+   public var preventAutoHideCalled = false
+ 
+-  private override init() {}
++  private override init() {
++      super.init()
++      
++      NotificationCenter.default.addObserver(self, selector: #selector(onAppReady), name: Notification.Name("RCTContentDidAppearNotification"), object: nil)
++  }
+ 
++  @MainActor
+   public func initWith(_ rootView: UIView) {
+     if RCTRunningInAppExtension() {
+       return
+     }
+ 
+-    self.rootView = rootView
+-    showSplashScreen()
+-    NotificationCenter.default.addObserver(self, selector: #selector(onAppReady), name: Notification.Name("RCTContentDidAppearNotification"), object: nil)
++    if let rootView = rootView as? RCTRootView {
++        self.rootView[rootView.moduleName] = rootView
++    } else if let rootView = rootView as? RCTSurfaceHostingProxyRootView {
++        self.rootView[rootView.moduleName] = rootView
++    }
++    
++    showSplashScreen(rootView: rootView)
+   }
+ 
+   @objc private func onAppReady() {
+     if !preventAutoHideCalled {
+-      hide()
++      DispatchQueue.main.async {
++        self.rootView.keys.forEach { moduleName in
++          self.hide(moduleName: moduleName)
++        }
++      }
+     }
+   }
+ 
+-  func hide() {
++  func hide(moduleName: String?) {
+     if RCTRunningInAppExtension() {
+       return
+     }
+ 
+     DispatchQueue.main.async { [weak self] in
+-      guard let self, let rootView, isLoadingViewVisible() else {
++      guard let self, let rootView = self.rootView[moduleName ?? "main"] else {
+         return
+       }
++        
++      var loadingView: UIView?
++          
++      if let rootView = rootView as? RCTSurfaceHostingProxyRootView {
++        loadingView = rootView.loadingView
++      } else if let rootView = rootView as? RCTRootView {
++        loadingView = rootView.subviews.first(where: { subView in
++          subView.accessibilityIdentifier == self.splashScreenIdentifier
++        })
++      }
++          
++      guard let loadingView else {
++        return
++      }
++        
++      if loadingView.isHidden {
++        return
++      }
++        
+       let duration = options.duration / 1000
+       if options.fade {
+         UIView.transition(with: rootView, duration: duration, options: .transitionCrossDissolve) {
+-          self.loadingView?.isHidden = true
++          loadingView.isHidden = true
+         } completion: { _ in
+-          self.loadingView?.removeFromSuperview()
+-          self.loadingView = nil
++          loadingView.removeFromSuperview()
++          
+         }
+       } else {
+-        loadingView?.isHidden = true
+-        loadingView?.removeFromSuperview()
+-        loadingView = nil
++        loadingView.isHidden = true
++        loadingView.removeFromSuperview()
+       }
+     }
+   }
+@@ -56,40 +88,36 @@ public class SplashScreenManager: NSObject, RCTReloadListener {
+     self.options = options
+   }
+ 
+-  private func showSplashScreen() {
++  private func showSplashScreen(rootView: UIView) {
+     let splashScreenFilename = Bundle.main.object(forInfoDictionaryKey: "UILaunchStoryboardName") as? String ?? "SplashScreen"
+     if let vc = UIStoryboard(name: splashScreenFilename, bundle: nil).instantiateInitialViewController() {
+-      loadingView = vc.view
+-      loadingView?.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+     
+-      if let bounds = self.rootView?.bounds {
+-        loadingView?.frame = bounds
+-        loadingView?.center = CGPoint(x: bounds.midX, y: bounds.midY)
+-      }
+-      loadingView?.isHidden = false
++    guard let loadingView = vc.view else {
++      return
++    }
++    loadingView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
++    loadingView.frame = rootView.bounds
++    loadingView.center = CGPoint(x: rootView.bounds.midX, y: rootView.bounds.midY)
++    loadingView.isHidden = false
++        
+ #if RCT_NEW_ARCH_ENABLED
+-      if let hostView = rootView as? RCTSurfaceHostingProxyRootView, let loadingView {
++      if let hostView = rootView as? RCTSurfaceHostingProxyRootView {
+         hostView.disableActivityIndicatorAutoHide(true)
+         hostView.loadingView = loadingView
+       }
+ #else
+-      if let loadingView {
+-        self.rootView?.addSubview(loadingView)
+-      }
++      loadingView.accessibilityIdentifier = splashScreenIdentifier
++      rootView.addSubview(loadingView)
+ #endif
+     }
+   }
+ 
+   public func didReceiveReloadCommand() {
+-    showSplashScreen()
+-  }
+-
+-  private func isLoadingViewVisible() -> Bool {
+-    guard let loadingView else {
+-      return false
+-    }
+-
+-    return !loadingView.isHidden
++      DispatchQueue.main.async {
++        self.rootView.forEach { (moduleName: String, rootView: UIView) in
++          self.showSplashScreen(rootView: rootView)
++        }
++      }
+   }
+ 
+   func removeObservers() {
+diff --git a/node_modules/expo-splash-screen/ios/SplashScreenModule.swift b/node_modules/expo-splash-screen/ios/SplashScreenModule.swift
+index f7baf4d..5b3fe77 100644
+--- a/node_modules/expo-splash-screen/ios/SplashScreenModule.swift
++++ b/node_modules/expo-splash-screen/ios/SplashScreenModule.swift
+@@ -10,17 +10,17 @@ public class SplashScreenModule: Module {
+       SplashScreenManager.shared.setOptions(options: options)
+     }
+ 
+-    Function("hide") {
+-      SplashScreenManager.shared.hide()
++    Function("hide") { (moduleName: String?) in
++      SplashScreenManager.shared.hide(moduleName: moduleName)
+     }
+ 
+-    AsyncFunction("hideAsync") {
+-      SplashScreenManager.shared.hide()
++    AsyncFunction("hideAsync") { (moduleName: String?) in
++      SplashScreenManager.shared.hide(moduleName: moduleName)
+     }
+ 
+     AsyncFunction("internalMaybeHideAsync") {
+       if !userControlledAutoHideEnabled {
+-        SplashScreenManager.shared.hide()
++        SplashScreenManager.shared.hide(moduleName: "main")
+       }
+     }
+ 
+diff --git a/node_modules/expo-splash-screen/src/SplashScreen.types.ts b/node_modules/expo-splash-screen/src/SplashScreen.types.ts
+index 3cc79ec..d0f5d96 100644
+--- a/node_modules/expo-splash-screen/src/SplashScreen.types.ts
++++ b/node_modules/expo-splash-screen/src/SplashScreen.types.ts
+@@ -17,7 +17,7 @@ export type SplashScreenOptions = {
+ export interface SplashScreenNativeModule extends NativeModule {
+   setOptions: (options: SplashScreenOptions) => void;
+   preventAutoHideAsync: () => Promise<boolean>;
+-  hide: () => void;
++  hide: (moduleName?: string) => void;
+   hideAsync: () => Promise<void>;
+   // @private
+   _internal_maybeHideAsync: () => Promise<void>;
+diff --git a/node_modules/expo-splash-screen/src/index.native.ts b/node_modules/expo-splash-screen/src/index.native.ts
+index 4f46ea4..cfe8716 100644
+--- a/node_modules/expo-splash-screen/src/index.native.ts
++++ b/node_modules/expo-splash-screen/src/index.native.ts
+@@ -2,6 +2,7 @@ import { isRunningInExpoGo } from 'expo';
+ import { requireOptionalNativeModule } from 'expo-modules-core';
+ 
+ import { SplashScreenNativeModule, SplashScreenOptions } from './SplashScreen.types';
++import { Platform } from 'react-native';
+ 
+ const SplashModule = requireOptionalNativeModule<SplashScreenNativeModule>('ExpoSplashScreen');
+ 
+@@ -20,16 +21,21 @@ export function setOptions(options: SplashScreenOptions) {
+   SplashModule.setOptions(options);
+ }
+ 
+-export function hide() {
++export function hide(moduleName?: string) {
+   if (!SplashModule) {
+     return;
+   }
+ 
++  if (Platform.OS === 'ios') {
++    SplashModule.hide(moduleName);
++    return;
++  }
++
+   SplashModule.hide();
+ }
+ 
+-export async function hideAsync(): Promise<void> {
+-  hide();
++export async function hideAsync(moduleName?: string): Promise<void> {
++  hide(moduleName);
+ }
+ 
+ export async function preventAutoHideAsync() {
+diff --git a/node_modules/expo-splash-screen/src/index.ts b/node_modules/expo-splash-screen/src/index.ts
+index cba1f02..8c236d8 100644
+--- a/node_modules/expo-splash-screen/src/index.ts
++++ b/node_modules/expo-splash-screen/src/index.ts
+@@ -37,12 +37,12 @@ export function setOptions(options: SplashScreenOptions): void {}
+  * to display when you hide the splash screen, or you may see a blank screen briefly. See the
+  * ["Usage"](#usage) section for an example.
+  */
+-export function hide(): void {}
++export function hide(moduleName?: string): void {}
+ 
+ /**
+  * Hides the native splash screen immediately. This method is provided for backwards compatability. See the
+  * ["Usage"](#usage) section for an example.
+  */
+-export async function hideAsync(): Promise<void> {}
++export async function hideAsync(moduleName?: string): Promise<void> {}
+ 
+ export { SplashScreenOptions };
