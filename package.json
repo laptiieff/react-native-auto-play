@@ -15,7 +15,7 @@
     "postinstall": "node scripts/conditional-patch.js"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4"
+    "@biomejs/biome": "^2.3.14"
   },
   "dependencies": {
     "patch-package": "^8.0.1"
