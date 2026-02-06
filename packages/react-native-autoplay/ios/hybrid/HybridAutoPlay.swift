@@ -270,7 +270,7 @@ class HybridAutoPlay: HybridAutoPlaySpec {
                         templateId: templateId
                     )
 
-                    guard var template = template as? AutoPlayHeaderProviding
+                    guard let template = template as? AutoPlayHeaderProviding
                     else {
                         throw AutoPlayError.invalidTemplateType(
                             "\(templateId) does not support header actions"
@@ -278,7 +278,7 @@ class HybridAutoPlay: HybridAutoPlaySpec {
                     }
 
                     template.barButtons = headerActions
-                    setBarButtons(template: template.getTemplate(), barButtons: headerActions)
+                    template.invalidate()
                 }
             }
         }
