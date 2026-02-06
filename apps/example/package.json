@@ -7,6 +7,7 @@
     "ios": "react-native run-ios --device",
     "lint": "biome check src",
     "lint-ci": "biome ci src --reporter=summary",
+    "typecheck": "tsc --noEmit",
     "start": "react-native start",
     "test": "jest",
     "android:autodrive": "adb shell dumpsys activity service com.example/com.margelo.nitro.swe.iternio.autoplay.AndroidAutoService AUTO_DRIVE"
