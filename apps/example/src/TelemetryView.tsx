@@ -35,6 +35,7 @@ function TelemetryView() {
             message: 'Grant permission for vehicle telemetry access.',
           }
         : undefined,
+    requestTelemetryPermissions: true,
   });
 
   const [mergedTelemetry, setMergedTelemetry] = useState<Telemetry>();

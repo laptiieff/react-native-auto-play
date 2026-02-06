@@ -12,10 +12,14 @@
     "ios": "yarn workspace example ios",
     "android": "yarn workspace example android",
     "android:adb": "./adb_port_setup.sh",
-    "postinstall": "node scripts/conditional-patch.js"
+    "postinstall": "node scripts/conditional-patch.js",
+    "lint:auto-play": "yarn workspace @iternio/react-native-auto-play lint",
+    "typecheck:auto-play": "yarn workspace @iternio/react-native-auto-play typecheck",
+    "lint:example": "yarn workspace example lint",
+    "typecheck:example": "yarn workspace example typecheck"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.4"
+    "@biomejs/biome": "^2.3.14"
   },
   "dependencies": {
     "patch-package": "^8.0.1"
