@@ -74,7 +74,7 @@ const AutoPlayRoot = (props: RootComponentInitialProps) => {
     const timer = setInterval(() => setI((p) => p + 1), 1000);
 
     return () => clearInterval(timer);
-  }, [mapTemplate?.showAlert, signedIn]);
+  }, [signedIn, mapTemplate]);
 
   useEffect(() => {
     const listeners: Array<UnsubscribeListener> = [];
