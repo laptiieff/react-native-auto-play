@@ -24,17 +24,17 @@ class GridTemplate: AutoPlayHeaderProviding {
     init(config: GridTemplateConfig) {
         self.config = config
         buttons = config.buttons
-        
+
         template = CPGridTemplate(
             title: Parser.parseText(text: config.title),
             gridButtons: GridTemplate.parseButtons(buttons: buttons),
             id: config.id
         )
-                
+
         super.init()
-        
+
         barButtons = config.headerActions
-        
+
     }
 
     static func parseButtons(buttons: [NitroGridButton]) -> [CPGridButton] {
@@ -47,7 +47,9 @@ class GridTemplate: AutoPlayHeaderProviding {
             gridButtonHeight = 44
         }
 
-        let traitCollection = SceneStore.getRootTraitCollection()
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return []
+        }
 
         return buttons.compactMap { button in
             var image: UIImage?

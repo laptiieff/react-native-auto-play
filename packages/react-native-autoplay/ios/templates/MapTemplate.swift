@@ -45,10 +45,10 @@ class MapTemplate: AutoPlayHeaderProviding,
 
     init(config: MapTemplateConfig) {
         self.config = config
-        
+
         mapButtons = config.mapButtons
         visibleTravelEstimate = config.visibleTravelEstimate
-        
+
         template = CPMapTemplate(id: config.id)
 
         if let initialProperties = SceneStore.getRootScene()?.initialProperties,
@@ -81,12 +81,16 @@ class MapTemplate: AutoPlayHeaderProviding,
     }
 
     func parseMapButtons(mapButtons: [NitroMapButton]) -> [CPMapButton] {
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return []
+        }
+
         return mapButtons.map { button in
             if let glyphImage = button.image.glyphImage,
                 let icon = SymbolFont.imageFromNitroImage(
                     image: glyphImage,
                     size: CPButtonMaximumImageSize.height,
-                    traitCollection: SceneStore.getRootTraitCollection()
+                    traitCollection: traitCollection
                 )
             {
                 return CPMapButton(image: icon) { _ in
@@ -100,7 +104,7 @@ class MapTemplate: AutoPlayHeaderProviding,
             if let assetImage = button.image.assetImage,
                 let icon = Parser.parseAssetImage(
                     assetImage: assetImage,
-                    traitCollection: SceneStore.getRootTraitCollection()
+                    traitCollection: traitCollection
                 )
             {
                 return CPMapButton(image: icon) { _ in
@@ -180,7 +184,10 @@ class MapTemplate: AutoPlayHeaderProviding,
 
     @MainActor
     override func traitCollectionDidChange() {
-        let traitCollection = SceneStore.getRootTraitCollection()
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return
+        }
+
         let isDark = traitCollection.userInterfaceStyle == .dark
 
         config.onAppearanceDidChange?(
@@ -354,6 +361,10 @@ class MapTemplate: AutoPlayHeaderProviding,
             return
         }
 
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return
+        }
+
         guard let title = Parser.parseText(text: alertConfig.title) else { return }
         let subtitle = alertConfig.subtitle.flatMap { subtitle in
             [Parser.parseText(text: subtitle)].compactMap { $0 }
@@ -361,7 +372,7 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         let image = Parser.parseNitroImage(
             image: alertConfig.image,
-            traitCollection: SceneStore.getRootTraitCollection()
+            traitCollection: traitCollection
         )
 
         let style = Parser.parseActionAlertStyle(
@@ -599,6 +610,10 @@ class MapTemplate: AutoPlayHeaderProviding,
     func updateManeuvers(messageManeuver: NitroMessageManeuver) {
         guard let navigationSession = navigationSession else { return }
 
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return
+        }
+
         let color = messageManeuver.cardBackgroundColor
         let cardBackgroundColor = Parser.parseColor(color: color)
 
@@ -615,7 +630,7 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         if let symbolImage = Parser.parseNitroImage(
             image: messageManeuver.image,
-            traitCollection: SceneStore.getRootTraitCollection()
+            traitCollection: traitCollection
         ) {
             maneuver.symbolImage = symbolImage
         }
@@ -632,6 +647,10 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         if maneuvers.isEmpty {
             navigationSession.upcomingManeuvers = []
+            return
+        }
+
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
             return
         }
 
@@ -674,7 +693,7 @@ class MapTemplate: AutoPlayHeaderProviding,
 
             let maneuver = Parser.parseManeuver(
                 nitroManeuver: nitroManeuver,
-                traitCollection: SceneStore.getRootTraitCollection()
+                traitCollection: traitCollection
             )
             upcomingManeuvers.append(maneuver)
         }
@@ -686,7 +705,7 @@ class MapTemplate: AutoPlayHeaderProviding,
                         // CarPlay has a limitation of 120x18 for the symbolImage on secondaryManeuver that shows lanes only
                         let secondarySymbolImage = Parser.imageFromLanes(
                             laneImages: laneImages.prefix(Int(120 / 18)),
-                            traitCollection: SceneStore.getRootTraitCollection()
+                            traitCollection: traitCollection
                         )
 
                         let secondaryManeuver = CPManeuver(

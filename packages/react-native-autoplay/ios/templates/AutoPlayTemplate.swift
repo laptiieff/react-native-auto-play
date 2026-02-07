@@ -42,10 +42,14 @@ class AutoPlayHeaderProviding: AutoPlayTemplate {
 func setBarButtons(template: CPTemplate, barButtons: [NitroAction]?) {
     guard let template = template as? CPBarButtonProviding else { return }
 
+    guard let traitCollection = SceneStore.getRootTraitCollection() else {
+        return
+    }
+
     if let headerActions = barButtons {
         let parsedActions = Parser.parseHeaderActions(
             headerActions: headerActions,
-            traitCollection: SceneStore.getRootTraitCollection()
+            traitCollection: traitCollection
         )
 
         template.backButton = parsedActions.backButton

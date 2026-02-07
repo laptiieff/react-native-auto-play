@@ -84,7 +84,7 @@ class SceneStore {
         return store[SceneStore.rootModuleName]
     }
 
-    static func getRootTraitCollection() -> UITraitCollection {
-        return store[SceneStore.rootModuleName]!.traitCollection
+    static func getRootTraitCollection() -> UITraitCollection? {
+        return store[SceneStore.rootModuleName]?.traitCollection
     }
 }

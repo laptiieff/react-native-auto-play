@@ -23,7 +23,7 @@ class ListTemplate: AutoPlayHeaderProviding {
 
     init(config: ListTemplateConfig) {
         self.config = config
-        
+
         sections = config.sections
 
         template = CPListTemplate(
@@ -32,9 +32,9 @@ class ListTemplate: AutoPlayHeaderProviding {
             assistantCellConfiguration: nil,
             id: config.id
         )
-        
+
         super.init()
-        
+
         barButtons = config.headerActions
     }
 
@@ -42,11 +42,15 @@ class ListTemplate: AutoPlayHeaderProviding {
     override func _invalidate() {
         setBarButtons(template: template, barButtons: barButtons)
 
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return
+        }
+
         template.updateSections(
             Parser.parseSections(
                 sections: sections,
                 updateSection: self.updateSection(section:sectionIndex:),
-                traitCollection: SceneStore.getRootTraitCollection()
+                traitCollection: traitCollection
             )
         )
     }
