@@ -54,18 +54,27 @@ class HeadUnitSceneDelegate: AutoPlayScene, CPTemplateApplicationSceneDelegate {
 
     func templateApplicationScene(
         _ templateApplicationScene: CPTemplateApplicationScene,
-        didDisconnectInterfaceController interfaceController:
-            CPInterfaceController
+        didDisconnect interfaceController: CPInterfaceController,
+        from window: CPWindow
     ) {
-        HybridAutoPlay.emit(event: .diddisconnect)
-        
         if let mapTemplate = try? templateStore.getTemplate(
             templateId: SceneStore.rootModuleName
         ) as? MapTemplate {
             mapTemplate.stopNavigation()
         }
-        
+
         disconnect()
+
+        HybridAutoPlay.emit(event: .diddisconnect)
+    }
+
+    func templateApplicationScene(
+        _ templateApplicationScene: CPTemplateApplicationScene,
+        didDisconnectInterfaceController interfaceController:
+            CPInterfaceController
+    ) {
+        disconnect()
+        HybridAutoPlay.emit(event: .diddisconnect)
     }
 
     func sceneWillResignActive(_ scene: UIScene) {

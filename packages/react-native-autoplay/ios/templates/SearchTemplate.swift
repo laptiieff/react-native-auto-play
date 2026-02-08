@@ -28,7 +28,7 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
     init(config: SearchTemplateConfig) {
         self.config = config
         results = config.results
-        
+
         template = CPSearchTemplate(id: config.id)
     }
 
@@ -49,9 +49,13 @@ class SearchTemplate: AutoPlayTemplate, CPSearchTemplateDelegate {
             return
         }
 
+        guard let traitCollection = SceneStore.getRootTraitCollection() else {
+            return
+        }
+
         let listItems = Parser.parseSearchResults(
             section: results,
-            traitCollection: SceneStore.getRootTraitCollection()
+            traitCollection: traitCollection
         )
         completionHandler(listItems)
 
