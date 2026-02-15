@@ -12,7 +12,7 @@ index 2a7519a..6ce3811 100644
  - (instancetype)initWithDelegate:(id<RCTTimingDelegate>)delegate;
  - (void)createTimerForNextFrame:(NSNumber *)callbackID
 diff --git a/node_modules/react-native/React/CoreModules/RCTTiming.mm b/node_modules/react-native/React/CoreModules/RCTTiming.mm
-index 0b36307..b504a5d 100644
+index 0b36307..9352abc 100644
 --- a/node_modules/react-native/React/CoreModules/RCTTiming.mm
 +++ b/node_modules/react-native/React/CoreModules/RCTTiming.mm
 @@ -101,11 +101,10 @@ static const NSTimeInterval kIdleCallbackFrameDeadline = 0.001;
@@ -69,17 +69,16 @@ index 0b36307..b504a5d 100644
  }
  
  - (void)proximityChanged
-@@ -204,43 +200,12 @@ RCT_EXPORT_MODULE()
+@@ -204,41 +200,6 @@ RCT_EXPORT_MODULE()
    }
  }
  
 -- (void)stopTimers
-+- (void)didUpdateFrame:(RCTFrameUpdate *)update
- {
-   if (_inBackground) {
-     return;
-   }
- 
+-{
+-  if (_inBackground) {
+-    return;
+-  }
+-
 -  if (!_paused) {
 -    _paused = YES;
 -    if (_pauseCallback) {
@@ -109,12 +108,10 @@ index 0b36307..b504a5d 100644
 -  }
 -}
 -
--- (void)didUpdateFrame:(RCTFrameUpdate *)update
--{
+ - (void)didUpdateFrame:(RCTFrameUpdate *)update
+ {
    NSDate *nextScheduledTarget = [NSDate distantFuture];
-   NSMutableArray<_RCTTimer *> *timersToCall = [NSMutableArray new];
-   NSDate *now = [NSDate date]; // compare all the timers to the same base time
-@@ -289,58 +254,6 @@ RCT_EXPORT_MODULE()
+@@ -289,58 +250,6 @@ RCT_EXPORT_MODULE()
        }
      }
    }
@@ -173,7 +170,7 @@ index 0b36307..b504a5d 100644
  }
  
  /**
-@@ -397,16 +310,6 @@ RCT_EXPORT_METHOD(createTimer
+@@ -397,16 +306,6 @@ RCT_EXPORT_METHOD(createTimer
    @synchronized(_timers) {
      _timers[callbackID] = timer;
    }
@@ -190,7 +187,7 @@ index 0b36307..b504a5d 100644
  }
  
  RCT_EXPORT_METHOD(deleteTimer : (double)timerID)
-@@ -414,19 +317,11 @@ RCT_EXPORT_METHOD(deleteTimer : (double)timerID)
+@@ -414,19 +313,11 @@ RCT_EXPORT_METHOD(deleteTimer : (double)timerID)
    @synchronized(_timers) {
      [_timers removeObjectForKey:[NSNumber numberWithDouble:timerID]];
    }
