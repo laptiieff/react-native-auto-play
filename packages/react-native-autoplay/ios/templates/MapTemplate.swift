@@ -597,7 +597,7 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         if var userInfo = route.userInfo as? [String: Any?] {
             userInfo["travelEstimates"] = steps.map { step in
-                Parser.parseTravelEstiamtes(
+                Parser.parseTravelEstimates(
                     travelEstimates: step.travelEstimates
                 )
             }
@@ -675,7 +675,7 @@ class MapTemplate: AutoPlayHeaderProviding,
                 .firstIndex(where: { $0.id == nitroManeuver.id })
             {
                 navigationSession.updateEstimates(
-                    Parser.parseTravelEstiamtes(
+                    Parser.parseTravelEstimates(
                         travelEstimates: nitroManeuver.travelEstimates
                     ),
                     for: navigationSession.upcomingManeuvers[maneuverIndex]
