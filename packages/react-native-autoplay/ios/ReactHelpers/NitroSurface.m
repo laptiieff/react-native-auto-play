@@ -19,32 +19,18 @@
         return;
     }
 
-    if ([view isKindOfClass:[RCTSurfaceHostingProxyRootView class]]) {
+    if ([view isKindOfClass:[RCTSurfaceHostingView class]]) {
         RCTSurfaceHostingProxyRootView *rootView =
             (RCTSurfaceHostingProxyRootView *)view;
-        RCTSurface *surface = rootView.surface;
-
-        if (surface == nil) {
-            NSLog(@"[AutoPlay] surface == nil, cannot stop");
+        
+        if (rootView == nil) {
+            NSLog(@"[AutoPlay] rootView == nil, cannot stop");
             return;
         }
-
-        [surface stop];
-        return;
+        
+        [rootView.surface stop];
     }
     
-    if ([view isKindOfClass:[RCTRootView class]]) {
-        RCTRootView *rootView = (RCTRootView *)view;
-        UIView<RCTInvalidating> *contentView = (UIView<RCTInvalidating> *)rootView.contentView;
-        
-        if ([contentView conformsToProtocol:@protocol(RCTInvalidating)]) {
-            [contentView invalidate];
-        } else {
-            NSLog(@"[AutoPlay] contentView does not conform to RCTInvalidating");
-        }
-        return;
-    }
-
     NSLog(@"[AutoPlay] View is not recognized type, ignoring");
 }
 
