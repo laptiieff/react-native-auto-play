@@ -30,7 +30,7 @@
         
         [rootView.surface stop];
     }
-    
+
     NSLog(@"[AutoPlay] View is not recognized type, ignoring");
 }
 
