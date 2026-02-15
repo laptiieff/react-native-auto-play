@@ -6,7 +6,6 @@
 //
 
 import CarPlay
-import React
 
 class AutoPlayScene: UIResponder {
     var initialProperties: [String: Any] = [:]
@@ -54,10 +53,7 @@ class AutoPlayScene: UIResponder {
     }
 
     func disconnect() {
-        if let view = self.window?.rootViewController?.view, let rootView = view as? RCTSurfaceHostingProxyRootView {
-            rootView.surface.stop()
-        }
-
+        NitroSurface.stop(self.window?.rootViewController?.view)
         self.window = nil
         isConnected = false
 
