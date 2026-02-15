@@ -7,6 +7,7 @@
 
 import CarPlay
 import UIKit
+import React
 
 struct HeaderActions {
     let leadingNavigationBarButtons: [CPBarButton]
@@ -739,7 +740,7 @@ class Parser {
     }
 
     static func doubleToColor(value: Double) -> UIColor {
-        return NitroConvert.uiColor(value)
+        return RCTConvert.uiColor(value)
     }
 
     static func parseNitroImage(
@@ -767,7 +768,7 @@ class Parser {
         assetImage: AssetImage,
         traitCollection: UITraitCollection
     ) -> UIImage? {
-        let uiImage = NitroConvert.uiImage([
+        let uiImage = RCTConvert.uiImage([
             "height": assetImage.height, "width": assetImage.width,
             "uri": assetImage.uri, "scale": assetImage.scale,
             "__packager_asset": assetImage.packager_asset,
@@ -775,6 +776,10 @@ class Parser {
 
         guard let color = assetImage.color else {
             return uiImage
+        }
+        
+        guard let uiImage = uiImage else {
+            return nil
         }
 
         return getTintedImageAsset(

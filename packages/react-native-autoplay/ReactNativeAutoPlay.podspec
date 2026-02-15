@@ -37,6 +37,7 @@ Pod::Spec.new do |s|
   load 'nitrogen/generated/ios/ReactNativeAutoPlay+autolinking.rb'
   add_nitrogen_files(s)
 
+  s.dependency 'React-Core'
   s.dependency 'React-jsi'
   s.dependency 'React-callinvoker'
   install_modules_dependencies(s)
