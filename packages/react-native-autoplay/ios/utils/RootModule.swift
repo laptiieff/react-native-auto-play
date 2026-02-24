@@ -49,23 +49,6 @@ class RootModule {
         }
     }
 
-    static func withTemplate<T: CPTemplate>(
-        templateId: String,
-        perform action: @escaping (T) throws -> Void
-    ) throws {
-        try withAutoPlayTemplate(templateId: templateId) {
-            (autoPlayTemplate: AutoPlayTemplate) in
-            if let template = autoPlayTemplate.getTemplate() as? T {
-                try! action(template)
-            }
-            else {
-                throw AutoPlayError.invalidTemplateType(
-                    "\(autoPlayTemplate) is not a \(T.self) template"
-                )
-            }
-        }
-    }
-
     static func withScene<T>(
         perform action:
             @escaping (AutoPlayScene) async throws -> T
