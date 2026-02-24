@@ -16,9 +16,7 @@ class RootModule {
                 moduleName: SceneStore.rootModuleName
             )
         else {
-            throw AutoPlayError.sceneNotFound(
-                "operation failed, \(SceneStore.rootModuleName) scene not found"
-            )
+            return
         }
 
         try action(scene)
@@ -51,35 +49,16 @@ class RootModule {
         }
     }
 
-    static func withTemplate<T: CPTemplate>(
-        templateId: String,
-        perform action: @escaping (T) throws -> Void
-    ) throws {
-        try withAutoPlayTemplate(templateId: templateId) {
-            (autoPlayTemplate: AutoPlayTemplate) in
-            if let template = autoPlayTemplate.getTemplate() as? T {
-                try! action(template)
-            }
-            else {
-                throw AutoPlayError.invalidTemplateType(
-                    "\(autoPlayTemplate) is not a \(T.self) template"
-                )
-            }
-        }
-    }
-
     static func withScene<T>(
         perform action:
             @escaping (AutoPlayScene) async throws -> T
-    ) async throws -> T {
+    ) async throws -> T? {
         guard
             let scene = SceneStore.getScene(
                 moduleName: SceneStore.rootModuleName
             )
         else {
-            throw AutoPlayError.sceneNotFound(
-                "operation failed, \(SceneStore.rootModuleName) scene not found"
-            )
+            return nil
         }
 
         return try await action(scene)
@@ -90,7 +69,7 @@ class RootModule {
         perform action:
             @escaping (AutoPlayScene, AutoPlayInterfaceController) async throws
             -> T
-    ) async throws -> T {
+    ) async throws -> T? {
         return try await withScene { scene in
             guard let interfaceController = scene.interfaceController else {
                 throw AutoPlayError.interfaceControllerNotFound(
@@ -106,7 +85,7 @@ class RootModule {
     static func withInterfaceController<T>(
         perform action:
             @escaping (AutoPlayInterfaceController) async throws -> T
-    ) async throws -> T {
+    ) async throws -> T? {
         try await withSceneAndInterfaceController { _, interfaceController in
             try await action(interfaceController)
         }

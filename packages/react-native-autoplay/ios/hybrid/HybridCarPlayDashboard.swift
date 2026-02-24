@@ -32,7 +32,7 @@ class HybridCarPlayDashboard: HybridCarPlayDashboardSpec {
 
     func initRootView() throws -> Promise<Void> {
         return Promise.async {
-            guard let scene = try SceneStore.getDashboardScene() else { return }
+            guard let scene = SceneStore.getDashboardScene() else { return }
             try await MainActor.run {
                 try scene.initRootView()
             }
@@ -43,9 +43,9 @@ class HybridCarPlayDashboard: HybridCarPlayDashboardSpec {
         Void
     > {
         return Promise.async {
-            try await MainActor.run {
-                let scene = try SceneStore.getDashboardScene()
-                scene?.setButtons(buttons: buttons)
+            await MainActor.run {
+                guard let scene = SceneStore.getDashboardScene() else { return }
+                scene.setButtons(buttons: buttons)
             }
         }
     }
