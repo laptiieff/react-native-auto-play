@@ -580,10 +580,10 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         guard let trip = navigationSession?.trip else { return }
 
-        let travelEstaimtes = trip.routeChoices.first?
+        let travelEstimates = trip.routeChoices.first?
             .travelEstimates
         if let estimates = self.visibleTravelEstimate == .first
-            ? travelEstaimtes?.first : travelEstaimtes?.last
+            ? travelEstimates?.first : travelEstimates?.last
         {
             template.updateEstimates(estimates, for: trip)
         }
