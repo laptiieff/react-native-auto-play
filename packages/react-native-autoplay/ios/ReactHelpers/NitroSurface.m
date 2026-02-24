@@ -9,7 +9,7 @@
 #import <React/RCTInvalidating.h>
 #import <React/RCTRootView.h>
 #import <React/RCTSurface.h>
-#import <React/RCTSurfaceHostingProxyRootView.h>
+#import <React/RCTSurfaceHostingView.h>
 
 @implementation NitroSurface
 
@@ -20,8 +20,8 @@
     }
 
     if ([view isKindOfClass:[RCTSurfaceHostingView class]]) {
-        RCTSurfaceHostingProxyRootView *rootView =
-            (RCTSurfaceHostingProxyRootView *)view;
+        RCTSurfaceHostingView *rootView =
+            (RCTSurfaceHostingView *)view;
         
         if (rootView == nil) {
             NSLog(@"[AutoPlay] rootView == nil, cannot stop");
