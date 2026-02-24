@@ -5,9 +5,9 @@ PODS:
   - FBLazyVector (0.81.6)
   - fmt (11.0.2)
   - glog (0.3.5)
-  - hermes-engine (0.81.4):
-    - hermes-engine/Pre-built (= 0.81.4)
-  - hermes-engine/Pre-built (0.81.4)
+  - hermes-engine (0.81.6):
+    - hermes-engine/Pre-built (= 0.81.6)
+  - hermes-engine/Pre-built (0.81.6)
   - NitroModules (0.33.7):
     - boost
     - DoubleConversion
@@ -2675,7 +2675,7 @@ SPEC CHECKSUMS:
   FBLazyVector: 812782f0506ba4c4a1b9f4b793e6de1bfdfc4c25
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
-  hermes-engine: 35c763d57c9832d0eef764316ca1c4d043581394
+  hermes-engine: 7219f6e751ad6ec7f3d7ec121830ee34dae40749
   NitroModules: 20e6bc4fd873621019f451d8bfbbf3c973976416
   RCT-Folly: 59ec0ac1f2f39672a0c6e6cecdd39383b764646f
   RCTDeprecation: d4ef510f229cea15314176aee5e3ba10064a8496

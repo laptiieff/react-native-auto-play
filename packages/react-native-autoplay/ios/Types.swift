@@ -12,7 +12,6 @@ struct TemplateEventPayload {
 
 enum AutoPlayError: Error {
     case templateNotFound(String)
-    case sceneNotFound(String)
     case interfaceControllerNotFound(String)
     case invalidTemplateError(String)
     case propertyNotFoundError(String)

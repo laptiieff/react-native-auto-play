@@ -57,10 +57,13 @@ class HybridCluster: HybridClusterSpec {
         return Promise.async {
             if #available(iOS 15.4, *) {
                 try await MainActor.run {
-                    let scene = try SceneStore.getClusterScene(
+                    guard let scene = SceneStore.getClusterScene(
                         clusterId: clusterId
-                    )
-                    try scene?.initRootView()
+                    ) else {
+                        return
+                    }
+                    
+                    try scene.initRootView()
                 }
             }
             else {
@@ -77,10 +80,13 @@ class HybridCluster: HybridClusterSpec {
             [NitroAttributedString]
     ) throws {
         if #available(iOS 15.4, *) {
-            let scene = try SceneStore.getClusterScene(
+            guard let scene = SceneStore.getClusterScene(
                 clusterId: clusterId
-            )
-            scene?.setAttributedInactiveDescriptionVariants(
+            ) else {
+                return
+            }
+            
+            scene.setAttributedInactiveDescriptionVariants(
                 attributedInactiveDescriptionVariants:
                     attributedInactiveDescriptionVariants
             )
