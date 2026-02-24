@@ -9,7 +9,7 @@
 #import <React/RCTInvalidating.h>
 #import <React/RCTRootView.h>
 #import <React/RCTSurface.h>
-#import <React/RCTSurfaceHostingProxyRootView.h>
+#import <React/RCTSurfaceHostingView.h>
 
 @implementation NitroSurface
 
@@ -19,30 +19,16 @@
         return;
     }
 
-    if ([view isKindOfClass:[RCTSurfaceHostingProxyRootView class]]) {
-        RCTSurfaceHostingProxyRootView *rootView =
-            (RCTSurfaceHostingProxyRootView *)view;
-        RCTSurface *surface = rootView.surface;
-
-        if (surface == nil) {
-            NSLog(@"[AutoPlay] surface == nil, cannot stop");
+    if ([view isKindOfClass:[RCTSurfaceHostingView class]]) {
+        RCTSurfaceHostingView *rootView =
+            (RCTSurfaceHostingView *)view;
+        
+        if (rootView == nil) {
+            NSLog(@"[AutoPlay] rootView == nil, cannot stop");
             return;
         }
-
-        [surface stop];
-        return;
-    }
-    
-    if ([view isKindOfClass:[RCTRootView class]]) {
-        RCTRootView *rootView = (RCTRootView *)view;
-        UIView<RCTInvalidating> *contentView = (UIView<RCTInvalidating> *)rootView.contentView;
         
-        if ([contentView conformsToProtocol:@protocol(RCTInvalidating)]) {
-            [contentView invalidate];
-        } else {
-            NSLog(@"[AutoPlay] contentView does not conform to RCTInvalidating");
-        }
-        return;
+        [rootView.surface stop];
     }
 
     NSLog(@"[AutoPlay] View is not recognized type, ignoring");

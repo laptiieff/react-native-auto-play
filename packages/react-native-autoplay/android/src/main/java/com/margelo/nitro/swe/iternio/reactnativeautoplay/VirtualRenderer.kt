@@ -20,10 +20,8 @@ import androidx.car.app.CarContext
 import androidx.car.app.SurfaceCallback
 import androidx.car.app.SurfaceContainer
 import com.facebook.react.ReactApplication
-import com.facebook.react.ReactRootView
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.UIManager
 import com.facebook.react.fabric.FabricUIManager
 import com.facebook.react.runtime.ReactSurfaceImpl
 import com.facebook.react.runtime.ReactSurfaceView
@@ -45,27 +43,17 @@ class VirtualRenderer(
     private val isCluster: Boolean = false
 ) {
     private lateinit var fabricUiManager: FabricUIManager
-    private lateinit var uiManager: UIManager
 
     private fun isUiManagerInitialized(): Boolean {
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            return ::fabricUiManager.isInitialized
-        }
-
-        return ::uiManager.isInitialized
+        return ::fabricUiManager.isInitialized
     }
 
     private lateinit var display: Display
     private lateinit var reactContext: ReactContext
 
     private lateinit var reactSurfaceImpl: ReactSurfaceImpl
-    private lateinit var reactSurfaceView: ReactSurfaceView
+    private var reactSurfaceView: ReactSurfaceView? = null
     private var reactSurfaceId: Int? = null
-
-    private lateinit var reactRootView: ReactRootView
-    private fun isReactRootViewInitialized(): Boolean {
-        return ::reactRootView.isInitialized
-    }
 
     private var height: Int = 0
     private var width: Int = 0
@@ -85,20 +73,9 @@ class VirtualRenderer(
             reactContext =
                 ReactContextResolver.getReactContext(context.applicationContext as ReactApplication)
 
-            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                fabricUiManager = UIManagerHelper.getUIManager(
-                    reactContext, UIManagerType.FABRIC
-                ) as FabricUIManager
-            } else {
-                // UIManagerType.DEFAULT was deprecated and will eventually be removed, but LEGACY is not available in lower RN versions. 
-                // So make sure both work to be backwards compatible
-                val legacyType = try {
-                    UIManagerType::class.java.getField("LEGACY").getInt(null)
-                } catch (e: NoSuchFieldException) {
-                    UIManagerType.DEFAULT
-                }
-                uiManager = UIManagerHelper.getUIManager(reactContext, legacyType) as UIManager
-            }
+            fabricUiManager = UIManagerHelper.getUIManager(
+                reactContext, UIManagerType.FABRIC
+            ) as FabricUIManager
 
             initRenderer()
         }
@@ -216,7 +193,7 @@ class VirtualRenderer(
                     val additionalMarginRight =
                         if (stableArea.right == visibleArea.right && visibleArea.right != width) 0 else defaultMargin
                     val additionalMarginTop =
-                        if (visibleArea.top != stableArea.top || (visibleArea.top > 0 && stableArea.top > 0 && visibleArea.right < width)) 0 else defaultMargin
+                        if (visibleArea.top != stableArea.top || (visibleArea.top > 0 && visibleArea.right < width)) 0 else defaultMargin
                     val additionalMarginBottom =
                         if (stableArea.bottom == visibleArea.bottom) defaultMargin else 0
 
@@ -293,89 +270,15 @@ class VirtualRenderer(
         val mainScreenDensity = DisplayMetricsHolder.getScreenDisplayMetrics().density
         val reactNativeScale = virtualScreenDensity / mainScreenDensity * BuildConfig.SCALE_FACTOR
 
-        if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-            if (!isUiManagerInitialized()) {
-                // this makes sure we have all required instances
-                // no matter if the app is launched on the phone or AA first
-                return
-            }
-
-            FabricMapPresentation(
-                context, display, height, width, initialProperties, reactNativeScale
-            ).show()
-        } else {
-            if (!isUiManagerInitialized()) {
-                // this makes sure we have all required instances
-                // no matter if the app is launched on the phone or AA first
-                return
-            }
-            MapPresentation(
-                context, display, height, width, initialProperties, reactNativeScale
-            ).show()
+        if (!isUiManagerInitialized()) {
+            // this makes sure we have all required instances
+            // no matter if the app is launched on the phone or AA first
+            return
         }
-    }
 
-    inner class MapPresentation(
-        private val context: CarContext,
-        display: Display,
-        private val height: Int,
-        private val width: Int,
-        private val initialProperties: Bundle,
-        private val reactNativeScale: Float,
-    ) : Presentation(context, display) {
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-
-            var splashScreenView: View? = null
-
-            // Wrap applicationContext with app theme to support AppCompat widgets like ReactTextView
-            val appTheme = context.applicationContext.applicationInfo.theme
-            val themedContext = ContextThemeWrapper(context.applicationContext, appTheme)
-
-            if (!isReactRootViewInitialized()) {
-                splashScreenView =
-                    if (isCluster) getClusterSplashScreen(themedContext, height, width) else null
-
-                val instanceManager =
-                    (themedContext.applicationContext as ReactApplication).reactNativeHost.reactInstanceManager
-
-                reactRootView = ReactRootView(themedContext).apply {
-                    layoutParams = FrameLayout.LayoutParams(
-                        (this@MapPresentation.width / reactNativeScale).toInt(),
-                        (this@MapPresentation.height / reactNativeScale).toInt()
-                    )
-                    scaleX = reactNativeScale
-                    scaleY = reactNativeScale
-                    pivotX = 0f
-                    pivotY = 0f
-                    setBackgroundColor(Color.DKGRAY)
-
-                    splashScreenView?.let {
-                        removeClusterSplashScreen({ viewTreeObserver }, it)
-                    }
-
-                    startReactApplication(instanceManager, moduleName, initialProperties)
-                    runApplication()
-                }
-            } else {
-                (reactRootView.parent as? ViewGroup)?.removeView(reactRootView)
-            }
-
-            val rootContainer = FrameLayout(themedContext).apply {
-                layoutParams = FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT
-                )
-                clipChildren = false
-
-                addView(reactRootView)
-            }
-
-            splashScreenView?.let {
-                rootContainer.addView(it)
-            }
-
-            setContentView(rootContainer)
-        }
+        FabricMapPresentation(
+            context, display, height, width, initialProperties, reactNativeScale
+        ).show()
     }
 
     inner class FabricMapPresentation(
@@ -398,11 +301,13 @@ class VirtualRenderer(
 
             var splashScreenView: View? = null
 
-            if (!this@VirtualRenderer::reactSurfaceView.isInitialized) {
+            reactSurfaceView?.let {
+                (it.parent as ViewGroup).removeView(it)
+            } ?: run {
                 splashScreenView =
                     if (isCluster) getClusterSplashScreen(themedContext, height, width) else null
 
-                reactSurfaceView = ReactSurfaceView(themedContext, reactSurfaceImpl).apply {
+                val surfaceView = ReactSurfaceView(themedContext, reactSurfaceImpl).apply {
                     layoutParams = FrameLayout.LayoutParams(
                         (width / reactNativeScale).toInt(), (height / reactNativeScale).toInt()
                     )
@@ -418,7 +323,7 @@ class VirtualRenderer(
                 }
 
                 reactSurfaceId = fabricUiManager.startSurface(
-                    reactSurfaceView,
+                    surfaceView,
                     moduleName,
                     Arguments.fromBundle(initialProperties),
                     View.MeasureSpec.makeMeasureSpec(
@@ -433,9 +338,10 @@ class VirtualRenderer(
                 reactContext.removeLifecycleEventListener(fabricUiManager)
                 // trigger ui-managers onHostResume to make sure the surface is rendered properly even when AA only is starting without the phone app
                 fabricUiManager.onHostResume()
-            } else {
-                (reactSurfaceView.parent as ViewGroup).removeView(reactSurfaceView)
+
+                reactSurfaceView = surfaceView
             }
+
 
             val rootContainer = FrameLayout(themedContext).apply {
                 layoutParams = FrameLayout.LayoutParams(
@@ -457,8 +363,15 @@ class VirtualRenderer(
     private fun getClusterSplashScreen(
         context: Context, containerHeight: Int, containerWidth: Int
     ): View {
+        val root = FrameLayout(context).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+        }
+
         val layout =
-            LayoutInflater.from(context).inflate(R.layout.cluster_splashscreen, null, false)
+            LayoutInflater.from(context).inflate(R.layout.cluster_splashscreen, root, false)
         val text = layout.findViewById<TextView>(R.id.splash_text)
 
         AppInfo.getApplicationIcon(context)?.let {
@@ -506,15 +419,9 @@ class VirtualRenderer(
         fun removeRenderer(moduleId: String) {
             val renderer = virtualRenderer[moduleId]
 
-            if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
-                if (renderer?.isUiManagerInitialized() == true) {
-                    renderer.reactSurfaceId?.let {
-                        renderer.fabricUiManager.stopSurface(it)
-                    }
-                }
-            } else {
-                if (renderer?.isReactRootViewInitialized() == true) {
-                    renderer.reactRootView.unmountReactApplication()
+            if (renderer?.isUiManagerInitialized() == true) {
+                renderer.reactSurfaceId?.let {
+                    renderer.fabricUiManager.stopSurface(it)
                 }
             }
 

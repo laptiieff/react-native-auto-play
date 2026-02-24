@@ -452,7 +452,7 @@ class Parser {
             id: routeChoice.id,
             // we don't want to keep the origin travel estimate
             travelEstimates: routeChoice.steps[1...].map { step in
-                parseTravelEstiamtes(travelEstimates: step.travelEstimates)
+                parseTravelEstimates(travelEstimates: step.travelEstimates)
             }
         )
 
@@ -492,7 +492,7 @@ class Parser {
         }
     }
 
-    static func parseTravelEstiamtes(travelEstimates: TravelEstimates)
+    static func parseTravelEstimates(travelEstimates: TravelEstimates)
         -> CPTravelEstimates
     {
         return CPTravelEstimates(
@@ -515,7 +515,7 @@ class Parser {
             traitCollection: traitCollection
         )
 
-        maneuver.initialTravelEstimates = Parser.parseTravelEstiamtes(
+        maneuver.initialTravelEstimates = Parser.parseTravelEstimates(
             travelEstimates: nitroManeuver.travelEstimates
         )
         maneuver.symbolImage = Parser.parseNitroImage(

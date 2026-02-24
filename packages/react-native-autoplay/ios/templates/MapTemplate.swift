@@ -580,10 +580,10 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         guard let trip = navigationSession?.trip else { return }
 
-        let travelEstaimtes = trip.routeChoices.first?
+        let travelEstimates = trip.routeChoices.first?
             .travelEstimates
         if let estimates = self.visibleTravelEstimate == .first
-            ? travelEstaimtes?.first : travelEstaimtes?.last
+            ? travelEstimates?.first : travelEstimates?.last
         {
             template.updateEstimates(estimates, for: trip)
         }
@@ -597,7 +597,7 @@ class MapTemplate: AutoPlayHeaderProviding,
 
         if var userInfo = route.userInfo as? [String: Any?] {
             userInfo["travelEstimates"] = steps.map { step in
-                Parser.parseTravelEstiamtes(
+                Parser.parseTravelEstimates(
                     travelEstimates: step.travelEstimates
                 )
             }
@@ -675,7 +675,7 @@ class MapTemplate: AutoPlayHeaderProviding,
                 .firstIndex(where: { $0.id == nitroManeuver.id })
             {
                 navigationSession.updateEstimates(
-                    Parser.parseTravelEstiamtes(
+                    Parser.parseTravelEstimates(
                         travelEstimates: nitroManeuver.travelEstimates
                     ),
                     for: navigationSession.upcomingManeuvers[maneuverIndex]
