@@ -11,6 +11,7 @@ import android.content.ServiceConnection
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import androidx.car.app.CarAppService
@@ -61,11 +62,13 @@ class AndroidAutoService : CarAppService() {
         notificationManager = getSystemService(NotificationManager::class.java)
         val appLabel = AppInfo.getApplicationLabel(this)
 
-        getSystemService(NotificationManager::class.java).createNotificationChannel(
-            NotificationChannel(
-                CHANNEL_ID, appLabel, NotificationManager.IMPORTANCE_DEFAULT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getSystemService(NotificationManager::class.java).createNotificationChannel(
+                NotificationChannel(
+                    CHANNEL_ID, appLabel, NotificationManager.IMPORTANCE_DEFAULT
+                )
             )
-        )
+        }
     }
 
     override fun onCreateSession(sessionInfo: SessionInfo): Session {
