@@ -42,14 +42,17 @@ class AndroidAutoTelemetryHolder {
     private var name: String? = null
     private var manufacturer: String? = null
     private var year: Int? = null
+    private var batteryCapacity: Float? = null
 
-    fun updateVehicle(name: String?, manufacturer: String?, year: Int?) = synchronized(lock) {
-        this.name = name
-        this.manufacturer = manufacturer
-        this.year = year
+    fun updateVehicle(name: String?, manufacturer: String?, year: Int?, batteryCapacity: Float?) =
+        synchronized(lock) {
+            this.name = name
+            this.manufacturer = manufacturer
+            this.year = year
+            this.batteryCapacity = batteryCapacity
 
-        isDirty = true
-    }
+            isDirty = true
+        }
 
     fun updateBatteryLevel(value: Float) = synchronized(lock) {
         if (batteryLevel == value) {
@@ -208,7 +211,8 @@ class AndroidAutoTelemetryHolder {
                 vehicle = VehicleTelemetryItem(
                     name = createStringTelemetryItem(name),
                     manufacturer = createStringTelemetryItem(manufacturer),
-                    year = createNumericTelemetryItem(year?.toFloat(), 0)
+                    year = createNumericTelemetryItem(year?.toFloat(), 0),
+                    batteryCapacity = createNumericTelemetryItem(batteryCapacity, 0)
                 )
             )
         }

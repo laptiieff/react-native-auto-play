@@ -25,7 +25,10 @@ data class VehicleTelemetryItem(
   val year: NumericTelemetryItem?,
   @DoNotStrip
   @Keep
-  val manufacturer: StringTelemetryItem?
+  val manufacturer: StringTelemetryItem?,
+  @DoNotStrip
+  @Keep
+  val batteryCapacity: NumericTelemetryItem?
 ) {
   /* primary constructor */
 
@@ -37,8 +40,8 @@ data class VehicleTelemetryItem(
     @Keep
     @Suppress("unused")
     @JvmStatic
-    private fun fromCpp(name: StringTelemetryItem?, year: NumericTelemetryItem?, manufacturer: StringTelemetryItem?): VehicleTelemetryItem {
-      return VehicleTelemetryItem(name, year, manufacturer)
+    private fun fromCpp(name: StringTelemetryItem?, year: NumericTelemetryItem?, manufacturer: StringTelemetryItem?, batteryCapacity: NumericTelemetryItem?): VehicleTelemetryItem {
+      return VehicleTelemetryItem(name, year, manufacturer, batteryCapacity)
     }
   }
 }

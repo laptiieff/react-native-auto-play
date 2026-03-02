@@ -42,10 +42,13 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
       jni::local_ref<JNumericTelemetryItem> year = this->getFieldValue(fieldYear);
       static const auto fieldManufacturer = clazz->getField<JStringTelemetryItem>("manufacturer");
       jni::local_ref<JStringTelemetryItem> manufacturer = this->getFieldValue(fieldManufacturer);
+      static const auto fieldBatteryCapacity = clazz->getField<JNumericTelemetryItem>("batteryCapacity");
+      jni::local_ref<JNumericTelemetryItem> batteryCapacity = this->getFieldValue(fieldBatteryCapacity);
       return VehicleTelemetryItem(
         name != nullptr ? std::make_optional(name->toCpp()) : std::nullopt,
         year != nullptr ? std::make_optional(year->toCpp()) : std::nullopt,
-        manufacturer != nullptr ? std::make_optional(manufacturer->toCpp()) : std::nullopt
+        manufacturer != nullptr ? std::make_optional(manufacturer->toCpp()) : std::nullopt,
+        batteryCapacity != nullptr ? std::make_optional(batteryCapacity->toCpp()) : std::nullopt
       );
     }
 
@@ -55,14 +58,15 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
      */
     [[maybe_unused]]
     static jni::local_ref<JVehicleTelemetryItem::javaobject> fromCpp(const VehicleTelemetryItem& value) {
-      using JSignature = JVehicleTelemetryItem(jni::alias_ref<JStringTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JStringTelemetryItem>);
+      using JSignature = JVehicleTelemetryItem(jni::alias_ref<JStringTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>, jni::alias_ref<JStringTelemetryItem>, jni::alias_ref<JNumericTelemetryItem>);
       static const auto clazz = javaClassStatic();
       static const auto create = clazz->getStaticMethod<JSignature>("fromCpp");
       return create(
         clazz,
         value.name.has_value() ? JStringTelemetryItem::fromCpp(value.name.value()) : nullptr,
         value.year.has_value() ? JNumericTelemetryItem::fromCpp(value.year.value()) : nullptr,
-        value.manufacturer.has_value() ? JStringTelemetryItem::fromCpp(value.manufacturer.value()) : nullptr
+        value.manufacturer.has_value() ? JStringTelemetryItem::fromCpp(value.manufacturer.value()) : nullptr,
+        value.batteryCapacity.has_value() ? JNumericTelemetryItem::fromCpp(value.batteryCapacity.value()) : nullptr
       );
     }
   };
