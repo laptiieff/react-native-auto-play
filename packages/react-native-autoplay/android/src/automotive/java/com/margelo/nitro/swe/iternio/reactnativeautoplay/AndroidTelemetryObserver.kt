@@ -45,7 +45,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
             VehiclePropertyIds.INFO_EV_BATTERY_CAPACITY, VehicleAreaType.VEHICLE_AREA_TYPE_GLOBAL
         )?.value ?: 0f
 
-        telemetryHolder.updateVehicle(carModel, carManufacturer, carModelYear)
+        telemetryHolder.updateVehicle(carModel, carManufacturer, carModelYear, batteryCapacity)
     }
 
     val vehiclePropertyReceiver = object : CarPropertyManager.CarPropertyEventCallback {

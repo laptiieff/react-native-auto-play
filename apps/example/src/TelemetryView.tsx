@@ -87,6 +87,12 @@ function TelemetryView() {
           {mergedTelemetry.vehicle.manufacturer.timestamp})
         </Text>
       ) : null}
+      {mergedTelemetry?.vehicle?.batteryCapacity ? (
+        <Text>
+          vehicle battery capacity: {mergedTelemetry.vehicle.batteryCapacity.value} (
+          {mergedTelemetry.vehicle.batteryCapacity.timestamp})
+        </Text>
+      ) : null}
     </>
   );
 }

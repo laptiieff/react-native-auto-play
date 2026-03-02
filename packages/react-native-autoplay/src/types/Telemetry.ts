@@ -49,6 +49,7 @@ type VehicleTelemetryItem = {
   name?: StringTelemetryItem;
   year?: NumericTelemetryItem;
   manufacturer?: StringTelemetryItem;
+  batteryCapacity?: NumericTelemetryItem;
 };
 
 export enum VehicleGear {

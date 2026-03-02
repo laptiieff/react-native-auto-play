@@ -27,7 +27,7 @@ object AndroidTelemetryObserver : TelemetryObserver() {
             model.year.value
         } else null
 
-        telemetryHolder.updateVehicle(name, manufacturer, year)
+        telemetryHolder.updateVehicle(name, manufacturer, year, null)
 
         telemetryHolder.toTelemetry()?.let {
             telemetryCallbacks.forEach { callback ->

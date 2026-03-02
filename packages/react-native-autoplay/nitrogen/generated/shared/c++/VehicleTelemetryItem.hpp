@@ -47,10 +47,11 @@ namespace margelo::nitro::swe::iternio::reactnativeautoplay {
     std::optional<StringTelemetryItem> name     SWIFT_PRIVATE;
     std::optional<NumericTelemetryItem> year     SWIFT_PRIVATE;
     std::optional<StringTelemetryItem> manufacturer     SWIFT_PRIVATE;
+    std::optional<NumericTelemetryItem> batteryCapacity     SWIFT_PRIVATE;
 
   public:
     VehicleTelemetryItem() = default;
-    explicit VehicleTelemetryItem(std::optional<StringTelemetryItem> name, std::optional<NumericTelemetryItem> year, std::optional<StringTelemetryItem> manufacturer): name(name), year(year), manufacturer(manufacturer) {}
+    explicit VehicleTelemetryItem(std::optional<StringTelemetryItem> name, std::optional<NumericTelemetryItem> year, std::optional<StringTelemetryItem> manufacturer, std::optional<NumericTelemetryItem> batteryCapacity): name(name), year(year), manufacturer(manufacturer), batteryCapacity(batteryCapacity) {}
 
   public:
     friend bool operator==(const VehicleTelemetryItem& lhs, const VehicleTelemetryItem& rhs) = default;
@@ -68,7 +69,8 @@ namespace margelo::nitro {
       return margelo::nitro::swe::iternio::reactnativeautoplay::VehicleTelemetryItem(
         JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "name"))),
         JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "year"))),
-        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "manufacturer")))
+        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "manufacturer"))),
+        JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::fromJSI(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "batteryCapacity")))
       );
     }
     static inline jsi::Value toJSI(jsi::Runtime& runtime, const margelo::nitro::swe::iternio::reactnativeautoplay::VehicleTelemetryItem& arg) {
@@ -76,6 +78,7 @@ namespace margelo::nitro {
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "name"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::toJSI(runtime, arg.name));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "year"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::toJSI(runtime, arg.year));
       obj.setProperty(runtime, PropNameIDCache::get(runtime, "manufacturer"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::toJSI(runtime, arg.manufacturer));
+      obj.setProperty(runtime, PropNameIDCache::get(runtime, "batteryCapacity"), JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::toJSI(runtime, arg.batteryCapacity));
       return obj;
     }
     static inline bool canConvert(jsi::Runtime& runtime, const jsi::Value& value) {
@@ -89,6 +92,7 @@ namespace margelo::nitro {
       if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "name")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "year")))) return false;
       if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::StringTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "manufacturer")))) return false;
+      if (!JSIConverter<std::optional<margelo::nitro::swe::iternio::reactnativeautoplay::NumericTelemetryItem>>::canConvert(runtime, obj.getProperty(runtime, PropNameIDCache::get(runtime, "batteryCapacity")))) return false;
       return true;
     }
   };
