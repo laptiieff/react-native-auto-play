@@ -55,100 +55,60 @@ class AndroidAutoTelemetryHolder {
         }
 
     fun updateBatteryLevel(value: Float) = synchronized(lock) {
-        if (batteryLevel == value) {
-            return
-        }
-
         batteryLevel = value
         batteryLevelTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateFuelLevel(value: Float) = synchronized(lock) {
-        if (fuelLevel == value) {
-            return
-        }
-
         fuelLevel = value
         fuelLevelTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateRange(value: Float) = synchronized(lock) {
-        if (range == value) {
-            return
-        }
-
         range = value
         rangeTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateSpeed(value: Float?) = synchronized(lock) {
-        if (speed == value) {
-            return
-        }
-
         speed = value
         speedTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateOdometer(value: Float?) = synchronized(lock) {
-        if (odometer == value) {
-            return
-        }
-
         odometer = value
         odometerTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateSelectedGear(value: Int?) = synchronized(lock) {
-        if (value == selectedGear) {
-            return
-        }
-
         selectedGear = value
         selectedGearTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateEnvOutsideTemperature(value: Float?) = synchronized(lock) {
-        if (value == envOutsideTemperature) {
-            return
-        }
-
         envOutsideTemperature = value
         envOutsideTemperatureTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateEvChargePortConnected(value: Boolean?) = synchronized(lock) {
-        if (value == evChargePortConnected) {
-            return
-        }
-
         evChargePortConnected = value
         evChargePortConnectedTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateEvBatteryInstantaneousChargeRate(value: Float?) = synchronized(lock) {
-        if (value == evBatteryInstantaneousChargeRate) {
-            return
-        }
-
         evBatteryInstantaneousChargeRate = value
         evBatteryInstantaneousChargeRateTimeStamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
     }
 
     fun updateParkingBrakeOn(value: Boolean?) = synchronized(lock) {
-        if (value == parkingBrakeOn) {
-            return
-        }
-
         parkingBrakeOn = value
         parkingBrakeOnTimestamp = (System.currentTimeMillis() / 1000L).toInt()
         isDirty = true
@@ -156,6 +116,10 @@ class AndroidAutoTelemetryHolder {
 
     fun updateBatteryLevel(levelWh: Float, capacityWh: Float) = synchronized(lock) {
         if (soe == levelWh) {
+            soeTimestamp = (System.currentTimeMillis() / 1000L).toInt()
+            batteryLevelTimestamp = soeTimestamp
+
+            isDirty = true
             return
         }
 
