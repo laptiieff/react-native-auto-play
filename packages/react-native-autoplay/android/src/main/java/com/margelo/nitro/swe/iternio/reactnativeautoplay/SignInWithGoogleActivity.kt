@@ -34,7 +34,10 @@ class SignInWithGoogleActivity : ComponentActivity() {
         val googleSignInClient = GoogleSignIn.getClient(
             this,
             GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestServerAuthCode(serverClientId).requestEmail().build()
+                .requestServerAuthCode(serverClientId)
+                .requestEmail()
+                .requestIdToken(serverClientId)
+                .build()
         )
         activityResultLauncher.launch(googleSignInClient.signInIntent)
     }
