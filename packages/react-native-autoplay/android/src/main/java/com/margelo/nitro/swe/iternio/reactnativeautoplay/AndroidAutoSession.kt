@@ -23,6 +23,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.CopyOnWriteArrayList
 
 class AndroidAutoSession(sessionInfo: SessionInfo, private val reactApplication: ReactApplication) :
     Session() {
@@ -246,9 +248,9 @@ class AndroidAutoSession(sessionInfo: SessionInfo, private val reactApplication:
         const val ROOT_SESSION = "AutoPlayRoot"
 
         private lateinit var reactContext: ReactContext
-        private val sessions = mutableMapOf<String, ScreenContext>()
+        private val sessions = ConcurrentHashMap<String, ScreenContext>()
 
-        private val clusterSessions = mutableListOf<String>()
+        private val clusterSessions = CopyOnWriteArrayList<String>()
 
         fun getIsConnected(): Boolean {
             return sessions.containsKey(ROOT_SESSION)

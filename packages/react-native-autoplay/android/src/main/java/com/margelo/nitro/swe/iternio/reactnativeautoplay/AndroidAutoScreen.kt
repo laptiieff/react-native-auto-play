@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.facebook.react.bridge.UiThreadUtil
+import java.util.concurrent.ConcurrentHashMap
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.template.AndroidAutoTemplate
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.template.GridTemplate
 import com.margelo.nitro.swe.iternio.reactnativeautoplay.template.InformationTemplate
@@ -117,7 +118,7 @@ class AndroidAutoScreen(
     companion object {
         const val TAG = "AndroidAutoScreen"
 
-        private val screens = mutableMapOf<String, AndroidAutoScreen>()
+        private val screens = ConcurrentHashMap<String, AndroidAutoScreen>()
 
         fun getScreen(marker: String): AndroidAutoScreen? {
             return screens[marker]
