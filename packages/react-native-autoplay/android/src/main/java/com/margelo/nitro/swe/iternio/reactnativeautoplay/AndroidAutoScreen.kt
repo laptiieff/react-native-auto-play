@@ -124,8 +124,11 @@ class AndroidAutoScreen(
         }
 
         fun getScreenManager(): ScreenManager? {
-            return screens[AndroidAutoSession.ROOT_SESSION]?.screenManager
-        }
+            val clusterSessions = AndroidAutoSession.getClusterSessions().toSet()
+            return screens.entries
+                .firstOrNull { !clusterSessions.contains(it.key) }
+                ?.value?.screenManager
+         }
 
         fun invalidateScreens() {
             for (screen in screens) {
