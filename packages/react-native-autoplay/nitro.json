@@ -10,48 +10,105 @@
   },
   "autolinking": {
     "AutoPlay": {
-      "kotlin": "HybridAutoPlay",
-      "swift": "HybridAutoPlay"
+      "android": {
+        "implementationClassName": "HybridAutoPlay",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridAutoPlay",
+        "language": "swift"
+      }
     },
     "AndroidAutoTelemetry": {
-      "kotlin": "HybridAndroidAutoTelemetry"
+      "android": {
+        "implementationClassName": "HybridAndroidAutoTelemetry",
+        "language": "kotlin"
+      }
     },
     "AndroidAutomotive": {
-      "kotlin": "HybridAndroidAutomotive"
+      "android": {
+        "implementationClassName": "HybridAndroidAutomotive",
+        "language": "kotlin"
+      }
     },
     "SignInTemplate": {
-      "kotlin": "HybridSignInTemplate"
+      "android": {
+        "implementationClassName": "HybridSignInTemplate",
+        "language": "kotlin"
+      }
     },
     "ListTemplate": {
-      "kotlin": "HybridListTemplate",
-      "swift": "HybridListTemplate"
+      "android": {
+        "implementationClassName": "HybridListTemplate",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridListTemplate",
+        "language": "swift"
+      }
     },
     "InformationTemplate": {
-      "kotlin": "HybridInformationTemplate",
-      "swift": "HybridInformationTemplate"
+      "android": {
+        "implementationClassName": "HybridInformationTemplate",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridInformationTemplate",
+        "language": "swift"
+      }
     },
     "GridTemplate": {
-      "kotlin": "HybridGridTemplate",
-      "swift": "HybridGridTemplate"
+      "android": {
+        "implementationClassName": "HybridGridTemplate",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridGridTemplate",
+        "language": "swift"
+      }
     },
     "MapTemplate": {
-      "kotlin": "HybridMapTemplate",
-      "swift": "HybridMapTemplate"
+      "android": {
+        "implementationClassName": "HybridMapTemplate",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridMapTemplate",
+        "language": "swift"
+      }
     },
     "MessageTemplate": {
-      "kotlin": "HybridMessageTemplate",
-      "swift": "HybridMessageTemplate"
+      "android": {
+        "implementationClassName": "HybridMessageTemplate",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridMessageTemplate",
+        "language": "swift"
+      }
     },
     "SearchTemplate": {
-      "kotlin": "HybridSearchTemplate",
-      "swift": "HybridSearchTemplate"
+      "android": {
+        "implementationClassName": "HybridSearchTemplate",
+        "language": "kotlin"
+      },
+      "ios": {
+        "implementationClassName": "HybridSearchTemplate",
+        "language": "swift"
+      }
     },
     "CarPlayDashboard": {
-      "swift": "HybridCarPlayDashboard"
+      "ios": {
+        "implementationClassName": "HybridCarPlayDashboard",
+        "language": "swift"
+      }
     },
     "Cluster": {
-      "kotlin": "HybridCluster",
-      "swift": "HybridCluster"
+      "android": {
+        "implementationClassName": "HybridCluster",
+        "language": "kotlin"
+      },
+      "ios": { "implementationClassName": "HybridCluster", "language": "swift" }
     }
   },
   "ignorePaths": ["**/node_modules"]
