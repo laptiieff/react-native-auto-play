@@ -270,7 +270,7 @@
 				INFOPLIST_FILE = example/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AutoPlay Example";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -301,7 +301,7 @@
 				INFOPLIST_FILE = example/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AutoPlay Example";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
